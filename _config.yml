@@ -2,6 +2,7 @@
 # General Site Settings
 title: Norlin
 logo: # You can add own logo. For example '/images/logo.png'.
+description: Burak Baris
 baseurl: "" # The subpath of your site, e.g. /blog
 url: "https://www.burakbaris.com" # The base hostname & protocol for your site, e.g. http://example.com
 
