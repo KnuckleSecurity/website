@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Norlin</title>
+    <description>Burak Baris</description>
+    <link>http://localhost:4000/</link>
+    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Mon, 27 Dec 2021 16:47:35 +0000</pubDate>
+    <lastBuildDate>Mon, 27 Dec 2021 16:47:35 +0000</lastBuildDate>
+    <generator>Jekyll v4.2.1</generator>
+    
+      <item>
+        <title>Tryhackme Blue Ctf Writeup</title>
+        <description>&lt;p&gt;&lt;a href=&quot;https://www.tryhackme.com/room/blue&quot;&gt;&lt;strong&gt;Solve Yourself »&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Blue is a machine that specifically designed to cover EternalBlue (CVE-2017-0144), 
+which allows remote attackers to execute arbitrary code via crafted packets, 
+aka “Windows SMB Remote Code Execution Vulnerability.” 
+&lt;br /&gt;
+&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;1-enumeration&quot;&gt;1-Enumeration&lt;/h2&gt;
+
+&lt;p&gt;Let us run Network Mapper (&lt;strong&gt;nmap&lt;/strong&gt;) to discover opened ports and services.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Parameter&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Functionality&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-sV&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Probe open ports to determine service/version info&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-sC or –script=default&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Performs a script scan using the default set of scripts&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-O&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Enable OS detection&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-T4&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;T{0-5} Set scan speed, higher is faster&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-p-&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Scan all 65536 ports&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Full command :&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;nmap &amp;lt;machine IP&amp;gt; &lt;span class=&quot;nt&quot;&gt;-sV&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-sC&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-O&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-T4&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-p-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-blue-ctf-writeup/blue2.jpg&quot; alt=&quot;Desktop View&quot; style=&quot;max-width: 80%&quot; class=&quot;normal&quot; /&gt; 
+&lt;br /&gt;
+It seems like plenty of services are enabled in the system.However one of them catches the eye.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;445 /tcp open microsoft-ds Windows 7 Professional 7601 Service Pack 1 microsoft-ds (workgroup : WORKGROUP)&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;After went through the web searching phase for that specific service, we got this:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0144&quot;&gt;&lt;strong&gt;CVE-2017-0144 - EternalBlue SMB Remote Code Execution (MS17-010)&lt;/strong&gt;&lt;/a&gt;
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;2-exploitation&quot;&gt;2-Exploitation&lt;/h2&gt;
+
+&lt;p&gt;Let’s use &lt;strong&gt;Metasploit&lt;/strong&gt; framework
+&lt;br /&gt;
+&lt;img src=&quot;/assets/img/posts/tryhackme-blue-ctf-writeup/blue3.jpg&quot; alt=&quot;Desktop View&quot; class=&quot;normal&quot; /&gt;
+&lt;br /&gt;
+And than use &lt;strong&gt;MS17-010&lt;/strong&gt;
+&lt;img src=&quot;/assets/img/posts/tryhackme-blue-ctf-writeup/blue4.jpg&quot; alt=&quot;Desktop View&quot; class=&quot;normal&quot; /&gt;
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;Six modules are showed up, two of them are auxiliary modules and the rest are exploiting scripts.In a real-life scenario it is not that obvious that those pre-arranged scripts would work.It is highly possible that target system would crash if you ran any careless exploit to target system or you are not sure host is vulnerable to it. To check this we can run &lt;strong&gt;auxiliary module&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;If you are not familiar with what an auxiliary module is, it is some kind of script that helps us to verify if the target system is vulnerable to our actual exploit or not, without crashing or corrupting the system.
+More technical description would be as following; An auxiliary module does not execute a payload. It can be used to perform arbitrary actions that may not be directly related to exploitation. Examples of auxiliary modules include scanners, fuzzers, and denial of service attacks.&lt;/p&gt;
+
+&lt;p&gt;In this case Metasploit database offers us those two auxiliary files, run:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;use auxiliary/scanner/smb/smb_ms17_010&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Than set RHOSTS  as IP address of  our target machine, and run it.
+&lt;img src=&quot;/assets/img/posts/tryhackme-blue-ctf-writeup/blue5.jpg&quot; alt=&quot;Desktop View&quot; class=&quot;normal&quot; /&gt;
+&lt;br /&gt;
+As you can see, the output tells us the that, &lt;strong&gt;Host is likely VULNERABLE to MS17-010 !!!&lt;/strong&gt; 
+After that point we got our proof that the exploit would work.So let us move to the exploitation phase.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Exploit - An exploit module executes a sequence of commands to target a specific vulnerability found in a system or application. An exploit module takes advantage of a vulnerability to provide access to the target system. Exploit modules include buffer overflow, code injection, and web application exploit.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Run:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;use exploit/windows/smb/ms17_010_eternalblue&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Like the previous auxiliary module, set RHOSTS as our target machine and run it.
+&lt;img src=&quot;/assets/img/posts/tryhackme-blue-ctf-writeup/blue6.jpg&quot; alt=&quot;Desktop View&quot; class=&quot;normal&quot; /&gt;
+&lt;br /&gt;
+&lt;img src=&quot;/assets/img/posts/tryhackme-blue-ctf-writeup/blue7.jpg&quot; alt=&quot;Desktop View&quot; class=&quot;normal&quot; /&gt;
+&lt;br /&gt;
+Congrats !!! You’ve hacked into the machine by using MS17-010 vulnerability.Now we have got our Meterpreter shell which provides additional powerful tools.&lt;/p&gt;
+
+&lt;p&gt;Now we need to use &lt;strong&gt;getsystem&lt;/strong&gt; command,which is provided by Metasploit’s meterpreter shell, that will use number of different techniques in attempt to gain SYSTEM level priveleges on the remote target. 
+&lt;img src=&quot;/assets/img/posts/tryhackme-blue-ctf-writeup/blue8.jpg&quot; alt=&quot;Desktop View&quot; class=&quot;normal&quot; /&gt;
+&lt;br /&gt;
+Now, lets list all runnig processes with &lt;strong&gt;ps&lt;/strong&gt; command, we will need to migrate our suspicious process into trusted process to ensure consistency.
+&lt;img src=&quot;/assets/img/posts/tryhackme-blue-ctf-writeup/blue9.jpg&quot; alt=&quot;Desktop View&quot; class=&quot;normal&quot; /&gt;
+&lt;br /&gt;
+SearchIndexer.exe seems like a good candidate to migrate our process.So type migrate {PID} to migrate spoolsv.exe, which is our reverse tcp payload.&lt;/p&gt;
+
+&lt;p&gt;Right now we have %100 access to target system and our session’s persistance is solid, lets move on for crediantels and flags.
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;3-post-exploitation---capturing-the-flags&quot;&gt;3-Post Exploitation - Capturing the Flags&lt;/h2&gt;
+&lt;p&gt;Just like the getsystem command, meterpreter provides &lt;strong&gt;hashdump&lt;/strong&gt; command, which brings the system hashes for us.
+&lt;img src=&quot;/assets/img/posts/tryhackme-blue-ctf-writeup/blue10.jpg&quot; alt=&quot;Desktop View&quot; class=&quot;normal&quot; /&gt;
+&lt;br /&gt;
+We need to find out what kind of hashes they are. It is easy to tell they are NTLM hashes, because Windows is using NTLM hashes for system as default but for the best practice, lets use a hash analyzer to identify the type, you can use any hash analyzer.
+&lt;img src=&quot;/assets/img/posts/tryhackme-blue-ctf-writeup/blue11.jpg&quot; alt=&quot;Desktop View&quot; class=&quot;normal&quot; /&gt;
+&lt;br /&gt;
+As you can see, it is &lt;strong&gt;NTLM&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;So, as we know the hash type, we can move forward for to cracking it.I will use &lt;strong&gt;John the Ripper&lt;/strong&gt;,you can use &lt;strong&gt;Hashcat&lt;/strong&gt; or any other cypher cracking tool.
+&lt;img src=&quot;/assets/img/posts/tryhackme-blue-ctf-writeup/blue12.jpg&quot; alt=&quot;Desktop View&quot; class=&quot;normal&quot; /&gt;
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Parameter&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Functionality&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;hashes&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;ASCII Text file, which contains copied hashes.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;–wordlist&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Location of the wordlist&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-format&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Hash format&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;We’ve cracked the first hash.&lt;/p&gt;
+
+&lt;p&gt;Now type shell to use windows’ shell instead of meterpreter shell and start looking for flags.&lt;/p&gt;
+&lt;h4 id=&quot;flag1txt&quot;&gt;flag1.txt&lt;/h4&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-blue-ctf-writeup/blue13.jpg&quot; alt=&quot;Desktop View&quot; class=&quot;normal&quot; /&gt;
+&lt;br /&gt;&lt;/p&gt;
+&lt;h4 id=&quot;flag2txt&quot;&gt;flag2.txt&lt;/h4&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-blue-ctf-writeup/blue14.jpg&quot; alt=&quot;Desktop View&quot; class=&quot;normal&quot; /&gt;
+&lt;br /&gt;&lt;/p&gt;
+&lt;h4 id=&quot;flag3txt&quot;&gt;flag3.txt&lt;/h4&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-blue-ctf-writeup/blue15.jpg&quot; alt=&quot;Desktop View&quot; class=&quot;normal&quot; /&gt;
+&lt;br /&gt;
+Congrats! End of the machine.&lt;/p&gt;
+
+</description>
+        <pubDate>Sat, 09 Oct 2021 00:59:00 +0100</pubDate>
+        <link>http://localhost:4000/2021/10/09/tryhackme-blue-ctf-writeup/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/10/09/tryhackme-blue-ctf-writeup/</guid>
+        
+        <category>ctf</category>
+        
+        <category>pentesting</category>
+        
+        <category>metasploit</category>
+        
+        <category>remote-code-execution</category>
+        
+        <category>buffer-overflow</category>
+        
+        <category>cracking</category>
+        
+        
+      </item>
+    
+  </channel>
+</rss>
