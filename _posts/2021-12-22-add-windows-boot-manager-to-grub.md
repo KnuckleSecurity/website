@@ -2,7 +2,6 @@
 layout: post
 title: Add Windows Boot Manager to Grub
 date: 2021-11-18 12:00
-author: krygennn
 tags: [linux, windows, grub, boot-managers]
 image: '/assets/img/posts/add-windows-boot-manager-to-grub/wgbanner.png'
 featured: false

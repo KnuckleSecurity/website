@@ -766,7 +766,7 @@ As you can see euid (Effective user id) set to 0 which belongs to root.Now you c
       </a>
       
       
-      <a class="next" href="/2021/10/12/downgrading-broken-packages/">
+      <a class="next" href="/2021/10/11/Downgrading-broken-packages/">
         <img class="post__nav-image lazy" data-src="/assets/img/posts/downgrade/dgbanner.png" alt="Downgrading Broken Packages">
         <div class="post__nav-box">
           <div class="post__nav post__nav__next">Next Post <i class="ion ion-md-arrow-forward"></i></div>
@@ -1003,50 +1003,7 @@ As you can see euid (Effective user id) set to 0 which belongs to root.Now you c
   </div>
 </div>
 
- <!-- begin comments -->
-<div class="container">
-  <div class="row">
-    <div class="col col-12">
-      <div class="disqus-inner">
-        <div id="disqus_thread" class="post-comments">
-          <div id="disqus_empty"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
-<script>
-  function load_disqus() {
-    var disqus_shortname = 'krygeNNN',
-      is_disqus_empty = document.getElementById('disqus_empty'),
-      disqus_target = document.getElementById('disqus_thread'),
-      disqus_embed = document.createElement('script'),
-      disqus_hook = (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]);
-
-    if (disqus_target && is_disqus_empty) {
-      disqus_embed.type = 'text/javascript';
-      disqus_embed.async = true;
-      disqus_embed.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      disqus_hook.appendChild(disqus_embed);
-      is_disqus_empty.remove();
-    }
-  }
-
-  window.addEventListener('scroll', function (e) {
-    var currentScroll = document.scrollingElement.scrollTop;
-    var disqus_target = document.getElementById('disqus_thread');
-
-    if (disqus_target && (currentScroll > disqus_target.getBoundingClientRect().top - 150)) {
-      load_disqus('disqus_shortname');
-    }
-  }, false);
-
-</script>
-<noscript>Please enable JavaScript to view the
-  <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
-</noscript>
-<!-- end comments --> 
   </main> 
   <!-- end content -->
   

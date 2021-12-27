@@ -2,7 +2,6 @@
 layout: post
 title: IPv4 Protocol
 date: 2021-11-18 12:00
-author: krygennn
 date: 2021-11-18 12:00
 image: '/assets/img/posts/ipv4-protocol/ip1.jpg'
 tags: [network protocols,ip-addresses]

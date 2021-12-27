@@ -1,7 +1,6 @@
 ---
 layout: post
 title: Subnetting
-author: krygennn
 date: 2021-10-9 00:59
 image: '/assets/img/posts/subnetting/subnetting1.jpg'
 tags: [subnetting,switch,router]

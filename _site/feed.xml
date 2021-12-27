@@ -5,8 +5,8 @@
     <description>Burak Baris</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 27 Dec 2021 19:48:04 +0000</pubDate>
-    <lastBuildDate>Mon, 27 Dec 2021 19:48:04 +0000</lastBuildDate>
+    <pubDate>Mon, 27 Dec 2021 20:30:58 +0000</pubDate>
+    <lastBuildDate>Mon, 27 Dec 2021 20:30:58 +0000</lastBuildDate>
     <generator>Jekyll v4.2.1</generator>
     
       <item>
@@ -1443,8 +1443,8 @@ images nor titles etc. Also can not perform error based sqli due to exception ha
 To be continued&lt;/p&gt;
 </description>
         <pubDate>Wed, 13 Oct 2021 12:00:00 +0100</pubDate>
-        <link>http://localhost:4000/2021/10/13/sql-injection/</link>
-        <guid isPermaLink="true">http://localhost:4000/2021/10/13/sql-injection/</guid>
+        <link>http://localhost:4000/2021/10/13/Sql-injection/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/10/13/Sql-injection/</guid>
         
         <category>sql</category>
         
@@ -1495,9 +1495,9 @@ software someday, you need to edit &lt;strong&gt;/etc/pacman.conf&lt;/strong&gt;
 variable, and delete the package name there. You can also add other packages 
 here manually to disable updates for a spesific program.&lt;/p&gt;
 </description>
-        <pubDate>Tue, 12 Oct 2021 00:59:00 +0100</pubDate>
-        <link>http://localhost:4000/2021/10/12/downgrading-broken-packages/</link>
-        <guid isPermaLink="true">http://localhost:4000/2021/10/12/downgrading-broken-packages/</guid>
+        <pubDate>Mon, 11 Oct 2021 22:59:35 +0100</pubDate>
+        <link>http://localhost:4000/2021/10/11/Downgrading-broken-packages/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/10/11/Downgrading-broken-packages/</guid>
         
         <category>arch-linux</category>
         

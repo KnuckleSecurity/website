@@ -2,7 +2,6 @@
 layout: post
 title: Tryhackme Vulnversity Ctf Writeup
 Description: Tryhackme Vulnversity Ctf Writeup
-author: krygennn
 date: 2021-10-9 18:04
 image: '/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vulnbanner.png'
 tags: [ctf,pentesting,linux-privesc,bruteforce,cracking,reverse-shell,php,shell-injection]

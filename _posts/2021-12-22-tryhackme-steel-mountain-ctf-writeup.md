@@ -2,7 +2,6 @@
 layout: post
 title: Tryhackme Steel Mountain CTF Writeup
 Description: Tryhackme Steel Mountain CTF Writeup
-author: krygennn
 date: 2021-12-23 00:50
 image: '/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/steelbanner.jpg'
 tags: [ctf,pentesting,remote-code-execution,windows-privesc,powershell,metasploit,unqoted-service-path]

