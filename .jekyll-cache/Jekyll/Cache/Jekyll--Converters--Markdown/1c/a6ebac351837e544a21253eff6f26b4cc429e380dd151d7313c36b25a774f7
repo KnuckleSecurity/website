@@ -1,0 +1,18 @@
+I"?<p>If you want to add windows boot manager to grub, follow these steps;</p>
+
+<p>1-Download <strong>os-prober</strong><br />
+2-Run :</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">sudo </span>os-prober</code></pre></figure>
+
+<p>If you see something like that, you are good to go.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">-&gt; <span class="nb">sudo </span>os-prober
+/dev/nvme1n1p1@/EFI/Microsoft/Boot/bootmgfw.efi:Windows Boot Manager:Windows:efi</code></pre></figure>
+
+<p><br />
+3- Add this line, <strong>GRUB_DISABLE_OS_PROBER=false</strong>, at the end of the <strong>/etc/default/grub</strong> file.<br />
+4- Run <code class="language-plaintext highlighter-rouge">sudo grub-mkconfig -o /boot/grub/grub.cfg</code><br />
+<br />
+Done !</p>
+:ET

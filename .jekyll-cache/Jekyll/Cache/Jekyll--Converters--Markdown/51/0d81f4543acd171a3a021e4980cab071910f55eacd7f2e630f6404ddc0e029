@@ -1,0 +1,36 @@
+I"©	<p>It is a small possibility, but not impossible, that you may have encountered
+with a broken package after updating your system, while using rolling release
+operating system. Packages pushed into the repositories without going under
+any superior control. For example, when new version of a package arrives,
+manjaro checks it in itâ€™s containers, then push them into public repos. While
+it is quite a personal preference which approach is better for you, it is not the
+same for each operating system. So if you have a broken package, or you are not just
+not comfortable with newer version of the release you may wish to downgrade it. 
+In this post you will learn how to downgrade a package and ignore updates.</p>
+
+<p>Download utility called <strong>downgrade</strong> with your favorite package manager.</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>yay <span class="nt">-S</span> downgrade
+</code></pre></div></div>
+<p>After installing it run</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>downgrade cmatrix
+</code></pre></div></div>
+<p>It will prompt you to a selection screen between version just like that</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Available packages (community):
+
+   1)  cmatrix    2.0  1  remote
++  2)  cmatrix    2.0  2  remote
++  3)  cmatrix    2.0  2  /var/cache/pacman/pkg
+
+select a package by number: 
+</code></pre></div></div>
+<p>Select which version of the program you wish to use than press enter.
+After that step, downgrade utility will ask you to whether you wish to
+add that program to ignorepackage list to prevent later updates or not.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>add cmatrix to IgnorePkg? [y/N]
+</code></pre></div></div>
+<p>If you press <code class="language-plaintext highlighter-rouge">y</code> in this step, the package wont be affected while doing
+system wide updates. However if you wish to change it back and update the
+software someday, you need to edit <code class="language-plaintext highlighter-rouge">/etc/pacman.conf</code>. Go find <code class="language-plaintext highlighter-rouge">IgnorePkg=</code>
+variable, and delete the package name there. You can also add other packages 
+here manually to disable updates for a spesific program.</p>
+:ET

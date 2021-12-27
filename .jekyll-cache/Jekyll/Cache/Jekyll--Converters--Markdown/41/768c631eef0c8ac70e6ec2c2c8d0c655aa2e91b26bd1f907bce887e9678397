@@ -1,0 +1,40 @@
+I"g	<p>It is a small possibility, but not impossible, that you may have encountered
+with a broken package after updating your system, while using rolling release
+operating system. Packages pushed into the repositories without going under
+any superior control. For example, when new version of a package arrives,
+manjaro checks it in it’s containers, then push them into public repos. While
+it is quite a personal preference which approach is better for you, it is not the
+same for each operating system. So if you have a broken package, or you are not just
+not comfortable with newer version of the release you may wish to downgrade it. 
+In this post you will learn how to downgrade a package and ignore updates.</p>
+
+<p>Download utility called <strong>downgrade</strong> with your favorite package manager.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">yay <span class="nt">-S</span> downgrade</code></pre></figure>
+
+<p>After installing it run</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">sudo </span>downgrade cmatrix</code></pre></figure>
+
+<p>It will prompt you to a selection screen between version just like that</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">Available packages <span class="o">(</span>community<span class="o">)</span>:
+
+   1<span class="o">)</span>  cmatrix    2.0  1  remote
++  2<span class="o">)</span>  cmatrix    2.0  2  remote
++  3<span class="o">)</span>  cmatrix    2.0  2  /var/cache/pacman/pkg
+
+<span class="k">select </span>a package by number: </code></pre></figure>
+
+<p>Select which version of the program you wish to use than press enter.
+After that step, downgrade utility will ask you to whether you wish to
+add that program to ignorepackage list to prevent later updates or not.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">add cmatrix to IgnorePkg? <span class="o">[</span>y/N]</code></pre></figure>
+
+<p>If you press <strong>y</strong> in this step, the package wont be affected while doing
+system wide updates. However if you wish to change it back and update the
+software someday, you need to edit <strong>/etc/pacman.conf</strong>. Go find <strong>IgnorePkg=</strong>
+variable, and delete the package name there. You can also add other packages 
+here manually to disable updates for a spesific program.</p>
+:ET
