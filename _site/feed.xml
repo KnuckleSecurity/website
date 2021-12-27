@@ -5,8 +5,8 @@
     <description>Burak Baris</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 27 Dec 2021 20:57:12 +0000</pubDate>
-    <lastBuildDate>Mon, 27 Dec 2021 20:57:12 +0000</lastBuildDate>
+    <pubDate>Mon, 27 Dec 2021 21:14:20 +0000</pubDate>
+    <lastBuildDate>Mon, 27 Dec 2021 21:14:20 +0000</lastBuildDate>
     <generator>Jekyll v4.2.1</generator>
     
       <item>
@@ -29,7 +29,8 @@ by looking at its full path.&lt;/p&gt;
 &lt;br /&gt;Basically, the system will interpret the path as a full string. 
 &lt;br /&gt;
 &lt;br /&gt;
-However, if the full path of the service file is not enclosed within quotation marks just like the following example:&lt;/p&gt;
+However, if the full path of the service file is not enclosed within quotation marks just like the following example, things are
+getting tricky:&lt;/p&gt;
 &lt;ul&gt;
   &lt;li&gt;Path of the vulnerable service -&amp;gt; C:\Program Files\a folder\b folder\c folder\vulnservice.exe&lt;/li&gt;
 &lt;/ul&gt;
