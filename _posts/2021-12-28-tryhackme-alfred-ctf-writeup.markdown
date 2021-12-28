@@ -147,5 +147,4 @@ type "C:\Users\Bruce\Desktop\user.txt"
 {% endhighlight%}
 
 # Privilege Escelation
-
 To be continued...
