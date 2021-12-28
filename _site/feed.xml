@@ -5,8 +5,8 @@
     <description>Burak Baris</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 28 Dec 2021 18:40:32 +0000</pubDate>
-    <lastBuildDate>Tue, 28 Dec 2021 18:40:32 +0000</lastBuildDate>
+    <pubDate>Tue, 28 Dec 2021 18:55:30 +0000</pubDate>
+    <lastBuildDate>Tue, 28 Dec 2021 18:55:30 +0000</lastBuildDate>
     <generator>Jekyll v4.2.1</generator>
     
       <item>
@@ -636,7 +636,7 @@ Find the flag under &lt;strong&gt;C:\users\bill\Desktop&lt;/strong&gt; directory
 &lt;p&gt;After gaining access to the system as a low-level user, it is time to get administrator privileges to have much more 
 permissions against the system. &lt;strong&gt;PowerUp.ps1&lt;/strong&gt; is a program that facilitates fast checks in a windows machine to identify 
 any misconfigurations and privilege escalation possibilities.
-&lt;br /&gt;-&amp;gt; &lt;a href=&quot;../../assets/documents/tryhackme-steel-mountain-writeup/PowerUp.ps1&quot;&gt;&lt;strong&gt;Download PowerUp.ps1&lt;/strong&gt;&lt;/a&gt;
+&lt;br /&gt;-&amp;gt; &lt;a href=&quot;https://github.com/krygeNNN/krygeNNN.github.io/blob/main/assets/documents/tryhackme-steel-mountain-writeup/PowerUp.ps1&quot;&gt;&lt;strong&gt;Download PowerUp.ps1&lt;/strong&gt;&lt;/a&gt;
 &lt;br /&gt;-&amp;gt; &lt;a href=&quot;https://github.com/PowerShellMafia/PowerSploit&quot;&gt;&lt;strong&gt;PowerSploit GitHub Repo&lt;/strong&gt;&lt;/a&gt;
 &lt;br /&gt;-&amp;gt; Run &lt;strong&gt;exit&lt;/strong&gt; and get back to the &lt;strong&gt;meterpreter&lt;/strong&gt; session.
 &lt;br /&gt;-&amp;gt; Upload the script just as we did before to the machine.
@@ -728,8 +728,8 @@ You can find the root flag &lt;strong&gt;root.txt&lt;/strong&gt; under &lt;stron
 &lt;p&gt;&lt;br /&gt;-&amp;gt; Copy &lt;strong&gt;Advanced.exe&lt;/strong&gt; or create a new backdoor executable with &lt;strong&gt;msfvenom&lt;/strong&gt; just like before.
 &lt;br /&gt;-&amp;gt; Download &lt;a href=&quot;https://github.com/carlospolop/PEASS-ng/blob/master/winPEAS/winPEASbat/winPEAS.bat&quot;&gt;&lt;strong&gt;winPEAS.bat&lt;/strong&gt;&lt;/a&gt;
 &lt;br /&gt;-&amp;gt; Download static binary &lt;a href=&quot;https://github.com/andrew-d/static-binaries/blob/0be803093b7d4b627b4d4eddd732e54ac4184b67/binaries/windows/x86/ncat.exe&quot;&gt;&lt;strong&gt;nc.exe&lt;/strong&gt;&lt;/a&gt;
-&lt;br /&gt;-&amp;gt; Download &lt;a href=&quot;../../assets/documents/tryhackme-steel-mountain-writeup/PowerUp.ps1&quot;&gt;&lt;strong&gt;PowerUp.ps1&lt;/strong&gt;&lt;/a&gt; or use the previous one if you downloaded it before.
-&lt;br /&gt;-&amp;gt; Download &lt;a href=&quot;../../assets/documents/tryhackme-steel-mountain-writeup/cve20146287.py&quot;&gt;&lt;strong&gt;CVE-2014-6287.py&lt;/strong&gt;&lt;/a&gt; or from &lt;a href=&quot;https://www.exploit-db.com/exploits/39161&quot;&gt;&lt;strong&gt;Exploitdb&lt;/strong&gt;&lt;/a&gt;
+&lt;br /&gt;-&amp;gt; Download &lt;a href=&quot;https://github.com/krygeNNN/krygeNNN.github.io/blob/main/assets/documents/tryhackme-steel-mountain-writeup/PowerUp.ps1&quot;&gt;&lt;strong&gt;PowerUp.ps1&lt;/strong&gt;&lt;/a&gt; or use the previous one if you downloaded it before.
+&lt;br /&gt;-&amp;gt; Download &lt;a href=&quot;https://github.com/krygeNNN/krygeNNN.github.io/blob/main/assets/documents/tryhackme-steel-mountain-writeup/cve20146287.py&quot;&gt;&lt;strong&gt;CVE-2014-6287.py&lt;/strong&gt;&lt;/a&gt; or from &lt;a href=&quot;https://www.exploit-db.com/exploits/39161&quot;&gt;&lt;strong&gt;Exploitdb&lt;/strong&gt;&lt;/a&gt;
 &lt;br /&gt;&lt;br /&gt;Your directory should look like this
 &lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/20.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;h2 id=&quot;2-exploitation&quot;&gt;2-Exploitation&lt;/h2&gt;

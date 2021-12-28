@@ -80,7 +80,7 @@ Find the flag under **C:\users\bill\Desktop** directory.
 After gaining access to the system as a low-level user, it is time to get administrator privileges to have much more 
 permissions against the system. **PowerUp.ps1** is a program that facilitates fast checks in a windows machine to identify 
 any misconfigurations and privilege escalation possibilities.
-<br>-> [**Download PowerUp.ps1**](../../assets/documents/tryhackme-steel-mountain-writeup/PowerUp.ps1)
+<br>-> [**Download PowerUp.ps1**](https://github.com/krygeNNN/krygeNNN.github.io/blob/main/assets/documents/tryhackme-steel-mountain-writeup/PowerUp.ps1)
 <br>-> [**PowerSploit GitHub Repo**](https://github.com/PowerShellMafia/PowerSploit)
 <br>-> Run **exit** and get back to the **meterpreter** session.
 <br>-> Upload the script just as we did before to the machine.
@@ -150,8 +150,8 @@ In this section, instead of using Metasploit and automatizing the process, we wi
 <br>-> Copy **Advanced.exe** or create a new backdoor executable with **msfvenom** just like before.
 <br>-> Download [**winPEAS.bat**](https://github.com/carlospolop/PEASS-ng/blob/master/winPEAS/winPEASbat/winPEAS.bat)
 <br>-> Download static binary [**nc.exe**](https://github.com/andrew-d/static-binaries/blob/0be803093b7d4b627b4d4eddd732e54ac4184b67/binaries/windows/x86/ncat.exe)
-<br>-> Download [**PowerUp.ps1**](../../assets/documents/tryhackme-steel-mountain-writeup/PowerUp.ps1) or use the previous one if you downloaded it before.
-<br>-> Download [**CVE-2014-6287.py**](../../assets/documents/tryhackme-steel-mountain-writeup/cve20146287.py) or from [**Exploitdb**](https://www.exploit-db.com/exploits/39161)
+<br>-> Download [**PowerUp.ps1**](https://github.com/krygeNNN/krygeNNN.github.io/blob/main/assets/documents/tryhackme-steel-mountain-writeup/PowerUp.ps1) or use the previous one if you downloaded it before.
+<br>-> Download [**CVE-2014-6287.py**](https://github.com/krygeNNN/krygeNNN.github.io/blob/main/assets/documents/tryhackme-steel-mountain-writeup/cve20146287.py) or from [**Exploitdb**](https://www.exploit-db.com/exploits/39161)
 <br><br>Your directory should look like this
 <br>![](/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/20.jpg){:.normal}<br><br>
 ## 2-Exploitation
