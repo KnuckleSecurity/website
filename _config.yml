@@ -1,6 +1,6 @@
 #-------------------------------
 # General Site Settings
-title: ":~$ bash_"
+title: ":~$ BBSec_"
 logo: ''
 description: Burak Baris
 baseurl: "" # The subpath of your site, e.g. /blog
@@ -17,7 +17,7 @@ author:
 #-------------------------------
 # Hero Settings
 hero:
-  title: Burak Baris
+  title: BBSec
   description: Technology and Cyber Security Blog.
   image: '/images/pic1.jpg'
 
