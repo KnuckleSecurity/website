@@ -1,7 +1,7 @@
 #-------------------------------
 # General Site Settings
 title: ":~$ BBSec_"
-logo: ''
+logo: '/images/logo2/5000x5000gl.jpg'
 description: Burak Baris
 baseurl: "" # The subpath of your site, e.g. /blog
 url: "https://www.burakbaris.com" # The base hostname & protocol for your site, e.g. http://example.com
