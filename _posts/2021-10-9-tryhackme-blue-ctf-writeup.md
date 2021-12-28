@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Tryhackme Blue Ctf Writeup
-Description: Tryhackme Blue Ctf Writeup
+description: Deploy & hack into a Windows machine, leveraging common misconfigurations issues.
 date: 2021-10-9 00:59
 image:  '/assets/img/posts/tryhackme-blue-ctf-writeup/bluebanner.png'
 tags: [ctf,pentesting,metasploit,remote-code-execution,buffer-overflow,cracking]

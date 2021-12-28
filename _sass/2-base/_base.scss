@@ -3,10 +3,29 @@
   box-sizing: border-box;
 }
 
+@font-face {
+    font-family: 'Roboto';
+    src: url('https://fonts.googleapis.com/css2?family=Roboto&display=swap') 
+}
+
+@font-face {
+    font-family: 'Roboto';
+    src: url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap') 
+}
+
+
 body {
-  font-family: $base-font-family;
+  //font-family: $base-font-family;
   font-size: $base-font-size;
   line-height: $base-line-height;
+  color: $text-color;
+  font-family: 'Roboto', monospace;
+  //font-weight: 400;
+  //font-style: normal;
+  //letter-spacing: 0em;
+  //text-transform: none;
+  //line-height: 1.8;
+  font-size: $base-font-size;
   color: $text-color;
   background-color: $background-color;
   -webkit-font-smoothing: antialiased;
@@ -56,7 +75,8 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: $heading-font-family;
+  font-family: 'Roboto', monospace;
+  //font-family: $heading-font-family;
   font-weight: $heading-font-weight;
   line-height: $heading-line-height;
   letter-spacing: $heading-letter-spacing;
