@@ -17,7 +17,7 @@ vulnerabilities that occur on the system.
 # FIRST METHOD
 ## 1-Preperation
 Export the ip address of the machine as a variable for shorthand usage.
-<br>-> `export ip={MACHINE IP}`
+<br>-> export ip={MACHINE IP}
 <br>![](/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/2.jpg){:.normal}
 
 ## 2-Enumeration 
@@ -33,7 +33,10 @@ Let us run Network Mapper (**nmap**) to discover opened ports and services.
 |-Pn                     | Skip host discovery                                    |
 |-oN                     | Write output to a file                                 |
 
-Full command : `nmap -sV -sS -O -T4 -p- {machine IP} -Pn -oN {outputfile}`
+Full command: 
+{% highlight bash %}
+nmap -sV -sS -O -T4 -p- {machine IP} -Pn -oN {outputfile}
+{% endhighlight %}
 <br>![](/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/3.jpg){:.normal}<br><br>
 There is a web server running on port **80**, let us visit.
 <br>![](/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/4.jpg){:.normal}<br><br>

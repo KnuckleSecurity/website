@@ -1,4 +1,4 @@
-I"ù0<h1 id="enumeration">Enumeration</h1>
+I"ú0<h1 id="enumeration">Enumeration</h1>
 
 <p>Run Network Mapper (<strong>nmap</strong>) on Alfred machine to discover opened ports and services.</p>
 
@@ -193,6 +193,5 @@ To get user flag, run:</p>
 <figure class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="kr">type</span><span class="w"> </span><span class="s2">"C:\Users\Bruce\Desktop\user.txt"</span></code></pre></figure>
 
 <h1 id="privilege-escelation">Privilege Escelation</h1>
-
 <p>To be continued‚Ä¶</p>
 :ET

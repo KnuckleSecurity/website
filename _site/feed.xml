@@ -5,8 +5,8 @@
     <description>Burak Baris</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 28 Dec 2021 17:43:18 +0000</pubDate>
-    <lastBuildDate>Tue, 28 Dec 2021 17:43:18 +0000</lastBuildDate>
+    <pubDate>Tue, 28 Dec 2021 17:58:13 +0000</pubDate>
+    <lastBuildDate>Tue, 28 Dec 2021 17:58:13 +0000</lastBuildDate>
     <generator>Jekyll v4.2.1</generator>
     
       <item>
@@ -206,7 +206,6 @@ To get user flag, run:&lt;/p&gt;
 &lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-powershell&quot; data-lang=&quot;powershell&quot;&gt;&lt;span class=&quot;kr&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;C:\Users\Bruce\Desktop\user.txt&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
 &lt;h1 id=&quot;privilege-escelation&quot;&gt;Privilege Escelation&lt;/h1&gt;
-
 &lt;p&gt;To be continued…&lt;/p&gt;
 </description>
         <pubDate>Tue, 28 Dec 2021 11:40:00 +0000</pubDate>
@@ -528,7 +527,7 @@ vulnerabilities that occur on the system.&lt;/p&gt;
 &lt;h1 id=&quot;first-method&quot;&gt;FIRST METHOD&lt;/h1&gt;
 &lt;h2 id=&quot;1-preperation&quot;&gt;1-Preperation&lt;/h2&gt;
 &lt;p&gt;Export the ip address of the machine as a variable for shorthand usage.
-&lt;br /&gt;-&amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;export ip={MACHINE IP}&lt;/code&gt;
+&lt;br /&gt;-&amp;gt; export ip={MACHINE IP}
 &lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/2.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;2-enumeration&quot;&gt;2-Enumeration&lt;/h2&gt;
@@ -573,8 +572,11 @@ vulnerabilities that occur on the system.&lt;/p&gt;
   &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;Full command : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nmap -sV -sS -O -T4 -p- {machine IP} -Pn -oN {outputfile}&lt;/code&gt;
-&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/3.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
+&lt;p&gt;Full command:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;nmap &lt;span class=&quot;nt&quot;&gt;-sV&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-sS&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-O&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-T4&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-p-&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;machine IP&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-Pn&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-oN&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;outputfile&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/3.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
 There is a web server running on port &lt;strong&gt;80&lt;/strong&gt;, let us visit.
 &lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/4.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
 There is also one more web server is running at port &lt;strong&gt;8080&lt;/strong&gt;

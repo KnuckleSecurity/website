@@ -1,4 +1,4 @@
-I"�7<p><a href="https://tryhackme.com/room/steelmountain"><strong>Solve Yourself »</strong></a></p>
+I"�8<p><a href="https://tryhackme.com/room/steelmountain"><strong>Solve Yourself »</strong></a></p>
 
 <p>The steel mountain is a windows machine. In order to hack into the machine, we are going to exploit  two different 
 vulnerabilities that occur on the system.</p>
@@ -6,7 +6,7 @@ vulnerabilities that occur on the system.</p>
 <h1 id="first-method">FIRST METHOD</h1>
 <h2 id="1-preperation">1-Preperation</h2>
 <p>Export the ip address of the machine as a variable for shorthand usage.
-<br />-&gt; <code class="language-plaintext highlighter-rouge">export ip={MACHINE IP}</code>
+<br />-&gt; export ip={MACHINE IP}
 <br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/2.jpg" alt="" class="normal" /></p>
 
 <h2 id="2-enumeration">2-Enumeration</h2>
@@ -51,8 +51,11 @@ vulnerabilities that occur on the system.</p>
   </tbody>
 </table>
 
-<p>Full command : <code class="language-plaintext highlighter-rouge">nmap -sV -sS -O -T4 -p- {machine IP} -Pn -oN {outputfile}</code>
-<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/3.jpg" alt="" class="normal" /><br /><br />
+<p>Full command:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">nmap <span class="nt">-sV</span> <span class="nt">-sS</span> <span class="nt">-O</span> <span class="nt">-T4</span> <span class="nt">-p-</span> <span class="o">{</span>machine IP<span class="o">}</span> <span class="nt">-Pn</span> <span class="nt">-oN</span> <span class="o">{</span>outputfile<span class="o">}</span></code></pre></figure>
+
+<p><br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/3.jpg" alt="" class="normal" /><br /><br />
 There is a web server running on port <strong>80</strong>, let us visit.
 <br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/4.jpg" alt="" class="normal" /><br /><br />
 There is also one more web server is running at port <strong>8080</strong>
