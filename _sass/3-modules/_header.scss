@@ -41,7 +41,7 @@
 }
 
 .logo__image {
-  max-height: 65px;
+  max-height: 60px;
 }
 
 /* Nav */
@@ -104,7 +104,8 @@
       display: inline-block;
       margin-right: 40px;
       &:last-child {
-        margin-right: 0;
+        //margin-right: 0;
+        margin-right: 125px;
       }
   
       .nav__link {
