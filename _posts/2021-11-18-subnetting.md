@@ -1,21 +1,10 @@
 ---
 layout: post
 title: Subnetting
-date: 2021-10-9 00:59
+date: 2021-11-18 12:00
 image: '/assets/img/posts/subnetting/subnetting1.jpg'
 tags: [subnetting,switch,router]
 featured: false
----
----
-author: krygennn
-date: 2021-11-18 12:00
-categories: [Blogging, Networking]
-image:
-    src: /assets/img/posts/subnetting/subnetting1.jpg
-    alt: SUBNETTING
-    width: 800
-    height: 450
-
 ---
 # WHAT IS SUBNETTING ?
 
