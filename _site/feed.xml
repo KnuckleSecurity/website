@@ -5,8 +5,8 @@
     <description>Burak Baris</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 28 Dec 2021 17:22:34 +0000</pubDate>
-    <lastBuildDate>Tue, 28 Dec 2021 17:22:34 +0000</lastBuildDate>
+    <pubDate>Tue, 28 Dec 2021 17:38:49 +0000</pubDate>
+    <lastBuildDate>Tue, 28 Dec 2021 17:38:49 +0000</lastBuildDate>
     <generator>Jekyll v4.2.1</generator>
     
       <item>
@@ -212,6 +212,8 @@ To get user flag, run:&lt;/p&gt;
         <pubDate>Tue, 28 Dec 2021 11:40:00 +0000</pubDate>
         <link>http://localhost:4000/2021/12/28/tryhackme-alfred-ctf-writeup/</link>
         <guid isPermaLink="true">http://localhost:4000/2021/12/28/tryhackme-alfred-ctf-writeup/</guid>
+        
+        <category>TryHackme-Machines</category>
         
         
       </item>
@@ -743,6 +745,8 @@ Thank you for following, wish you more penetrations ;)&lt;/p&gt;
         <pubDate>Thu, 23 Dec 2021 00:50:00 +0000</pubDate>
         <link>http://localhost:4000/2021/12/23/tryhackme-steel-mountain-ctf-writeup/</link>
         <guid isPermaLink="true">http://localhost:4000/2021/12/23/tryhackme-steel-mountain-ctf-writeup/</guid>
+        
+        <category>TryHackme-Machines</category>
         
         <category>ctf</category>
         
@@ -1971,6 +1975,8 @@ As you can see euid (Effective user id) set to 0 which belongs to root.Now you c
         <link>http://localhost:4000/2021/10/09/tryhackme-vulnversity-ctf-writeup/</link>
         <guid isPermaLink="true">http://localhost:4000/2021/10/09/tryhackme-vulnversity-ctf-writeup/</guid>
         
+        <category>TryHackme-Machines</category>
+        
         <category>ctf</category>
         
         <category>pentesting</category>
@@ -2225,6 +2231,8 @@ Congrats! End of the machine.&lt;/p&gt;
         <pubDate>Sat, 09 Oct 2021 00:59:00 +0100</pubDate>
         <link>http://localhost:4000/2021/10/09/tryhackme-blue-ctf-writeup/</link>
         <guid isPermaLink="true">http://localhost:4000/2021/10/09/tryhackme-blue-ctf-writeup/</guid>
+        
+        <category>TryHackme-Machines</category>
         
         <category>ctf</category>
         

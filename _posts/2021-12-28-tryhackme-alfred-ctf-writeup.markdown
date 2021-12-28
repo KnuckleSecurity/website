@@ -4,6 +4,7 @@ description: Exploit Jenkins to gain an initial shell, then escalate your privil
 title: Tryhackme Alfred CTF Writeup
 date: 2021-12-28 11:40
 image: '/assets/img/posts/tryhackme-alfred-ctf-writeup/alfredbanner.png'
+tags: [TryHackme-Machines]
 featured: false
 ---
 

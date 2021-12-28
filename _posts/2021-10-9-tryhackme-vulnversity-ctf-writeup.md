@@ -4,7 +4,7 @@ title: Tryhackme Vulnversity Ctf Writeup
 description: Learn about active recon, web app attacks and privilege escalation.
 date: 2021-10-9 18:04
 image: '/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vulnbanner.png'
-tags: [ctf,pentesting,linux-privesc,bruteforce,cracking,reverse-shell,php,shell-injection]
+tags: [TryHackme-Machines,ctf,pentesting,linux-privesc,bruteforce,cracking,reverse-shell,php,shell-injection]
 featured: false
 ---
 [**Solve Yourself >>**](https://www.tryhackme.com/room/vulnversity)
