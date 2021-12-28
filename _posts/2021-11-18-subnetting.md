@@ -8,7 +8,7 @@ featured: false
 ---
 # WHAT IS SUBNETTING ?
 
-As the name suggest, subnetting means dividing a network into sub sub branches. For example, you have a class with 50 students,
+As the name suggest, subnetting means dividing a network into sub branches. For example, you have a class with 50 students,
 if you divide them into two groups, you will have two subclasses, 25 students per class. Subetting is just the same however,
 instead of class, this time it is the network which is going to be divided into **smaller chunks**.
 
@@ -36,7 +36,7 @@ both for them to see each other's traffic as they are completely different depar
 |Reduces Traffic Congestion | Subnet Mask guarantees that traffic remains within the assigned subnet.<br>This reduces extensive congestion and diminishes the load on the network.<br> In subnets, less distance needs to be travelled for any data, less likely to lose <br>data.
 |Improve Speed and Performance | After sending a broadcast message, every device on the network will <br>receive and reply to that message even though the message is not relevant <br>for most of the machines.By doing that, network capacity and bandwidth <br>getting drained.However, with subnets only the relevant machines are in<br> communication.This means performance !
 
-**Note:** Before moving any further, I highly recommend you to read [**IPv4 Protocol**](https://krygennn.github.io/posts/ipv4-addresses) blogpost first.
+**Note:** Before moving any further, I highly recommend you to read [**IPv4 Protocol**](https://www.bbsec.net/2021/11/18/ipv4-addresses/) blogpost first.
 
 <br>
 To be continued

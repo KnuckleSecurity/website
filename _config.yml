@@ -4,7 +4,7 @@ title: ":~$ BBSec_"
 logo: '/images/logo2/5000x5000tl.png'
 description: Burak Baris
 baseurl: "" # The subpath of your site, e.g. /blog
-url: "https://www.burakbaris.com" # The base hostname & protocol for your site, e.g. http://example.com
+url: "https://www.bbsec.net" # The base hostname & protocol for your site, e.g. http://example.com
 
 
 #-------------------------------

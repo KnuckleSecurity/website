@@ -7,13 +7,6 @@ image: '/assets/img/posts/ipv4-protocol/ip1.jpg'
 tags: [network protocols,ip-addresses]
 featured: false
 ---
----
-image:
-    src: /assets/img/posts/ipv4-protocol/ip1.jpg
-    alt: SUBNETTING
-    width: 800
-    height: 450
----
 ## IPv4
 
 IPv4 stands for Internet Protocol version 4. IPs are addresses for users on the internet. Messages and packages delivered via
