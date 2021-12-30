@@ -1,17 +1,6 @@
-I"±<hr />
-<p>author: krygennn
-date: 2021-11-18 12:00
-categories: [Blogging, Networking]
-image:
-    src: /assets/img/posts/subnetting/subnetting1.jpg
-    alt: SUBNETTING
-    width: 800
-    height: 450</p>
+I"Ý<h1 id="what-is-subnetting-">WHAT IS SUBNETTING ?</h1>
 
-<hr />
-<h1 id="what-is-subnetting-">WHAT IS SUBNETTING ?</h1>
-
-<p>As the name suggest, subnetting means dividing a network into sub sub branches. For example, you have a class with 50 students,
+<p>As the name suggest, subnetting means dividing a network into sub branches. For example, you have a class with 50 students,
 if you divide them into two groups, you will have two subclasses, 25 students per class. Subetting is just the same however,
 instead of class, this time it is the network which is going to be divided into <strong>smaller chunks</strong>.</p>
 
@@ -51,7 +40,7 @@ both for them to see each otherâ€™s traffic as they are completely different dep
   </tbody>
 </table>
 
-<p><strong>Note:</strong> Before moving any further, I highly recommend you to read <a href="https://krygennn.github.io/posts/ipv4-addresses"><strong>IPv4 Protocol</strong></a> blogpost first.</p>
+<p><strong>Note:</strong> Before moving any further, I highly recommend you to read <a href="https://www.bbsec.net/2021/11/18/ipv4-addresses/"><strong>IPv4 Protocol</strong></a> blogpost first.</p>
 
 <p><br />
 To be continued</p>

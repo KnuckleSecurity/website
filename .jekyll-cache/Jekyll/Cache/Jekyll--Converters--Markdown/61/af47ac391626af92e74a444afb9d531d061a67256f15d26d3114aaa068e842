@@ -1,11 +1,4 @@
-I"e<hr />
-<p>image:
-    src: /assets/img/posts/ipv4-protocol/ip1.jpg
-    alt: SUBNETTING
-    width: 800
-    height: 450
-â€”</p>
-<h2 id="ipv4">IPv4</h2>
+I"è<h2 id="ipv4">IPv4</h2>
 
 <p>IPv4 stands for Internet Protocol version 4. IPs are addresses for users on the internet. Messages and packages delivered via
 IP addresses. IPv4 address spaces consists of four octets. Depending on the class and configuration, some portion of bits in the

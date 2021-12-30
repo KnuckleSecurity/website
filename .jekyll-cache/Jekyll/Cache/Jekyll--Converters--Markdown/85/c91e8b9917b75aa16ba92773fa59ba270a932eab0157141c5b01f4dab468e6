@@ -127,7 +127,7 @@ any misconfigurations and privilege escalation possibilities.
 <br />-&gt; Run <strong>Invoke-AllChecks</strong>
 <br /><strong>InvokeAllChecks</strong> will diagnose any detectable vulnerabilities along with their descriptions.
 <br /><br />The first result we got is a service called <strong>AdvancedSystemCare9</strong>, and it has a vulnerability called 
-<strong>Unquoted Service Path</strong> <a href="https://krygennn.github.io/posts/unquoted-service-path-vulnerability/"><strong>-&gt; Read more about it</strong></a>. We will abuse this vulnerability. 
+<strong>Unquoted Service Path</strong> <a href="https://www.bbsec.net/2021/12/23/unquoted-service-path-vulnerability/"><strong>-&gt; Read more about it</strong></a>. We will abuse this vulnerability. 
 <br /><strong>CanRestart</strong> field means that the current user, in this case, <strong>bill</strong>, can manually restart the service even though
 the service itself is being run with <strong>LocalSystem</strong> service account permissions, which has the top-level privileges.
 <br /><a href="https://docs.microsoft.com/en-us/windows/win32/services/localsystem-account?redirectedfrom=MSDN"><strong>LocalSystem Service Account</strong></a>

