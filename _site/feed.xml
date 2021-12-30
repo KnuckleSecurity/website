@@ -5,8 +5,8 @@
     <description>Burak Baris</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 30 Dec 2021 17:54:40 +0000</pubDate>
-    <lastBuildDate>Thu, 30 Dec 2021 17:54:40 +0000</lastBuildDate>
+    <pubDate>Thu, 30 Dec 2021 18:01:39 +0000</pubDate>
+    <lastBuildDate>Thu, 30 Dec 2021 18:01:39 +0000</lastBuildDate>
     <generator>Jekyll v4.2.1</generator>
     
       <item>
@@ -533,6 +533,8 @@ Let’s check the the &lt;a href=&quot;https://networkencyclopedia.com/access-co
 for every user who belongs to &lt;strong&gt;Users Group&lt;/strong&gt;. The &lt;strong&gt;krygen&lt;/strong&gt; user we have created at the beginning of the 
 post belongs to the Users Group. However, for the vulnerability to occur ,Users Group needs the &lt;strong&gt;write&lt;/strong&gt; 
 permission for any of those subfolders, a,b or c, it does not matter which. For this example I will use &lt;strong&gt;a folder&lt;/strong&gt;.
+&lt;br /&gt;Read more about &lt;a href=&quot;https://networkencyclopedia.com/discretionary-access-control-list-dacl/&quot;&gt;Security Descriptors&lt;/a&gt; and
+&lt;a href=&quot;https://networkencyclopedia.com/discretionary-access-control-list-dacl/&quot;&gt;DACL&lt;/a&gt;
 &lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/16.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
 
 &lt;p&gt;Let us grant write access to Users Group for &lt;strong&gt;a folder&lt;/strong&gt;.
