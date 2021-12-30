@@ -1,7 +1,6 @@
 ---
 layout: post
 title:  SQL Injection
-description: Sin tantum modo ad indicia veteris memoriae cognoscenda, curiosorum. Haec et tu ita posuisti, et verba vestra sunt. Idemne potest esse dies...
 date:   2021-10-13 12:00:35 +0300
 image:  '/assets/img/posts/fundamentals-of-sql-injection/sql2.jpg'
 tags: [sql, sql-injection]
