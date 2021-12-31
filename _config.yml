@@ -17,9 +17,9 @@ author:
 #-------------------------------
 # Hero Settings
 hero:
-  title: BBSec
+  title: root@bbsec:~$ _ 
   description: Technology and Cyber Security Blog.
-  image: '/images/pic19.jpg'
+  image: '/images/pic31.jpg'
 
 
 #-------------------------------

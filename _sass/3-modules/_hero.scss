@@ -61,6 +61,8 @@
 }
 
 .hero__title {
+  font-family: 'Montserrat', sans-serif;
+  font-family: 'Roboto', monospace;
   font-size: 60px;
   margin: 0 0 10px;
   line-height: 1;
@@ -69,6 +71,7 @@
     font-size: 43px;
     margin: 0 0 5px;
   }
+  font-weight: lighter;
 }
 
 .hero__desc {
