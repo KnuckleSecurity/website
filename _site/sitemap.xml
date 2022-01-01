@@ -49,13 +49,13 @@
 <lastmod>2022-01-01T16:00:00+00:00</lastmod>
 </url>
 <url>
-<loc>http://localhost:4000/about/</loc>
-</url>
-<url>
 <loc>http://localhost:4000/contact/</loc>
 </url>
 <url>
 <loc>http://localhost:4000/</loc>
+</url>
+<url>
+<loc>http://localhost:4000/socials/</loc>
 </url>
 <url>
 <loc>http://localhost:4000/tag/tryhackme-machines/</loc>

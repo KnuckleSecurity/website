@@ -1,7 +1,7 @@
 ---
 layout: page
-title: About
-permalink: /about/
+title: Socials
+permalink: /socials/
 image: '/images/pic31.jpg'
 ---
 LinkedIn: [**/burak-baris**](https://www.linkedin.com/in/burak-baris/)<br>
