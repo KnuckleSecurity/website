@@ -8,7 +8,6 @@ tags: [TryHackme-Machines,ctf,pentesting,metasploit,mindows-privesc,windows-toke
 featured: false
 ---
 
-
 # ENUMERATION
 
 Run Network Mapper (**nmap**) on Alfred machine to discover opened ports and services.   
@@ -56,6 +55,7 @@ Ordinary [**Microsoft IIS**](https://en.wikipedia.org/wiki/Internet_Information_
 ## Port 3389 tcpwrapped
 **tcpwrapped** means that the remote host closed the connection after completing the TCP three-way handshake without receiving any data.
 <br>[**More information here**.](https://secwiki.org/w/FAQ_tcpwrapped)
+<br>However, port 3389 typically used for [RDP](https://docs.microsoft.com/en-us/troubleshoot/windows-server/remote/understanding-remote-desktop-protocol) protocol.
 
 ## Port 8080 Jetty 9.4.z-SNAPSHOT
 
@@ -67,7 +67,7 @@ would be useless. So we will brute force the credentials for best practice.<br>
 
 # EXPLOITATION
 
-In order to create a continuous HTTP request, we have to know how the HTTP request looks.
+In order to create continuous HTTP requests, we have to know how the HTTP request looks.
 Launch the [**Burp Suite**](https://www.geeksforgeeks.org/what-is-burp-suite/) to examine the HTTP POST request sent 
 when a login attempt occurs.
 ![](/assets/img/posts/tryhackme-alfred-ctf-writeup/4.png)_Request_<br><br>
