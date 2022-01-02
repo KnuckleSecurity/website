@@ -6,10 +6,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Tryhackme Vulnversity Ctf Writeup</title>
-  <meta name='description' content='Learn about active recon, web app attacks and privilege escalation.'>
+  <title>:~$ BBSec_</title>
+  <meta name='description' content='Burak Baris'>
 
-  <link rel="canonical" href="http://localhost:4000/2021/10/09/tryhackme-vulnversity-ctf-writeup/">
+  <link rel="canonical" href="http://localhost:4000/tag/technology/">
   <link rel="alternate" type="application/rss+xml" title=":~$ BBSec_" href="/feed.xml">
 
   <!-- Fonts -->
@@ -17,6 +17,8 @@
 
   <!-- Ionicons -->
   <link href="https://unpkg.com/ionicons@4.2.2/dist/css/ionicons.min.css" rel="stylesheet">
+
+  <script src="https://kit.fontawesome.com/b8cebea34c.js" crossorigin="anonymous"></script>
 
   <style>
   
@@ -26,6 +28,7 @@
 
   </style>
 </head>
+
 
 <body>
   
@@ -96,6 +99,14 @@
       <li class="nav__item">
         <a href="/tag/tryhackme-machines/" class="nav__link">THM</a>
       </li>
+      
+    
+  
+    
+      
+    
+  
+    
       
     
   
@@ -416,6 +427,14 @@
       
     
   
+    
+      
+    
+  
+    
+      
+    
+  
 </ul>
         </div>
       </div>
@@ -461,615 +480,83 @@
 
   <!-- begin content -->
   <main class="content" aria-label="Content">
-    <div class="post-head">
-  <div class="container">
-    <div class="row">
-      
-      <div class="col col-6 col-t-12">
-        <div class="image-box">
-          <img class="post-image lazy" data-src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vulnbanner.png" alt="Tryhackme Vulnversity Ctf Writeup">
-        </div>
-      </div>
-      
-  
-      <div class="col col-6 col-t-12">
-        <div class="post-head__box">
-        
-          <div class="post__meta">
-            <span class="post__minutes">
-              
-              
-                7 min read
-              
-              <time class="post__date"
-                datetime="2021-10-09T18:04:00+01:00">Oct 9, 2021</time>
-            </span>
-          </div>
-        
-          <h2 class="post__title">Tryhackme Vulnversity Ctf Writeup</h2>
-        
-          <div class="post__bottom">
-        
-            <div class="post__author">
-              <a href="/about/" aria-label="Burak Baris"><img class="post__author-image"
-                  src="/images/15.jpg" alt="Burak Baris's Picture"></a>
-            </div>
-        
-            <div class="post__bottom-meta">
-              <a href="/about/" class="post__author-link">Burak Baris</a>
-              
-              <span>in</span>
-              <span class="post-tags">
-                
-                <a href="/tag/TryHackme-Machines" class="post__tag">TryHackme-Machines</a>
-                
-                <a href="/tag/ctf" class="post__tag">ctf</a>
-                
-                <a href="/tag/pentesting" class="post__tag">pentesting</a>
-                
-                <a href="/tag/linux-privesc" class="post__tag">linux-privesc</a>
-                
-                <a href="/tag/bruteforce" class="post__tag">bruteforce</a>
-                
-                <a href="/tag/cracking" class="post__tag">cracking</a>
-                
-                <a href="/tag/reverse-shell" class="post__tag">reverse-shell</a>
-                
-                <a href="/tag/php" class="post__tag">php</a>
-                
-                <a href="/tag/shell-injection" class="post__tag">shell-injection</a>
-                
-              </span>
-              
-            </div>
-          </div>
-        
-        </div>
+    <div class="container">
+  <div class="row">
+    <div class="col col-8 col-d-10 col-m-12 push-m-0 push-d-1 push-2">
+      <div class="archive-box">
+        <span class="archive-meta">1 post  tagged</span>
+        <h1 class="archive-title">technology</h1>
       </div>
     </div>
   </div>
 </div>
 
-<!-- begin post -->
 <div class="container">
-  <article class="post animate">
+  <div class="row">
+    <div class="col col-12 col-d-10 col-m-12 push-m-0 push-d-1">
+      <div class="container__inner">
+        <div class="row grid">
+          
+            <div class="article col col-4 col-d-6 col-t-12 grid__post animate">
+  <div class="article__inner">
 
-    <div class="post__content">
-      <p><a href="https://www.tryhackme.com/room/vulnversity"><strong>Solve Yourself »</strong></a></p>
+    
+    <a class="article__image" href="/2018/04/24/Strive-not-to-be-a-success-but-rather-to-be-of-value/">
+      <img class="lazy" data-src="/images/05.jpg" alt="Strive not to be a success, but rather to be of value">
+    </a>
+    
 
-<p>Vulnversity is a machine that combines reconnaissance, web attack vectors and privilege escalation methods together.
-<br />
-<br /></p>
-<h2 id="1-enumeration">1-Enumeration</h2>
-<p>Let’s start with enumerating the host.I will use Network Mapper <strong>nmap</strong> tool in order to scan and probe opened ports and active services to find my attack vector.</p>
+    <div class="article__content">
 
-<table>
-  <thead>
-    <tr>
-      <th style="text-align: left">Parameter</th>
-      <th style="text-align: left">Functionality</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: left">-sS</td>
-      <td style="text-align: left">SYN Stealth Scan (Half TCP Connect scan)</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">-sV</td>
-      <td style="text-align: left">Probe open ports to determine service/version info</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">-O</td>
-      <td style="text-align: left">Enable OS detection.</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">-T4</td>
-      <td style="text-align: left">T{0-5} Set scan speed, higher is faster.</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">-p-</td>
-      <td style="text-align: left">Scan all 65536 ports.</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">-oN</td>
-      <td style="text-align: left">Outputfile</td>
-    </tr>
-  </tbody>
-</table>
-
-<p>Full command:</p>
-
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash">nmap <span class="o">{</span>machine IP<span class="o">}</span> <span class="nt">-sV</span> <span class="nt">-sS</span> <span class="nt">-O</span> <span class="nt">-T4</span> <span class="nt">-p-</span> <span class="nt">-oN</span> vulnversity.nmap</code></pre></figure>
-
-<p><img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln2.jpg" alt="Desktop View" />
-<br />
-To create our attack vector.If you do your research and investigate whether one of these services have any vulnerabilities or not, you will return to your home empty handed.You can try anonymous login to FTP protocol, or try to make a SSH connection but you would fail just like I did.None of these services have any vulnerabilities that would put us in the target system.</p>
-
-<p>Other than that <strong>“3333/tcp open  http   Apache httpd 2.4.18 ((Ubuntu))”</strong> catches the eye, so lets start to investigate the webpage that the host is running on its port 3333.</p>
-
-<p><img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln3.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
-<br />
-Fire up your browser and type <strong>{machine IP}:3333</strong> to your address bar.You will see the webpage shown above.Nothing suspicious there, so lets start to extract the directories with the help of the <code class="language-plaintext highlighter-rouge">gobuster</code> tool.</p>
-
-<table>
-  <thead>
-    <tr>
-      <th style="text-align: left">Parameter</th>
-      <th style="text-align: left">Functionality</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: left">dir -u</td>
-      <td style="text-align: left">URL and the port where web server is running</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">-w</td>
-      <td style="text-align: left">Wordlist that contains possible directory names</td>
-    </tr>
-  </tbody>
-</table>
-
-<p>Full command:</p>
-
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash">gobuster <span class="nb">dir</span> <span class="nt">-u</span> http://<span class="o">{</span>MachineIP<span class="o">}</span>:3333 <span class="nt">-w</span> /usr/share/wordlists/seclists/Discovery/Web-Content/common.txt</code></pre></figure>
-
-<p><a href="https://github.com/danielmiessler/SecLists"><strong>Seclist’s Wordlist Pack »</strong></a>
-<img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln4.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
-<br />
-Let’s go for <strong>http://[IP]:3333/internal</strong>
-<img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln5.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
-<br />
-It seems like we’ve find our playground :) Website have got an upload functionality.
-<br />
-<br /></p>
-<h2 id="2-exploitation">2-Exploitation</h2>
-<p>First thing came into my mind was to upload a php reverse shell, so let’s try it out.</p>
-
-<p><a href="https://github.com/krygeNNN/phpenumerate"><strong>PHP Reverse Shell Script »</strong></a>
-<img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln6.jpg" alt="Desktop View" class="shadow normal" style="max-width: 80%" /> <br />
-Download the script by using <strong>curl</strong>.However in order to make it work, we need to make some configurations in the script to make it work.</p>
-
-<p><img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln7.jpg" alt="Desktop View" class="shadow normal" style="max-width: 80%" /> <br />
-Change <strong>$ip</strong> to your own machines ip (tryhackme’s vpn tunnel) ,define the port as any random <strong>$port</strong>.I’ve changed it to the 8888 while it was 1234 by default.</p>
-
-<p>Configurations are all done ! Now, it is time for us to upload the reverse shell to the web server.<br />
-<img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln8.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
-<br />
-<strong>Note</strong>:My machine shutted it down while creating this post, so I had to restart it. That is why the ip have changed, don’t worry :)</p>
-
-<p>It seems like .php extension is not allowed.However ,php extension is not the only extension that we can use, we have got couple more.You can try all of them manually, but come on, let’s write a python script :)) 
-<img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln9.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
-<br />
-<a href="https://www.tryhackme.com/room/vulnversity"><strong>Download the php bruter script »</strong></a>
-Run it.
-<img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln10.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
-<br />
-<strong>.phtml</strong> is the working extension. Rename the payload, <strong>php_reverse_shell.php</strong> into <strong>php_reverse_shell.phtml</strong>, and than upload it.</p>
-
-<p><img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln11.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
-<br />
-Now we have successfully injected our reverse shell script.However we also need to listen incoming connections from the server.Therefore we will use Netcat (<strong>nc</strong>) to listen to the port 8888, which we set in the script before.</p>
-
-<table>
-  <thead>
-    <tr>
-      <th style="text-align: left">Parameter</th>
-      <th style="text-align: left">Functionality</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: left">-n</td>
-      <td style="text-align: left">Do not resolve hostnames via DNS</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">-l</td>
-      <td style="text-align: left">Bind and listen for incoming connections</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">-v</td>
-      <td style="text-align: left">Set verbosity level (can be used several times)</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">-p</td>
-      <td style="text-align: left">Specify source port to use</td>
-    </tr>
-  </tbody>
-</table>
-
-<p>Full command:</p>
-
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash">nc <span class="nt">-nvlp</span> 8888</code></pre></figure>
-
-<p><img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln12.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
-<br />
-While listening to port 8888, we need to activate the script that we just uploaded.
-<img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln13.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
-<br />
-Visit this URL » <strong>http://{machineIP}:3333/internals/uploads</strong>, and than click to the reverse php 
-shell script that you have uploaded.</p>
-
-<p><img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln14.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
-<br />
-Excellent, we are in !
-<br />
-<br /></p>
-<h2 id="3-flag-capturing-and-privilege-eseclation">3-Flag Capturing and Privilege Eseclation</h2>
-<p>Nevertheless, this shell is not stable righ now, we need to spawn a python shell.
-<br />Run those in order:</p>
-
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash">python <span class="nt">-c</span> <span class="s1">'import pty;pty.spawn("/bin/bash")'</span>
-<span class="nb">export </span><span class="nv">TERM</span><span class="o">=</span>xterm</code></pre></figure>
-
-<p><img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln15.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
-<br /></p>
-
-<h4 id="1-user-flag">1-User Flag</h4>
-<p><img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln16.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
-<br />
-In order to get root flag, we have to escalate our privileges, let’s search for SUID binaries.If you are not familiar with SUID executables, I recommend you to make your research, than come back, but basically, when you executing a SUID file, you are executing it with it’s owner’s permissions.We will use <strong>find</strong> command to scan for those binaries.</p>
-
-<table>
-  <thead>
-    <tr>
-      <th style="text-align: left">Parameter</th>
-      <th style="text-align: left">Functionality</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: left">/</td>
-      <td style="text-align: left">Search from the root directory</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">-type f</td>
-      <td style="text-align: left">Only search for files</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">-user root</td>
-      <td style="text-align: left">Only find the files owned by root</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">-perm -u=s</td>
-      <td style="text-align: left">Only find the files with SUID bit set</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">2&gt;/dev/null</td>
-      <td style="text-align: left">Redirect all stderr outputs to device null</td>
-    </tr>
-  </tbody>
-</table>
-
-<p>Full command:</p>
-
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash">find <span class="nt">-type</span> f <span class="nt">-user</span> root <span class="nt">-perm</span> <span class="nt">-u</span><span class="o">=</span>s 2&gt;/dev/null</code></pre></figure>
-
-<p><img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln17.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
-<br />
-Some of those binaries have set uid bit by default, however <strong>/bin/systemctl</strong> should not have that SUID permission by default,so let’s search how we can exploit that.
-<br />
-<a href="https://gtfobins.github.io/"><strong>GTFOBins »</strong></a>
-<br />
-GTFOBins is a github project, and it is curated list of Unix binaries that can be used to bypass local security restrictions in misconfigured systems.Click the link given above and search fore <strong>systemctl</strong>.
-<img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln18.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
-<br />
-t seems like one way to exploit that SUID set systemctl is creating a temporary service.Since systemctl’s burden is coordinate the services, it makes sense.However we will need to configure that service file.</p>
-<h4 id="service-file">Service file</h4>
-
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">TF</span><span class="o">=</span><span class="si">$(</span><span class="nb">mktemp</span><span class="si">)</span>.service
-<span class="nb">echo</span> <span class="s1">'[Service]
-Type=oneshot
-ExecStart=/bin/bash -c "chmod +s /bin/bash"
-[Install]
-WantedBy=multi-user.target'</span> <span class="o">&gt;</span> <span class="nv">$TF</span>
-/bin/systemctl <span class="nb">link</span> <span class="nv">$TF</span>
-/bin/systemctl <span class="nb">enable</span> <span class="nt">--now</span> <span class="nv">$TF</span></code></pre></figure>
-
-<p>I have manually changed the systemctl location in the given code from relative to static directory,and also ExecStart will set SUID perm to /bin/bash.</p>
-
-<p>Copy and paste the lines given above to shell (Press enter two times after you paste it), and than check the /bin/bash’s file permissions.
-<img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln19.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
-<br />
-As you can see, /bin/bash binary now have ‘s’ permission, which indicates that it is a SUID executable.
-<br />Run:</p>
-
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash">bash <span class="nt">-p</span></code></pre></figure>
-
-<h4 id="2-root-flag">2-Root Flag</h4>
-<p><img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln20.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
-<br />
-As you can see euid (Effective user id) set to 0 which belongs to root.Now you can get the root flag.</p>
-
-<p>That is all for this machine, thank you for reading :)</p>
-
-
-    </div>
-
-    <div class="post__share">
-      <div class="share__list">
-        <a class="share__link share__facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2021/10/09/tryhackme-vulnversity-ctf-writeup/" onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
-
-        <a class="share__link share__twitter" href="https://twitter.com/intent/tweet?text=Tryhackme%20Vulnversity%20Ctf%20Writeup&url=http://localhost:4000/2021/10/09/tryhackme-vulnversity-ctf-writeup/" onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
-
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/2021/10/09/tryhackme-vulnversity-ctf-writeup/&amp;media=http://localhost:4000/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vulnbanner.png&amp;description=Tryhackme%20Vulnversity%20Ctf%20Writeup" onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest" rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
-      </div>
-    </div>
-
-    <div class="post__navigation">
-      
-      <a class="prev" href="/2021/10/09/tryhackme-blue-ctf-writeup/">
-        <img class="post__nav-image lazy" data-src="/assets/img/posts/tryhackme-blue-ctf-writeup/bluebanner.png" alt="Tryhackme Blue Ctf Writeup">
-        <div class="post__nav-box">
-          <div class="post__nav post__nav__prev"><i class="ion ion-md-arrow-round-back"></i> Previous Post</div>
-          <h4 class="post__nav__title">Tryhackme Blue Ctf Writeup</h4>
-        </div>
-      </a>
-      
-      
-      <a class="next" href="/2021/10/11/Downgrading-broken-packages/">
-        <img class="post__nav-image lazy" data-src="/assets/img/posts/downgrade/dgbanner.png" alt="Downgrading Broken Packages">
-        <div class="post__nav-box">
-          <div class="post__nav post__nav__next">Next Post <i class="ion ion-md-arrow-forward"></i></div>
-          <h4 class="post__nav__title">Downgrading Broken Packages</h4>
-        </div>
-      </a>
-      
-    </div>
-
-  </article>
-</div>
-<!-- end post -->
-
-
-
-
-
-
-
-<div class="container">
-  <div class="related-posts is-related">
-    <div class="row">
-      <div class="col col-12">
-        <div class="container__inner">
-          <h3 class="related-title">You may also like</h3>
-          <div class="row grid">
-
+      <div class="article__meta">
+        <span class="article__minutes">
           
             
-            
+              2 min read
+          
+          <time class="article__date" datetime="2018-04-24T13:01:35+01:00">Apr 24, 2018</time>
+        </span>
+      </div>
 
-            
+      <h2 class="article__title">Strive not to be a success, but rather to be of value</h2>
 
-            
-            
-            
-            
+      <p class="article__excerpt">Sin tantum modo ad indicia veteris memoriae cognoscenda, curiosorum. Haec et tu ita posuisti, et verba vestra sunt. Idemne potest esse dies...</p>
 
-            
+      <div class="article__bottom">
 
-            
+        
+        <div class="article__author">
+          <a href="/about/" aria-label="Burak Baris"><img class="article__author-image lazy" data-src="/images/15.jpg" alt="Burak Baris's Picture"></a>
+        </div>
+        
 
-            <div class="article col col-4 col-d-6 col-t-12 grid__post">
-              <div class="article__inner">
-
-                
-                <a class="article__image" href="/2021/12/31/tryhackme-hackpark-ctf-writeup/">
-                  <img class="lazy" data-src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/parkbanner.jpg" alt="Tryhackme Hackpark CTF Writeup">
-                </a>
-                
-
-                <div class="article__content">
-
-                  <div class="article__meta">
-                    <span class="article__minutes">
-                      
-                      
-                        2 min read
-                      
-                      <time class="article__date"
-                        datetime="2021-12-31T18:20:00+00:00">Dec 31, 2021</time>
-                    </span>
-                  </div>
-
-                  <h2 class="article__title">Tryhackme Hackpark CTF Writeup</h2>
-
-                  <p class="article__excerpt">Bruteforce a websites login with Hydra, identify and use a public exploit then escalate your privileges on this Windows machine!</p>
-
-                  <div class="article__bottom">
-
-                    
-                    <div class="article__author">
-                      <a href="/about/" aria-label="Burak Baris"><img class="article__author-image lazy" data-src="/images/15.jpg" alt="Burak Baris's Picture"></a>
-                    </div>
-                    
-
-                    <div class="article__bottom-meta">
-                      
-                        <a href="/about/" class="article__author-link">Burak Baris</a>
-                      
-                      
-                      <span>in</span>
-                      <span class="article-tags">
-                        
-                          <a href="/tag/TryHackme-Machines" class="article__tag">TryHackme-Machines</a>
-                        
-                          <a href="/tag/ctf" class="article__tag">ctf</a>
-                        
-                          <a href="/tag/pentesting" class="article__tag">pentesting</a>
-                        
-                      </span>
-                      
-                    </div>
-                  </div>
-
-                </div>
-
-              </div>
-            </div>
-
-            
-                
+        <div class="article__bottom-meta">
+          
+            <a href="/about/" class="article__author-link">Burak Baris</a>
+          
+          
+            <span>in</span>
+            <span class="article-tags">
               
-            
-            
-            
-
-            
-
-            
-
-            <div class="article col col-4 col-d-6 col-t-12 grid__post">
-              <div class="article__inner">
-
-                
-                <a class="article__image" href="/2021/12/28/tryhackme-alfred-ctf-writeup/">
-                  <img class="lazy" data-src="/assets/img/posts/tryhackme-alfred-ctf-writeup/alfredbanner.png" alt="Tryhackme Alfred CTF Writeup">
-                </a>
-                
-
-                <div class="article__content">
-
-                  <div class="article__meta">
-                    <span class="article__minutes">
-                      
-                      
-                        11 min read
-                      
-                      <time class="article__date"
-                        datetime="2021-12-28T11:40:00+00:00">Dec 28, 2021</time>
-                    </span>
-                  </div>
-
-                  <h2 class="article__title">Tryhackme Alfred CTF Writeup</h2>
-
-                  <p class="article__excerpt">Exploit Jenkins to gain an initial shell, then escalate your privileges by exploiting Windows authentication tokens.</p>
-
-                  <div class="article__bottom">
-
-                    
-                    <div class="article__author">
-                      <a href="/about/" aria-label="Burak Baris"><img class="article__author-image lazy" data-src="/images/15.jpg" alt="Burak Baris's Picture"></a>
-                    </div>
-                    
-
-                    <div class="article__bottom-meta">
-                      
-                        <a href="/about/" class="article__author-link">Burak Baris</a>
-                      
-                      
-                      <span>in</span>
-                      <span class="article-tags">
-                        
-                          <a href="/tag/TryHackme-Machines" class="article__tag">TryHackme-Machines</a>
-                        
-                          <a href="/tag/ctf" class="article__tag">ctf</a>
-                        
-                          <a href="/tag/pentesting" class="article__tag">pentesting</a>
-                        
-                          <a href="/tag/metasploit" class="article__tag">metasploit</a>
-                        
-                          <a href="/tag/mindows-privesc" class="article__tag">mindows-privesc</a>
-                        
-                          <a href="/tag/windows-tokens" class="article__tag">windows-tokens</a>
-                        
-                          <a href="/tag/bruteforce" class="article__tag">bruteforce</a>
-                        
-                          <a href="/tag/remote-code-execution" class="article__tag">remote-code-execution</a>
-                        
-                      </span>
-                      
-                    </div>
-                  </div>
-
-                </div>
-
-              </div>
-            </div>
-
-            
-                
+                <a href="/tag/work" class="article__tag">work</a>
               
-            
-            
-            
+                <a href="/tag/technology" class="article__tag">technology</a>
+              
+            </span>
+          
+        </div>
+      </div>
 
-            
+    </div>
 
-            
-
-            <div class="article col col-4 col-d-6 col-t-12 grid__post">
-              <div class="article__inner">
-
-                
-                <a class="article__image" href="/2021/12/23/unquoted-service-path-vulnerability/">
-                  <img class="lazy" data-src="/assets/img/posts/unquoted-service-path-vulnerability/unquotedbanner.png" alt="Unquoted Service Path Vulnerability">
-                </a>
-                
-
-                <div class="article__content">
-
-                  <div class="article__meta">
-                    <span class="article__minutes">
-                      
-                      
-                        10 min read
-                      
-                      <time class="article__date"
-                        datetime="2021-12-23T00:59:00+00:00">Dec 23, 2021</time>
-                    </span>
-                  </div>
-
-                  <h2 class="article__title">Unquoted Service Path Vulnerability</h2>
-
-                  <p class="article__excerpt"></p>
-
-                  <div class="article__bottom">
-
-                    
-                    <div class="article__author">
-                      <a href="/about/" aria-label="Burak Baris"><img class="article__author-image lazy" data-src="/images/15.jpg" alt="Burak Baris's Picture"></a>
-                    </div>
-                    
-
-                    <div class="article__bottom-meta">
-                      
-                        <a href="/about/" class="article__author-link">Burak Baris</a>
-                      
-                      
-                      <span>in</span>
-                      <span class="article-tags">
-                        
-                          <a href="/tag/windows-privesc" class="article__tag">windows-privesc</a>
-                        
-                          <a href="/tag/unqoted-service-path" class="article__tag">unqoted-service-path</a>
-                        
-                          <a href="/tag/windows" class="article__tag">windows</a>
-                        
-                          <a href="/tag/pentesting" class="article__tag">pentesting</a>
-                        
-                      </span>
-                      
-                    </div>
-                  </div>
-
-                </div>
-
-              </div>
-            </div>
-
-            
-                
-                  
-          </div>
+  </div>
+</div>
+          
         </div>
       </div>
     </div>
   </div>
 </div>
-
-
   </main> 
   <!-- end content -->
   
@@ -1115,20 +602,20 @@ As you can see euid (Effective user id) set to 0 which belongs to root.Now you c
     
     <div class="recent-posts">
       
-      <a class="recent-posts__image" href="/2021/12/31/tryhackme-hackpark-ctf-writeup/"><img class="lazy" data-src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/parkbanner.jpg" alt="Tryhackme Hackpark CTF Writeup"></a>
+      <a class="recent-posts__image" href="/2021/12/31/thm-hackpark-ctf-writeup/"><img class="lazy" data-src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/parkbanner.jpg" alt="THM Hackpark CTF Writeup"></a>
       
       <div class="recent-posts__content">
         <div class="article__meta">
           <span class="article__minutes">
             
             
-              2 min read
+              3 min read
             
           </span>
           <time class="article__date"
             datetime="2021-12-31T18:20:00+00:00">Dec 31, 2021</time>
         </div>
-        <h4 class="recent-posts__title"><a href="/2021/12/31/tryhackme-hackpark-ctf-writeup/">Tryhackme Hackpark CTF Writeup</a></h4>
+        <h4 class="recent-posts__title"><a href="/2021/12/31/thm-hackpark-ctf-writeup/">THM Hackpark CTF Writeup</a></h4>
         <div class="article__bottom">
           <div class="article__author">
             <a href="/about/" aria-label="Burak Baris"><img class="article__author-image lazy" data-src="/images/15.jpg" alt="Burak Baris's Picture"></a>
@@ -1150,7 +637,7 @@ As you can see euid (Effective user id) set to 0 which belongs to root.Now you c
       <h3 class="widget__title">Explore Tags</h3>
     </div>
     <div class="tag__cloud">
-      <a href="/tag/tryhackme-machines/" class="set-5">TryHackme-Machines</a> <a href="/tag/arch-linux/" class="set-1">arch-linux</a> <a href="/tag/boot-managers/" class="set-1">boot-managers</a> <a href="/tag/bruteforce/" class="set-2">bruteforce</a> <a href="/tag/buffer-overflow/" class="set-1">buffer-overflow</a> <a href="/tag/cracking/" class="set-2">cracking</a> <a href="/tag/ctf/" class="set-5">ctf</a> <a href="/tag/grub/" class="set-1">grub</a> <a href="/tag/ip-addresses/" class="set-1">ip-addresses</a> <a href="/tag/linux/" class="set-1">linux</a> <a href="/tag/linux-privesc/" class="set-1">linux-privesc</a> <a href="/tag/metasploit/" class="set-3">metasploit</a> <a href="/tag/mindows-privesc/" class="set-1">mindows-privesc</a> <a href="/tag/network-protocols/" class="set-1">network protocols</a> <a href="/tag/package-managers/" class="set-1">package-managers</a> <a href="/tag/pentesting/" class="set-5">pentesting</a> <a href="/tag/php/" class="set-1">php</a> <a href="/tag/powershell/" class="set-1">powershell</a> <a href="/tag/remote-code-execution/" class="set-3">remote-code-execution</a> <a href="/tag/reverse-shell/" class="set-1">reverse-shell</a> <a href="/tag/router/" class="set-1">router</a> <a href="/tag/shell-injection/" class="set-1">shell-injection</a> <a href="/tag/sql/" class="set-1">sql</a> <a href="/tag/sql-injection/" class="set-1">sql-injection</a> <a href="/tag/subnetting/" class="set-1">subnetting</a> <a href="/tag/switch/" class="set-1">switch</a> <a href="/tag/unqoted-service-path/" class="set-2">unqoted-service-path</a> <a href="/tag/windows/" class="set-2">windows</a> <a href="/tag/windows-privesc/" class="set-2">windows-privesc</a> <a href="/tag/windows-tokens/" class="set-1">windows-tokens</a>
+      <a href="/tag/tryhackme-machines/" class="set-5">TryHackme-Machines</a> <a href="/tag/arch-linux/" class="set-1">arch-linux</a> <a href="/tag/boot-managers/" class="set-1">boot-managers</a> <a href="/tag/bruteforce/" class="set-2">bruteforce</a> <a href="/tag/buffer-overflow/" class="set-1">buffer-overflow</a> <a href="/tag/cracking/" class="set-2">cracking</a> <a href="/tag/ctf/" class="set-5">ctf</a> <a href="/tag/grub/" class="set-1">grub</a> <a href="/tag/ip-addresses/" class="set-1">ip-addresses</a> <a href="/tag/linux/" class="set-1">linux</a> <a href="/tag/linux-privesc/" class="set-1">linux-privesc</a> <a href="/tag/metasploit/" class="set-3">metasploit</a> <a href="/tag/mindows-privesc/" class="set-1">mindows-privesc</a> <a href="/tag/network-protocols/" class="set-1">network protocols</a> <a href="/tag/package-managers/" class="set-1">package-managers</a> <a href="/tag/pentesting/" class="set-5">pentesting</a> <a href="/tag/php/" class="set-1">php</a> <a href="/tag/powershell/" class="set-1">powershell</a> <a href="/tag/remote-code-execution/" class="set-3">remote-code-execution</a> <a href="/tag/reverse-shell/" class="set-1">reverse-shell</a> <a href="/tag/router/" class="set-1">router</a> <a href="/tag/shell-injection/" class="set-1">shell-injection</a> <a href="/tag/sql/" class="set-1">sql</a> <a href="/tag/sql-injection/" class="set-1">sql-injection</a> <a href="/tag/subnetting/" class="set-1">subnetting</a> <a href="/tag/switch/" class="set-1">switch</a> <a href="/tag/technology/" class="set-1">technology</a> <a href="/tag/unqoted-service-path/" class="set-2">unqoted-service-path</a> <a href="/tag/windows/" class="set-2">windows</a> <a href="/tag/windows-privesc/" class="set-2">windows-privesc</a> <a href="/tag/windows-tokens/" class="set-1">windows-tokens</a> <a href="/tag/work/" class="set-1">work</a>
     </div>
   </div>
 </div>
@@ -1190,7 +677,7 @@ As you can see euid (Effective user id) set to 0 which belongs to root.Now you c
     <div class="row">
       <div class="col col-12">
       <div class="footer__inner">
-        <div class="copyright">2022 &copy; <a href="/">:~$ BBSec_</a>. Crafted & Designed by <a href="https://jekyllthemes.io/developers/artem-sheludko">Artem Sheludko</a>.</div>
+        <div class="copyright">2022 &copy; <a href="/">:~$ BBSec_</a>. 
         
 <div class="social">
   <ul class="social__list list-reset">
@@ -1209,6 +696,10 @@ As you can see euid (Effective user id) set to 0 which belongs to root.Now you c
     
     <li class="social__item">
       <a class="social__link" href="https://twitter.com/Krygen2" aria-label="social icon"><i class="ion ion-logo-twitter"></i></a>
+    </li>
+    
+    <li class="social__item">
+      <a class="social__link" href="https://tryhackme.com/p/Krygen" aria-label="social icon"><i class="ion fas fa-terminal"></i></a>
     </li>
     
   </ul>

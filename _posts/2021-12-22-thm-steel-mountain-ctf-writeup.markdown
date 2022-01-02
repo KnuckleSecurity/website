@@ -1,15 +1,13 @@
 ---
-layout: post
-title: Tryhackme Steel Mountain CTF Writeup
-description: Hack into a Mr. Robot themed Windows machine. Use metasploit for initial access, utilise powershell for Windows privilege escalation enumeration and learn a new technique to get Administrator access. 
-date: 2021-12-23 00:50
-image: '/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/steelbanner.jpg'
-tags: [TryHackme-Machines,ctf,pentesting,remote-code-execution,windows-privesc,powershell,metasploit,unqoted-service-path]
+layout:   post
+title:   THM Steel Mountain CTF Writeup
+description:   Hack into a Mr. Robot themed Windows machine. Use metasploit for initial access, utilise powershell for Windows privilege escalation enumeration and learn a new technique to get Administrator access. 
+date:   2021-12-23 00:50:00 +0300
+image:   '/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/steelbanner.jpg'
+tags:   [TryHackme-Machines,ctf,pentesting,remote-code-execution,windows-privesc,powershell,metasploit,unqoted-service-path]
 featured: false
 ---
-
 [**Solve Yourself >>**](https://tryhackme.com/room/steelmountain)
-
 
 The steel mountain is a windows machine. In order to hack into the machine, we are going to exploit  two different 
 vulnerabilities that occur on the system.

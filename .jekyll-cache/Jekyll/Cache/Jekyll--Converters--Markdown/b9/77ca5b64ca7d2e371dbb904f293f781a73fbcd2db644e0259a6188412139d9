@@ -1,4 +1,4 @@
-I"� <p><a href="https://www.tryhackme.com/room/blue"><strong>Solve Yourself »</strong></a></p>
+I"� <p><a href="https://www.tryhackme.com/room/blue"><strong>Solve Yourself »</strong></a></p>
 
 <p>Blue is a machine that specifically designed to cover EternalBlue (CVE-2017-0144), 
 which allows remote attackers to execute arbitrary code via crafted packets, 
@@ -153,5 +153,4 @@ As you can see, it is <strong>NTLM</strong>.</p>
 <p><img src="/assets/img/posts/tryhackme-blue-ctf-writeup/blue15.jpg" alt="Desktop View" class="normal" />
 <br />
 Congrats! End of the machine.</p>
-
 :ET

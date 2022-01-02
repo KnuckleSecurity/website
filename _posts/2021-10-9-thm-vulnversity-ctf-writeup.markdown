@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Tryhackme Vulnversity Ctf Writeup
+title: THM Vulnversity Ctf Writeup
 description: Learn about active recon, web app attacks and privilege escalation.
 date: 2021-10-9 18:04
 image: '/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vulnbanner.png'
