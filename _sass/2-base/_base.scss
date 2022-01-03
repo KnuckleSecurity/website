@@ -2,36 +2,15 @@
 *, *::after, *::before {
   box-sizing: border-box;
 }
-
-@font-face {
-    font-family: 'Roboto';
-    src: url('https://fonts.googleapis.com/css2?family=Roboto&display=swap') 
-}
-
-@font-face {
-    font-family: 'Roboto';
-    src: url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap') 
-}
-
-@font-face {
-    font-family: 'Licorice';
-    src: url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap') 
-}
-
-
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital@1&family=Space+Mono&display=swap');
 body {
   //font-family: $base-font-family;
+  font-family: 'Space Mono', monospace;
   font-size: $base-font-size;
   line-height: $base-line-height;
   color: $text-color;
-  font-family: 'Roboto', monospace;
-  //font-weight: 400;
-  //font-style: normal;
-  //letter-spacing: 0em;
-  //text-transform: none;
-  //line-height: 1.8;
   font-size: $base-font-size;
-  color: $text-color;
+  //background-color: $background-color;
   background-color: $background-color;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -80,7 +59,8 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Roboto', monospace;
+  //font-family: $base-font-family;
+  font-family: 'Space Mono', monospace;
   //font-family: $heading-font-family;
   font-weight: $heading-font-weight;
   line-height: $heading-line-height;

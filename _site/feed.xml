@@ -3,10 +3,10 @@
   <channel>
     <title>:~$ BBSec_</title>
     <description>Burak Baris</description>
-    <link>http://localhost:4000/</link>
-    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sun, 02 Jan 2022 00:15:16 +0000</pubDate>
-    <lastBuildDate>Sun, 02 Jan 2022 00:15:16 +0000</lastBuildDate>
+    <link>http://192.168.0.100:4000/</link>
+    <atom:link href="http://192.168.0.100:4000/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Mon, 03 Jan 2022 23:38:47 +0000</pubDate>
+    <lastBuildDate>Mon, 03 Jan 2022 23:38:47 +0000</lastBuildDate>
     <generator>Jekyll v4.2.1</generator>
     
       <item>
@@ -14,8 +14,8 @@
         <description>
 </description>
         <pubDate>Sat, 01 Jan 2022 16:00:00 +0000</pubDate>
-        <link>http://localhost:4000/2022/01/01/public-key-infrastructure/</link>
-        <guid isPermaLink="true">http://localhost:4000/2022/01/01/public-key-infrastructure/</guid>
+        <link>http://192.168.0.100:4000/2022/01/01/public-key-infrastructure/</link>
+        <guid isPermaLink="true">http://192.168.0.100:4000/2022/01/01/public-key-infrastructure/</guid>
         
         
       </item>
@@ -121,8 +121,8 @@ Launch the &lt;a href=&quot;https://www.geeksforgeeks.org/what-is-burp-suite/&qu
 when a login attempt occurs.&lt;/p&gt;
 </description>
         <pubDate>Fri, 31 Dec 2021 18:20:00 +0000</pubDate>
-        <link>http://localhost:4000/2021/12/31/thm-hackpark-ctf-writeup/</link>
-        <guid isPermaLink="true">http://localhost:4000/2021/12/31/thm-hackpark-ctf-writeup/</guid>
+        <link>http://192.168.0.100:4000/2021/12/31/thm-hackpark-ctf-writeup/</link>
+        <guid isPermaLink="true">http://192.168.0.100:4000/2021/12/31/thm-hackpark-ctf-writeup/</guid>
         
         <category>TryHackme-Machines</category>
         
@@ -498,8 +498,8 @@ By doing that, we have camouflaged our malicious process into a safer looking on
 Thanks for reading :)&lt;/p&gt;
 </description>
         <pubDate>Tue, 28 Dec 2021 08:40:00 +0000</pubDate>
-        <link>http://localhost:4000/2021/12/28/thm-alfred-ctf-writeup/</link>
-        <guid isPermaLink="true">http://localhost:4000/2021/12/28/thm-alfred-ctf-writeup/</guid>
+        <link>http://192.168.0.100:4000/2021/12/28/thm-alfred-ctf-writeup/</link>
+        <guid isPermaLink="true">http://192.168.0.100:4000/2021/12/28/thm-alfred-ctf-writeup/</guid>
         
         <category>TryHackme-Machines</category>
         
@@ -810,8 +810,8 @@ have fun after that point :))).
 &lt;p&gt;Thanks for reading.&lt;/p&gt;
 </description>
         <pubDate>Thu, 23 Dec 2021 00:59:00 +0000</pubDate>
-        <link>http://localhost:4000/2021/12/23/unquoted-service-path-vulnerability/</link>
-        <guid isPermaLink="true">http://localhost:4000/2021/12/23/unquoted-service-path-vulnerability/</guid>
+        <link>http://192.168.0.100:4000/2021/12/23/unquoted-service-path-vulnerability/</link>
+        <guid isPermaLink="true">http://192.168.0.100:4000/2021/12/23/unquoted-service-path-vulnerability/</guid>
         
         <category>windows-privesc</category>
         
@@ -1066,8 +1066,8 @@ You will need to repeat previous steps to get the root flag. Download &lt;strong
 Thank you for following, wish you more penetrations ;)&lt;/p&gt;
 </description>
         <pubDate>Wed, 22 Dec 2021 21:50:00 +0000</pubDate>
-        <link>http://localhost:4000/2021/12/22/thm-steel-mountain-ctf-writeup/</link>
-        <guid isPermaLink="true">http://localhost:4000/2021/12/22/thm-steel-mountain-ctf-writeup/</guid>
+        <link>http://192.168.0.100:4000/2021/12/22/thm-steel-mountain-ctf-writeup/</link>
+        <guid isPermaLink="true">http://192.168.0.100:4000/2021/12/22/thm-steel-mountain-ctf-writeup/</guid>
         
         <category>TryHackme-Machines</category>
         
@@ -1112,8 +1112,8 @@ Thank you for following, wish you more penetrations ;)&lt;/p&gt;
 Done ! You will see all bootable system in your grub menu at the next boot.&lt;/p&gt;
 </description>
         <pubDate>Thu, 18 Nov 2021 12:00:00 +0000</pubDate>
-        <link>http://localhost:4000/2021/11/18/add-windows-boot-manager-to-grub/</link>
-        <guid isPermaLink="true">http://localhost:4000/2021/11/18/add-windows-boot-manager-to-grub/</guid>
+        <link>http://192.168.0.100:4000/2021/11/18/add-windows-boot-manager-to-grub/</link>
+        <guid isPermaLink="true">http://192.168.0.100:4000/2021/11/18/add-windows-boot-manager-to-grub/</guid>
         
         <category>linux</category>
         
@@ -1314,8 +1314,8 @@ layer. If ping responses with a packet loss, then the connectivity issue is on t
 this first. If there is no packet loss, you can start to explore other possibilities that may cause failure.&lt;/p&gt;
 </description>
         <pubDate>Thu, 18 Nov 2021 12:00:00 +0000</pubDate>
-        <link>http://localhost:4000/2021/11/18/ipv4-addresses/</link>
-        <guid isPermaLink="true">http://localhost:4000/2021/11/18/ipv4-addresses/</guid>
+        <link>http://192.168.0.100:4000/2021/11/18/ipv4-addresses/</link>
+        <guid isPermaLink="true">http://192.168.0.100:4000/2021/11/18/ipv4-addresses/</guid>
         
         <category>network protocols</category>
         
@@ -1374,8 +1374,8 @@ both for them to see each other’s traffic as they are completely different dep
 To be continued&lt;/p&gt;
 </description>
         <pubDate>Thu, 18 Nov 2021 12:00:00 +0000</pubDate>
-        <link>http://localhost:4000/2021/11/18/subnetting/</link>
-        <guid isPermaLink="true">http://localhost:4000/2021/11/18/subnetting/</guid>
+        <link>http://192.168.0.100:4000/2021/11/18/subnetting/</link>
+        <guid isPermaLink="true">http://192.168.0.100:4000/2021/11/18/subnetting/</guid>
         
         <category>subnetting</category>
         
@@ -2034,8 +2034,8 @@ images nor titles etc. Also can not perform error based sqli due to exception ha
 To be continued&lt;/p&gt;
 </description>
         <pubDate>Wed, 13 Oct 2021 10:00:35 +0100</pubDate>
-        <link>http://localhost:4000/2021/10/13/Sql-injection/</link>
-        <guid isPermaLink="true">http://localhost:4000/2021/10/13/Sql-injection/</guid>
+        <link>http://192.168.0.100:4000/2021/10/13/Sql-injection/</link>
+        <guid isPermaLink="true">http://192.168.0.100:4000/2021/10/13/Sql-injection/</guid>
         
         <category>sql</category>
         
@@ -2087,8 +2087,8 @@ variable, and delete the package name there. You can also add other packages
 here manually to disable updates for a spesific program.&lt;/p&gt;
 </description>
         <pubDate>Mon, 11 Oct 2021 22:59:35 +0100</pubDate>
-        <link>http://localhost:4000/2021/10/11/Downgrading-broken-packages/</link>
-        <guid isPermaLink="true">http://localhost:4000/2021/10/11/Downgrading-broken-packages/</guid>
+        <link>http://192.168.0.100:4000/2021/10/11/Downgrading-broken-packages/</link>
+        <guid isPermaLink="true">http://192.168.0.100:4000/2021/10/11/Downgrading-broken-packages/</guid>
         
         <category>arch-linux</category>
         
