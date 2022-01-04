@@ -3,19 +3,168 @@
   <channel>
     <title>:~$ BBSec_</title>
     <description>Burak Baris</description>
-    <link>http://192.168.0.100:4000/</link>
-    <atom:link href="http://192.168.0.100:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 03 Jan 2022 23:43:28 +0000</pubDate>
-    <lastBuildDate>Mon, 03 Jan 2022 23:43:28 +0000</lastBuildDate>
+    <link>http://192.168.0.100:80/</link>
+    <atom:link href="http://192.168.0.100/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Tue, 04 Jan 2022 23:49:42 +0000</pubDate>
+    <lastBuildDate>Tue, 04 Jan 2022 23:49:42 +0000</lastBuildDate>
     <generator>Jekyll v4.2.1</generator>
     
       <item>
         <title>Public Key Infrastructure</title>
-        <description>
+        <description>&lt;p&gt;This post will discuss all the terminologies behind &lt;strong&gt;&lt;em&gt;Public Key Infrastructure (PKI)&lt;/em&gt;&lt;/strong&gt;.
+It is essential to have the knowledge on &lt;em&gt;Public Key Cryptography&lt;/em&gt; ,&lt;em&gt;Encryption&lt;/em&gt; and &lt;em&gt;Digital Signing&lt;/em&gt; as the prequisition.&lt;/p&gt;
+
+&lt;h1 id=&quot;what-is-pki&quot;&gt;WHAT IS PKI?&lt;/h1&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Public Key Infrastructure (PKI)&lt;/em&gt;&lt;/strong&gt; is a system on which every connection that requires to establish and manage &lt;em&gt;Public Key
+Encryption&lt;/em&gt; depends. This procedure done by what we call &lt;strong&gt;&lt;em&gt;X.509 certificates&lt;/em&gt;&lt;/strong&gt;.&lt;/p&gt;
+&lt;h1 id=&quot;why-pki-is-important&quot;&gt;WHY PKI IS IMPORTANT?&lt;/h1&gt;
+&lt;p&gt;While public-key encryption solves the problem of the data’s legibility by everyone, PKI adds authentication mechanism on top of it.
+Combination of those two mechanism together makes online communication becomes much more trustworthy.&lt;/p&gt;
+&lt;h1 id=&quot;real-life-scenario&quot;&gt;REAL LIFE SCENARIO&lt;/h1&gt;
+
+&lt;p&gt;Let us examine this example:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;John&lt;/strong&gt;: Hey Robert, can you send those confidential data to Ashley?&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Robert&lt;/strong&gt;: Sure, but who is she?&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;John&lt;/strong&gt;: She is the HR manager of BBSec.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Robert&lt;/strong&gt;: All right.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;br /&gt;For Robert to send any confidential data to Ashley, he must find Ashley’s public-key. However, searching for her
+public-key on the web would not be smart since there could be many other public-keys for other Ashleys. How can Robert
+be confident that he uses the correct public-key from the Ashley he wants to communicate?
+&lt;br /&gt;&lt;br /&gt;To solve this problem, what we call &lt;strong&gt;&lt;em&gt;x509 certificates&lt;/em&gt;&lt;/strong&gt; comes into play.&lt;/p&gt;
+
+&lt;h1 id=&quot;what-is-an-x509-certificate&quot;&gt;WHAT IS AN X.509 CERTIFICATE?&lt;/h1&gt;
+
+&lt;p&gt;&lt;em&gt;X.509&lt;/em&gt; is a standard procedure for public-key certificates. They are digital documents that validate the integrity of the 
+association between identities such as organizations, individuals or websites, and their cryptographic key pairs.
+&lt;br /&gt;&lt;br /&gt;An &lt;em&gt;X.509 certificate&lt;/em&gt; essentially contains those:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Identity’s name, address, email,etc.&lt;/li&gt;
+  &lt;li&gt;Identity’s public-key.&lt;/li&gt;
+  &lt;li&gt;The &lt;em&gt;Issuer&lt;/em&gt; of the certificate.&lt;/li&gt;
+  &lt;li&gt;The &lt;em&gt;encrypted hash&lt;/em&gt; of the certificate.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If Robert can find a certificate that binds Ashley’s name with her company BBSec, he can confidently tell that it is the correct
+certificate he was looking for.
+&lt;br /&gt;&lt;br /&gt;There are two more fields above, which are &lt;em&gt;Issuer&lt;/em&gt; and &lt;em&gt;encrypted hash&lt;/em&gt;. We will come to that later.&lt;/p&gt;
+
+&lt;p&gt;Common applications that use X.509 certificates:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;TLS/SSL and HTTPS for encrypted and authenticated web browsing&lt;/li&gt;
+  &lt;li&gt;S/MIME Protocol for encrypted and signed email.&lt;/li&gt;
+  &lt;li&gt;Document signing&lt;/li&gt;
+  &lt;li&gt;Client authentication&lt;/li&gt;
+  &lt;li&gt;Goverment-issued electronic ID&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;certificate-authorities&quot;&gt;CERTIFICATE AUTHORITIES&lt;/h1&gt;
+
+&lt;p&gt;However, what if Robert finds more than one certificate claiming to have Ashley’s public key? Now which one is the right one?
+I can easily create a certificate identical to Ashley’s and put my public-key in it.
+We need a mechanism to verify that the certificate assigned to a specific identity is one of its kind.
+&lt;br /&gt;&lt;br /&gt;We have what we call &lt;strong&gt;&lt;em&gt;Certificate Authorities (CAs)&lt;/em&gt;&lt;/strong&gt; to solve this problem.  There are dozens of organizations that we 
+trust to be authoritative. All operating systems and browsers come with built-in configured CAs. If a CA claims
+a certificate is authentic, we will believe it. 
+&lt;br /&gt;&lt;br /&gt;However, how does a CA indicate that the certificate in question is authentic?
+By &lt;em&gt;signing&lt;/em&gt; it digitally. The signature of the CA must be checked to verify the authenticity of a certificate.
+&lt;br /&gt;&lt;br /&gt; In the definition of an X.509 certificate above, there were two more fields left unexplained. &lt;em&gt;Issuer&lt;/em&gt; and &lt;em&gt;Encrypted Hash&lt;/em&gt;.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Issuer: The name of the organization (CA) that issued the certificate.&lt;/li&gt;
+  &lt;li&gt;Encrypted Hash: the digital signature of the CA.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Let us continue to the Robert and Ashley example above:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Robert obtains certificate A that claims to be Ashley’s certificate and issued by X.&lt;/li&gt;
+  &lt;li&gt;To verify that certificate A is authentic by verifying CA’s signature, Robert gets the public key of X from somewhere, then
+decrypts the &lt;em&gt;encrypted hash&lt;/em&gt;, the digital signature, inside of certificate A to see if it matches.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;The question is that Robert just downloaded X’s certificate from somewhere, so how can he tell that it is also authentic? By looking
+at the &lt;em&gt;Issuer&lt;/em&gt; of X, which is Y. Now, he must find the Y certificate to verify the signature on the X certificate. We can continue
+to do that endlessly. It becomes an endless loop, and we have to stop at one point.
+&lt;br /&gt;&lt;br /&gt;To solve this problem we have what we call the &lt;strong&gt;&lt;em&gt;Root CAs&lt;/em&gt;&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h1 id=&quot;what-is-a-root-ca&quot;&gt;WHAT IS A ROOT CA?&lt;/h1&gt;
+
+&lt;p&gt;A &lt;strong&gt;&lt;em&gt;top-level, root CA&lt;/em&gt;&lt;/strong&gt; is a certificate authority that sits on the top of the authority hierarchy. CAs can sign their own certificates. These
+are what we call &lt;em&gt;self-signed certificates&lt;/em&gt;. Since it is not possible to validate self-signed certificates with PKI, Root CAs 
+distribute their keys &lt;em&gt;out-of-band&lt;/em&gt; (e.g. out-of-band distribution means non-electronic distributing, such as going to their offices
+and getting their public key in person).
+&lt;br /&gt;&lt;br /&gt;However, it would be harsh to go to the Root CAs office and collect their public key each time you intend to send an 
+email to somebody. Web browsers come with more than 30 Root CAs. The browsers’ distributors are deciding who are truthful. By
+using their browser, you trust their choice.
+&lt;br /&gt;&lt;br /&gt;Let us get back to the Ashley and Robert example. If we assume that the certificate Y is a &lt;em&gt;self-signed&lt;/em&gt; certificate and the organization Y
+is indeed a &lt;em&gt;Root CA&lt;/em&gt;, Robert can trust certificate A since X trusts A and Y trusts X.&lt;/p&gt;
+
+&lt;h1 id=&quot;terminologies&quot;&gt;TERMINOLOGIES&lt;/h1&gt;
+
+&lt;h2 id=&quot;x509&quot;&gt;X.509&lt;/h2&gt;
+&lt;p&gt;The protocol’s itself.&lt;/p&gt;
+&lt;h2 id=&quot;pkix&quot;&gt;PKIX&lt;/h2&gt;
+&lt;p&gt;Stands for &lt;strong&gt;P&lt;/strong&gt;ublic  &lt;strong&gt;K&lt;/strong&gt;ey &lt;strong&gt;I&lt;/strong&gt;nfrastructure &lt;strong&gt;X&lt;/strong&gt;.509&lt;/p&gt;
+&lt;h2 id=&quot;abstract-syntax-notation-one-asn1&quot;&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/ASN.1&quot;&gt;Abstract Syntax Notation One (ASN.1)&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;It is the syntax used to describe things in an X.509 certificate. For instancee, if the certificates were written in JSON, 
+ASN.1 would be the syntax for the schema (This example is over-simplified).
+Using ASN.1, it is possible to define data structures that 
+can be transmitted over the network independently of software or hardware.&lt;/p&gt;
+&lt;h3 id=&quot;der-pem-xer-per-ber-cer&quot;&gt;DER, PEM, XER, PER, BER, CER&lt;/h3&gt;
+&lt;p&gt;Those are some of the popular encoding rules for ASN.1. 
+&lt;br /&gt;&lt;em&gt;DER&lt;/em&gt; and &lt;em&gt;PEM&lt;/em&gt; are the used.&lt;/p&gt;
+&lt;h2 id=&quot;algorithm&quot;&gt;Algorithm&lt;/h2&gt;
+&lt;p&gt;When the context is the PKI, it refers to cryptographic algorithms like “SHA1 with DSA”, “SHA1 with RSA”, etc. In order to
+achieve cryptographic signing, first, we need to hash the data, then encrypt the hash. “SHA1 with RSA” would indicate that the
+data hashed with SHA1 and encrypted with RSA.&lt;/p&gt;
+&lt;h2 id=&quot;object-identifiers-oids&quot;&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Object_identifier&quot;&gt;Object Identifiers (OIDs)&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Instead of using English to describe things in a X.509 certificate, &lt;em&gt;OIDs&lt;/em&gt; are being used.
+For instance, in a certificate 
+instead of referring to the encryption field as “RSA”, which would be a string value, you would see its’ integer OID value “1.2.840.11359”.
+&lt;br /&gt;&lt;a href=&quot;https://www.alvestrand.no/objectid/top.html&quot;&gt;You can find the list of the registered OIDs here.&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;privacy-enhanced-mail-pem&quot;&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Privacy-Enhanced_Mail&quot;&gt;Privacy Enhanced Mail (PEM)&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;If you hear PEM, it usually refers to &lt;a href=&quot;https://asecuritysite.com/encryption/sigs3?a0=304e301006072a8648ce3d020106052b81040021033a0004eada93be10b2449e1e8bb58305d52008013c57107c1a20a317a6cba7eca672340c03d1d2e09663286691df55069fa25490c9dd9f9c0bb2b5&quot;&gt;DER&lt;/a&gt;. 
+PEM is further encoded version of DER to base64.
+Using PEM encoding can assist transmission over media that is sensitive to textual encodings.&lt;/p&gt;
+&lt;h2 id=&quot;distinguished-name-dn&quot;&gt;&lt;a href=&quot;https://docs.microsoft.com/en-us/previous-versions/windows/desktop/ldap/distinguished-names?redirectedfrom=MSDN&quot;&gt;Distinguished Name (DN)&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Just referring someone with his/her name would not be helpful to identify someone. 
+&lt;em&gt;DN&lt;/em&gt; is used to identify someone uniquely by dividing attributes into fields like &lt;strong&gt;CN=Burak, DC=bbsec, DC=COM&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2 id=&quot;simple-pki-spki&quot;&gt;&lt;a href=&quot;https://crypto.stackexchange.com/questions/790/need-an-introduction-to-spki-or-spki-for-dummies&quot;&gt;Simple PKI (SPKI)&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;The PKI we were discussing (&lt;a href=&quot;https://www.ietf.org/rfc/rfc5280.txt&quot;&gt;RFC 5280&lt;/a&gt;) binds a certificate with &lt;em&gt;distinguished name&lt;/em&gt;.
+SPKI (&lt;a href=&quot;https://datatracker.ietf.org/doc/html/rfc2692&quot;&gt;RFC 2692&lt;/a&gt;) binds public key to a set of permissions. Not commonly used.&lt;/p&gt;
+
+&lt;h2 id=&quot;public-key-cryptography-standrat-pkcs&quot;&gt;&lt;a href=&quot;https://www.encryptionconsulting.com/public-key-cryptography-standards/&quot;&gt;Public Key Cryptography Standrat (PKCS)&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;&lt;em&gt;PKCS&lt;/em&gt; is a set of standrats for PKI from 1 to 15. The PKCS standarts listed below are the most common and important ones.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;PKCS #1: RSA Cryptograpgy Standart&lt;/li&gt;
+  &lt;li&gt;PKCS #3: Diffie-Hellman Key Agreement Standard&lt;/li&gt;
+  &lt;li&gt;PKCS #7/CMS: Cryptographic Message Syntax Standard&lt;/li&gt;
+  &lt;li&gt;PKCS #9: Selected Object Classes and Attribute Types&lt;/li&gt;
+  &lt;li&gt;PKCS #10: Certification Request Syntax Standard&lt;/li&gt;
+  &lt;li&gt;PKCS #12: Personal Information Exchange Syntax Standard&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;certificate-revocation-list-clr&quot;&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Certificate_revocation_list&quot;&gt;Certificate Revocation List (CLR)&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;These lists are published by some authorities’ servers to indicate which certificates have been revoked.
+If you were to lose your credit card for whatever reason, you would like to revocate your credit card.
+It works the same for the certificates too. You might lose your private key for whatever reason, or it can get stolen. In this case, 
+you would like to revocate your X.509 certificate.&lt;/p&gt;
+
+&lt;h2 id=&quot;online-certificate-status-protocol-ocsp&quot;&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Online_Certificate_Status_Protocol&quot;&gt;Online Certificate Status Protocol (OCSP)&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;An internet protocol used for gathering the revocation status of an X.509 certificate.&lt;/p&gt;
+
+&lt;h2 id=&quot;certificate-signing-requests-csr&quot;&gt;&lt;a href=&quot;https://www.namecheap.com/support/knowledgebase/article.aspx/337/67/what-is-a-certificate-signing-request-csr/&quot;&gt;Certificate Signing Requests (CSR)&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;In order to get a certificate signed by a Root CA, a &lt;em&gt;Certificate Signing Request&lt;/em&gt; should be made to a Root CA.
+There are meta-data that needs to be bundled which is specified by PKCS#10&lt;/p&gt;
+
 </description>
         <pubDate>Sat, 01 Jan 2022 16:00:00 +0000</pubDate>
-        <link>http://192.168.0.100:4000/2022/01/01/public-key-infrastructure/</link>
-        <guid isPermaLink="true">http://192.168.0.100:4000/2022/01/01/public-key-infrastructure/</guid>
+        <link>http://192.168.0.100/2022/01/01/public-key-infrastructure/</link>
+        <guid isPermaLink="true">http://192.168.0.100/2022/01/01/public-key-infrastructure/</guid>
         
         
       </item>
@@ -121,8 +270,8 @@ Launch the &lt;a href=&quot;https://www.geeksforgeeks.org/what-is-burp-suite/&qu
 when a login attempt occurs.&lt;/p&gt;
 </description>
         <pubDate>Fri, 31 Dec 2021 18:20:00 +0000</pubDate>
-        <link>http://192.168.0.100:4000/2021/12/31/thm-hackpark-ctf-writeup/</link>
-        <guid isPermaLink="true">http://192.168.0.100:4000/2021/12/31/thm-hackpark-ctf-writeup/</guid>
+        <link>http://192.168.0.100/2021/12/31/thm-hackpark-ctf-writeup/</link>
+        <guid isPermaLink="true">http://192.168.0.100/2021/12/31/thm-hackpark-ctf-writeup/</guid>
         
         <category>TryHackme-Machines</category>
         
@@ -498,8 +647,8 @@ By doing that, we have camouflaged our malicious process into a safer looking on
 Thanks for reading :)&lt;/p&gt;
 </description>
         <pubDate>Tue, 28 Dec 2021 08:40:00 +0000</pubDate>
-        <link>http://192.168.0.100:4000/2021/12/28/thm-alfred-ctf-writeup/</link>
-        <guid isPermaLink="true">http://192.168.0.100:4000/2021/12/28/thm-alfred-ctf-writeup/</guid>
+        <link>http://192.168.0.100/2021/12/28/thm-alfred-ctf-writeup/</link>
+        <guid isPermaLink="true">http://192.168.0.100/2021/12/28/thm-alfred-ctf-writeup/</guid>
         
         <category>TryHackme-Machines</category>
         
@@ -810,8 +959,8 @@ have fun after that point :))).
 &lt;p&gt;Thanks for reading.&lt;/p&gt;
 </description>
         <pubDate>Thu, 23 Dec 2021 00:59:00 +0000</pubDate>
-        <link>http://192.168.0.100:4000/2021/12/23/unquoted-service-path-vulnerability/</link>
-        <guid isPermaLink="true">http://192.168.0.100:4000/2021/12/23/unquoted-service-path-vulnerability/</guid>
+        <link>http://192.168.0.100/2021/12/23/unquoted-service-path-vulnerability/</link>
+        <guid isPermaLink="true">http://192.168.0.100/2021/12/23/unquoted-service-path-vulnerability/</guid>
         
         <category>windows-privesc</category>
         
@@ -1066,8 +1215,8 @@ You will need to repeat previous steps to get the root flag. Download &lt;strong
 Thank you for following, wish you more penetrations ;)&lt;/p&gt;
 </description>
         <pubDate>Wed, 22 Dec 2021 21:50:00 +0000</pubDate>
-        <link>http://192.168.0.100:4000/2021/12/22/thm-steel-mountain-ctf-writeup/</link>
-        <guid isPermaLink="true">http://192.168.0.100:4000/2021/12/22/thm-steel-mountain-ctf-writeup/</guid>
+        <link>http://192.168.0.100/2021/12/22/thm-steel-mountain-ctf-writeup/</link>
+        <guid isPermaLink="true">http://192.168.0.100/2021/12/22/thm-steel-mountain-ctf-writeup/</guid>
         
         <category>TryHackme-Machines</category>
         
@@ -1112,8 +1261,8 @@ Thank you for following, wish you more penetrations ;)&lt;/p&gt;
 Done ! You will see all bootable system in your grub menu at the next boot.&lt;/p&gt;
 </description>
         <pubDate>Thu, 18 Nov 2021 12:00:00 +0000</pubDate>
-        <link>http://192.168.0.100:4000/2021/11/18/add-windows-boot-manager-to-grub/</link>
-        <guid isPermaLink="true">http://192.168.0.100:4000/2021/11/18/add-windows-boot-manager-to-grub/</guid>
+        <link>http://192.168.0.100/2021/11/18/add-windows-boot-manager-to-grub/</link>
+        <guid isPermaLink="true">http://192.168.0.100/2021/11/18/add-windows-boot-manager-to-grub/</guid>
         
         <category>linux</category>
         
@@ -1314,8 +1463,8 @@ layer. If ping responses with a packet loss, then the connectivity issue is on t
 this first. If there is no packet loss, you can start to explore other possibilities that may cause failure.&lt;/p&gt;
 </description>
         <pubDate>Thu, 18 Nov 2021 12:00:00 +0000</pubDate>
-        <link>http://192.168.0.100:4000/2021/11/18/ipv4-addresses/</link>
-        <guid isPermaLink="true">http://192.168.0.100:4000/2021/11/18/ipv4-addresses/</guid>
+        <link>http://192.168.0.100/2021/11/18/ipv4-addresses/</link>
+        <guid isPermaLink="true">http://192.168.0.100/2021/11/18/ipv4-addresses/</guid>
         
         <category>network protocols</category>
         
@@ -1374,8 +1523,8 @@ both for them to see each other’s traffic as they are completely different dep
 To be continued&lt;/p&gt;
 </description>
         <pubDate>Thu, 18 Nov 2021 12:00:00 +0000</pubDate>
-        <link>http://192.168.0.100:4000/2021/11/18/subnetting/</link>
-        <guid isPermaLink="true">http://192.168.0.100:4000/2021/11/18/subnetting/</guid>
+        <link>http://192.168.0.100/2021/11/18/subnetting/</link>
+        <guid isPermaLink="true">http://192.168.0.100/2021/11/18/subnetting/</guid>
         
         <category>subnetting</category>
         
@@ -2034,8 +2183,8 @@ images nor titles etc. Also can not perform error based sqli due to exception ha
 To be continued&lt;/p&gt;
 </description>
         <pubDate>Wed, 13 Oct 2021 10:00:35 +0100</pubDate>
-        <link>http://192.168.0.100:4000/2021/10/13/Sql-injection/</link>
-        <guid isPermaLink="true">http://192.168.0.100:4000/2021/10/13/Sql-injection/</guid>
+        <link>http://192.168.0.100/2021/10/13/Sql-injection/</link>
+        <guid isPermaLink="true">http://192.168.0.100/2021/10/13/Sql-injection/</guid>
         
         <category>sql</category>
         
@@ -2087,8 +2236,8 @@ variable, and delete the package name there. You can also add other packages
 here manually to disable updates for a spesific program.&lt;/p&gt;
 </description>
         <pubDate>Mon, 11 Oct 2021 22:59:35 +0100</pubDate>
-        <link>http://192.168.0.100:4000/2021/10/11/Downgrading-broken-packages/</link>
-        <guid isPermaLink="true">http://192.168.0.100:4000/2021/10/11/Downgrading-broken-packages/</guid>
+        <link>http://192.168.0.100/2021/10/11/Downgrading-broken-packages/</link>
+        <guid isPermaLink="true">http://192.168.0.100/2021/10/11/Downgrading-broken-packages/</guid>
         
         <category>arch-linux</category>
         

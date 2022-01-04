@@ -1,0 +1,25 @@
+I"<p>This post will discuss all the terminologies behind <em>Public Key Infrastructure (PKI)</em>.
+It is essential to have the knowledge on <em>Public Key Cryptography</em> ,<em>Encryption</em> and <em>Digital Signing</em> as the prequisition.</p>
+
+<h1 id="what-is-pki-">WHAT IS PKI ?</h1>
+<p><em>Public Key Infrastructure (PKI)</em> is a generic term that represents every connection that are manage and establish <em>Public Key
+Encryption</em>.</p>
+<h1 id="why-pki-is-important-">WHY PKI IS IMPORTANT ?</h1>
+<p>While public key encryption solves the problem of the data’s legibility by everyone, PKI adds authentication mechanism on top of it.
+Combination of those two mechanism together makes online communication becomes much more trustworthy.</p>
+<h1 id="real-life-scenario">REAL LIFE SCENARIO</h1>
+
+<p>Let us examine this example:</p>
+
+<ul>
+  <li><strong>John</strong>: Hey Robert, can you send those confidential data to Ashley?</li>
+  <li><strong>Robert</strong>: Sure, but who is she?</li>
+  <li><strong>John</strong>: She is the HR manager of BBSec.</li>
+  <li><strong>Robert</strong>: All right.</li>
+</ul>
+
+<p><br />For Robert to send any confidential data to Ashley, he must find Ashley’s public key. However, searching for her
+public key on the web would not be smart since there could be many other public keys for other Ashleys. How can Robert
+be confident that he uses the correct public key from the Ashley he wants to communicate?
+<br /><br />To solve this problem, what we call <em>certificates</em> comes into play.</p>
+:ET

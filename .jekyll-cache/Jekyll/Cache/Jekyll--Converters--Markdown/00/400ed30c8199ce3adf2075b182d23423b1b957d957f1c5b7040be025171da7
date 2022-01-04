@@ -1,0 +1,65 @@
+I"6<p>This post will discuss all the terminologies behind <em>Public Key Infrastructure (PKI)</em>.
+It is essential to have the knowledge on <em>Public Key Cryptography</em> ,<em>Encryption</em> and <em>Digital Signing</em> as the prequisition.</p>
+
+<h1 id="what-is-pki">WHAT IS PKI?</h1>
+<p><em>Public Key Infrastructure (PKI)</em> is a system on which every connection that requires to establish and manage <em>Public Key
+Encryption</em> depends. This procedure done by what we call <em>X.509 certificates</em>.</p>
+<h1 id="why-pki-is-important">WHY PKI IS IMPORTANT?</h1>
+<p>While public-key encryption solves the problem of the data’s legibility by everyone, PKI adds authentication mechanism on top of it.
+Combination of those two mechanism together makes online communication becomes much more trustworthy.</p>
+<h1 id="real-life-scenario">REAL LIFE SCENARIO</h1>
+
+<p>Let us examine this example:</p>
+
+<ul>
+  <li><strong>John</strong>: Hey Robert, can you send those confidential data to Ashley?</li>
+  <li><strong>Robert</strong>: Sure, but who is she?</li>
+  <li><strong>John</strong>: She is the HR manager of BBSec.</li>
+  <li><strong>Robert</strong>: All right.</li>
+</ul>
+
+<p><br />For Robert to send any confidential data to Ashley, he must find Ashley’s public-key. However, searching for her
+public-key on the web would not be smart since there could be many other public-keys for other Ashleys. How can Robert
+be confident that he uses the correct public-key from the Ashley he wants to communicate?
+<br /><br />To solve this problem, what we call <em>x509 certificates</em> comes into play.</p>
+
+<h1 id="what-is-a-x509-certificate">WHAT IS A X.509 CERTIFICATE?</h1>
+
+<p><em>X.509</em> is a standard procedure for public-key certificates. They are digital documents that validate the integrity of the 
+association between identities such as organizations, individuals or websites, and their cryptographic key pairs.
+<br /><br />An_X.509_ certificate essentially contains those:</p>
+<ul>
+  <li>Identity’s name, address, email,etc.</li>
+  <li>Identity’s public-key.</li>
+  <li>The <em>Issuer</em> of the certificate.</li>
+  <li>The <em>encrypted hash</em> of the certificate.</li>
+</ul>
+
+<p>If Robert can find a certificate that binds Ashley’s name with her company BBSec, he can confidently tell that it is the correct
+certificate he was looking for.
+<br /><br />There are two more fields above which are <em>Issuer</em> and <em>encrypted hash</em>. We will come to that later.</p>
+
+<h1 id="certificate-authorities">CERTIFICATE AUTHORITIES</h1>
+
+<p>However, what if Robert finds more than one certificate that claim to have the public key of Ashley? Now which one is the right one?
+I myself easily can create a certificate identical to Ashley’ and put my public key in the it.
+We need a mechanism to verify the certificate assigned to a specific identity is the one of its kind.
+<br /><br />To solve this problem we have what we call <em>Certificate Authorities (CAs)</em>. There are dozens of organisations that we 
+trust to be authoritative. All operating systems and the browsers comes with built-in configured CAs. Basically, if a CA claims
+a certificate is authentic, we will believe it. 
+<br /><br />However, how does a CA indicates that a certificate in question is authentic?
+By <em>signing</em> it digitally. To verify the authenticity of a certificate, the signature of the CA must be checked. 
+<br /><br /> In the definition of a X.509 certificate above, there were two more fields left unexplained. <em>Issuer</em> and the <em>Encrypted Hash</em>.</p>
+<ul>
+  <li>Issuer: The name of the organization (CA) that issued the certificate.</li>
+  <li>Encrypted Hash: the digital signature of the CA.</li>
+</ul>
+
+<p>Continuing the scenario above:</p>
+
+<ol>
+  <li>Robert obtains certificate A that claims to be Ashley’s certificate and issiued by X.</li>
+  <li>For Robert to verify that certificate A is authentic by verifying CA’s signature, he gets the public key of X from somewhere, then
+decrypts the <em>encrypted hash</em>, which is the digital signature, inside of certificate A to see if it matches.</li>
+</ol>
+:ET
