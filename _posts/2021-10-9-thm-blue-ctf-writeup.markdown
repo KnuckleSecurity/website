@@ -4,7 +4,7 @@ title:   THM Blue Ctf Writeup
 description:   Deploy & hack into a Windows machine, leveraging common misconfigurations issues.
 date:   2021-10-9 00:59:35 +0300
 image:   '/assets/img/posts/tryhackme-blue-ctf-writeup/bluebanner.png'
-tags:   [TryHackme-Machines,ctf,pentesting,metasploit,remote-code-execution,buffer-overflow,cracking]
+tags:   [TryHackme Machines,ctf,pentesting,metasploit,remote-code-execution,buffer-overflow,cracking]
 featured:   false
 ---
 [**Solve Yourself >>**](https://www.tryhackme.com/room/blue)

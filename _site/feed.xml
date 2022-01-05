@@ -5,8 +5,8 @@
     <description>Burak Baris</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Wed, 05 Jan 2022 20:55:56 +0000</pubDate>
-    <lastBuildDate>Wed, 05 Jan 2022 20:55:56 +0000</lastBuildDate>
+    <pubDate>Wed, 05 Jan 2022 20:58:35 +0000</pubDate>
+    <lastBuildDate>Wed, 05 Jan 2022 20:58:35 +0000</lastBuildDate>
     <generator>Jekyll v4.2.1</generator>
     
       <item>
@@ -760,7 +760,7 @@ when a login attempt occurs.&lt;/p&gt;
         <link>http://localhost:4000/2021/12/31/thm-hackpark-ctf-writeup/</link>
         <guid isPermaLink="true">http://localhost:4000/2021/12/31/thm-hackpark-ctf-writeup/</guid>
         
-        <category>TryHackme-Machines</category>
+        <category>TryHackme Machines</category>
         
         <category>ctf</category>
         
@@ -1137,7 +1137,7 @@ Thanks for reading :)&lt;/p&gt;
         <link>http://localhost:4000/2021/12/28/thm-alfred-ctf-writeup/</link>
         <guid isPermaLink="true">http://localhost:4000/2021/12/28/thm-alfred-ctf-writeup/</guid>
         
-        <category>TryHackme-Machines</category>
+        <category>TryHackme Machines</category>
         
         <category>ctf</category>
         
@@ -1705,7 +1705,7 @@ Thank you for following, wish you more penetrations ;)&lt;/p&gt;
         <link>http://localhost:4000/2021/12/22/thm-steel-mountain-ctf-writeup/</link>
         <guid isPermaLink="true">http://localhost:4000/2021/12/22/thm-steel-mountain-ctf-writeup/</guid>
         
-        <category>TryHackme-Machines</category>
+        <category>TryHackme Machines</category>
         
         <category>ctf</category>
         
