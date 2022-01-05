@@ -11,8 +11,8 @@ This post will discuss all the terminologies behind the **_Public Key Infrastruc
 It is essential to have knowledge of _Public Key Cryptography_, _Encryption_ and _Digital Signing_ as the prequisition.
 
 # WHAT IS PKI?
-A [**_Public Key Infrastructure (PKI)_**](https://en.wikipedia.org/wiki/Public_key_infrastructure) is a collection of roles, policies, hardware, software, and procedures that are 
-required to produce, regulate, disperse, use, store, and revoke x.509 certificates along with manage public-key encryption.
+A [**_Public Key Infrastructure (PKI)_**](https://en.wikipedia.org/wiki/Public_key_infrastructure) is a collection of roles, policies, hardware, software, and procedures
+required to produce, regulate, disperse, use, store, and revoke x.509 certificates and manage public-key encryption.
 # WHY PKI IS IMPORTANT?
 While public-key encryption solves the problem of the data's legibility by everyone, PKI adds authentication mechanism on top of it.
 Combination of those two mechanism together makes online communication much more trustworthy.
