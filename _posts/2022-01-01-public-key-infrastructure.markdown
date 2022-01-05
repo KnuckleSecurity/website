@@ -15,7 +15,7 @@ A [**_Public Key Infrastructure (PKI)_**](https://en.wikipedia.org/wiki/Public_k
 required to produce, regulate, disperse, use, store, and revoke x.509 certificates along with manage public-key encryption.
 # WHY PKI IS IMPORTANT?
 While public-key encryption solves the problem of the data's legibility by everyone, PKI adds authentication mechanism on top of it.
-Combination of those two mechanism together makes online communication becomes much more trustworthy.
+Combination of those two mechanism together makes online communication much more trustworthy.
 # REAL LIFE SCENARIO
 
 Let us examine this example:

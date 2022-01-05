@@ -5,8 +5,8 @@
     <description>Burak Baris</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Wed, 05 Jan 2022 00:19:02 +0000</pubDate>
-    <lastBuildDate>Wed, 05 Jan 2022 00:19:02 +0000</lastBuildDate>
+    <pubDate>Wed, 05 Jan 2022 00:20:46 +0000</pubDate>
+    <lastBuildDate>Wed, 05 Jan 2022 00:20:46 +0000</lastBuildDate>
     <generator>Jekyll v4.2.1</generator>
     
       <item>
@@ -19,7 +19,7 @@ It is essential to have knowledge of &lt;em&gt;Public Key Cryptography&lt;/em&gt
 required to produce, regulate, disperse, use, store, and revoke x.509 certificates along with manage public-key encryption.&lt;/p&gt;
 &lt;h1 id=&quot;why-pki-is-important&quot;&gt;WHY PKI IS IMPORTANT?&lt;/h1&gt;
 &lt;p&gt;While public-key encryption solves the problem of the data’s legibility by everyone, PKI adds authentication mechanism on top of it.
-Combination of those two mechanism together makes online communication becomes much more trustworthy.&lt;/p&gt;
+Combination of those two mechanism together makes online communication much more trustworthy.&lt;/p&gt;
 &lt;h1 id=&quot;real-life-scenario&quot;&gt;REAL LIFE SCENARIO&lt;/h1&gt;
 
 &lt;p&gt;Let us examine this example:&lt;/p&gt;
