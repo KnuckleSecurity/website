@@ -7,8 +7,8 @@ image: '/assets/img/posts/public-key-infrastructure/2.jpg'
 featured: false
 ---
 
-This post will discuss all the terminologies behind **_Public Key Infrastructure (PKI)_**.
-It is essential to have the knowledge on _Public Key Cryptography_ ,_Encryption_ and _Digital Signing_ as the prequisition.
+This post will discuss all the terminologies behind the **_Public Key Infrastructure (PKI)_**.
+It is essential to have knowledge of _Public Key Cryptography_, _Encryption_ and _Digital Signing_ as the prequisition.
 
 # WHAT IS PKI?
 **_Public Key Infrastructure (PKI)_** is a system on which every connection that requires to establish and manage _Public Key
