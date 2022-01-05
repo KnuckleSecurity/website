@@ -234,6 +234,30 @@
       
     
   
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
 </ul>
                 </div>
               </div>
@@ -284,6 +308,30 @@
       <li class="nav__item">
         <a href="/tag/tryhackme-machines/" class="nav__link">THM</a>
       </li>
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
       
     
   
@@ -501,6 +549,17 @@
             <div class="post__bottom-meta">
               <a href="/about/" class="post__author-link">Burak Baris</a>
               
+              <span>in</span>
+              <span class="post-tags">
+                
+                <a href="/tag/PKI" class="post__tag">PKI</a>
+                
+                <a href="/tag/PKC" class="post__tag">PKC</a>
+                
+                <a href="/tag/x509" class="post__tag">x509</a>
+                
+              </span>
+              
             </div>
           </div>
         
@@ -586,10 +645,10 @@ By <em>signing</em> it digitally. The signature of the CA must be checked to ver
 <ol>
   <li>Robert obtains certificate A that claims to be Ashley’s certificate and issued by X.</li>
   <li>To verify that certificate A is authentic by verifying CA’s signature, Robert gets the public key of X from somewhere, then
-decrypts the <em>encrypted hash</em>, the digital signature, inside of certificate A to see if it matches.</li>
+decrypts the <em>encrypted hash</em>, the digital signature, inside of certificate A.</li>
 </ol>
 
-<p>The question is that Robert just downloaded X’s certificate from somewhere, so how can he tell that it is also authentic? By looking
+<p>The question is that Robert just downloaded X’s certificate from somewhere, so how can he tell that it is also authentic? The answer is, by looking
 at the <em>Issuer</em> of X, which is Y. Now, he must find the Y certificate to verify the signature on the X certificate. We can continue
 to do that endlessly. It becomes an endless loop, and we have to stop at one point.
 <br /><br />To solve this problem we have what we call the <strong><em>Root CAs</em></strong>.</p>
@@ -600,7 +659,7 @@ to do that endlessly. It becomes an endless loop, and we have to stop at one poi
 are what we call <em>self-signed certificates</em>. Since it is not possible to validate self-signed certificates with PKI, Root CAs 
 distribute their keys <em>out-of-band</em> (e.g. out-of-band distribution means non-electronic distributing, such as going to their offices
 and getting their public key in person).
-<br /><br />However, it would be harsh to go to the Root CAs office and collect their public key each time you intend to send an 
+<br /><br />However, it would be harsh to go to the Root CAs office and collect their public key when you want to send an 
 email to somebody. Web browsers come with more than 30 Root CAs. The browsers’ distributors are deciding who are truthful. By
 using their browser, you trust their choice.
 <br /><br />Let us get back to the Ashley and Robert example. If we assume that the certificate Y is a <em>self-signed</em> certificate and the organization Y
@@ -666,7 +725,8 @@ you would like to revocate your X.509 certificate.</p>
 There are meta-data that needs to be bundled which is specified by PKCS#10</p>
 
 <p><br />
-Thank you for reading.</p>
+Further reading and practice about how to create digital signatures and x.509 certificates furthermore how to sign and 
+verify a document or certificate with <a href="https://www.bbsec.net/2022/01/05/OpenSSL-CLI-Tool/"><em>OpenSSL can be found here</em></a>.</p>
 
     </div>
 
@@ -691,6 +751,14 @@ Thank you for reading.</p>
       </a>
       
       
+      <a class="next" href="/2022/01/05/OpenSSL-CLI-Tool/">
+        <img class="post__nav-image lazy" data-src="/assets/img/posts/openssl-cli-tool/sslbanner.png" alt="OpenSSL CLI Tool">
+        <div class="post__nav-box">
+          <div class="post__nav post__nav__next">Next Post <i class="ion ion-md-arrow-forward"></i></div>
+          <h4 class="post__nav__title">OpenSSL CLI Tool</h4>
+        </div>
+      </a>
+      
     </div>
 
   </article>
@@ -704,7 +772,7 @@ Thank you for reading.</p>
 
 
 <div class="container">
-  <div class="related-posts ">
+  <div class="related-posts is-related">
     <div class="row">
       <div class="col col-12">
         <div class="container__inner">
@@ -712,6 +780,81 @@ Thank you for reading.</p>
           <div class="row grid">
 
           
+            
+            
+
+            
+
+            
+
+            <div class="article col col-4 col-d-6 col-t-12 grid__post">
+              <div class="article__inner">
+
+                
+                <a class="article__image" href="/2022/01/05/OpenSSL-CLI-Tool/">
+                  <img class="lazy" data-src="/assets/img/posts/openssl-cli-tool/sslbanner.png" alt="OpenSSL CLI Tool">
+                </a>
+                
+
+                <div class="article__content">
+
+                  <div class="article__meta">
+                    <span class="article__minutes">
+                      
+                      
+                        9 min read
+                      
+                      <time class="article__date"
+                        datetime="2022-01-05T14:00:00+00:00">Jan 5, 2022</time>
+                    </span>
+                  </div>
+
+                  <h2 class="article__title">OpenSSL CLI Tool</h2>
+
+                  <p class="article__excerpt"></p>
+
+                  <div class="article__bottom">
+
+                    
+                    <div class="article__author">
+                      <a href="/about/" aria-label="Burak Baris"><img class="article__author-image lazy" data-src="/images/15.jpg" alt="Burak Baris's Picture"></a>
+                    </div>
+                    
+
+                    <div class="article__bottom-meta">
+                      
+                        <a href="/about/" class="article__author-link">Burak Baris</a>
+                      
+                      
+                      <span>in</span>
+                      <span class="article-tags">
+                        
+                          <a href="/tag/OpenSSL" class="article__tag">OpenSSL</a>
+                        
+                          <a href="/tag/PKI" class="article__tag">PKI</a>
+                        
+                          <a href="/tag/PKC" class="article__tag">PKC</a>
+                        
+                          <a href="/tag/Cryptography" class="article__tag">Cryptography</a>
+                        
+                          <a href="/tag/x509" class="article__tag">x509</a>
+                        
+                          <a href="/tag/Encryption" class="article__tag">Encryption</a>
+                        
+                      </span>
+                      
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+
+            
+                
+              
+            
             
             
 
@@ -822,6 +965,33 @@ Thank you for reading.</p>
     
     <div class="recent-posts">
       
+      <a class="recent-posts__image" href="/2022/01/05/OpenSSL-CLI-Tool/"><img class="lazy" data-src="/assets/img/posts/openssl-cli-tool/sslbanner.png" alt="OpenSSL CLI Tool"></a>
+      
+      <div class="recent-posts__content">
+        <div class="article__meta">
+          <span class="article__minutes">
+            
+            
+              9 min read
+            
+          </span>
+          <time class="article__date"
+            datetime="2022-01-05T14:00:00+00:00">Jan 5, 2022</time>
+        </div>
+        <h4 class="recent-posts__title"><a href="/2022/01/05/OpenSSL-CLI-Tool/">OpenSSL CLI Tool</a></h4>
+        <div class="article__bottom">
+          <div class="article__author">
+            <a href="/about/" aria-label="Burak Baris"><img class="article__author-image lazy" data-src="/images/15.jpg" alt="Burak Baris's Picture"></a>
+          </div>
+          <div class="article__bottom-meta">
+            <a href="/about/" class="article__author-link">Burak Baris</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="recent-posts">
+      
       <a class="recent-posts__image" href="/2022/01/01/public-key-infrastructure/"><img class="lazy" data-src="/assets/img/posts/public-key-infrastructure/2.jpg" alt="Public Key Infrastructure"></a>
       
       <div class="recent-posts__content">
@@ -847,33 +1017,6 @@ Thank you for reading.</p>
       </div>
     </div>
     
-    <div class="recent-posts">
-      
-      <a class="recent-posts__image" href="/2021/12/31/thm-hackpark-ctf-writeup/"><img class="lazy" data-src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/parkbanner.jpg" alt="THM Hackpark CTF Writeup"></a>
-      
-      <div class="recent-posts__content">
-        <div class="article__meta">
-          <span class="article__minutes">
-            
-            
-              3 min read
-            
-          </span>
-          <time class="article__date"
-            datetime="2021-12-31T18:20:00+00:00">Dec 31, 2021</time>
-        </div>
-        <h4 class="recent-posts__title"><a href="/2021/12/31/thm-hackpark-ctf-writeup/">THM Hackpark CTF Writeup</a></h4>
-        <div class="article__bottom">
-          <div class="article__author">
-            <a href="/about/" aria-label="Burak Baris"><img class="article__author-image lazy" data-src="/images/15.jpg" alt="Burak Baris's Picture"></a>
-          </div>
-          <div class="article__bottom-meta">
-            <a href="/about/" class="article__author-link">Burak Baris</a>
-          </div>
-        </div>
-      </div>
-    </div>
-    
 
   </div>
 </div>
@@ -884,7 +1027,7 @@ Thank you for reading.</p>
       <h3 class="widget__title">Explore Tags</h3>
     </div>
     <div class="tag__cloud">
-      <a href="/tag/tryhackme-machines/" class="set-5">TryHackme-Machines</a> <a href="/tag/arch-linux/" class="set-1">arch-linux</a> <a href="/tag/boot-managers/" class="set-1">boot-managers</a> <a href="/tag/bruteforce/" class="set-2">bruteforce</a> <a href="/tag/buffer-overflow/" class="set-1">buffer-overflow</a> <a href="/tag/cracking/" class="set-2">cracking</a> <a href="/tag/ctf/" class="set-5">ctf</a> <a href="/tag/grub/" class="set-1">grub</a> <a href="/tag/ip-addresses/" class="set-1">ip-addresses</a> <a href="/tag/linux/" class="set-1">linux</a> <a href="/tag/linux-privesc/" class="set-1">linux-privesc</a> <a href="/tag/metasploit/" class="set-3">metasploit</a> <a href="/tag/mindows-privesc/" class="set-1">mindows-privesc</a> <a href="/tag/network-protocols/" class="set-1">network protocols</a> <a href="/tag/package-managers/" class="set-1">package-managers</a> <a href="/tag/pentesting/" class="set-5">pentesting</a> <a href="/tag/php/" class="set-1">php</a> <a href="/tag/powershell/" class="set-1">powershell</a> <a href="/tag/remote-code-execution/" class="set-3">remote-code-execution</a> <a href="/tag/reverse-shell/" class="set-1">reverse-shell</a> <a href="/tag/router/" class="set-1">router</a> <a href="/tag/shell-injection/" class="set-1">shell-injection</a> <a href="/tag/sql/" class="set-1">sql</a> <a href="/tag/sql-injection/" class="set-1">sql-injection</a> <a href="/tag/subnetting/" class="set-1">subnetting</a> <a href="/tag/switch/" class="set-1">switch</a> <a href="/tag/unqoted-service-path/" class="set-2">unqoted-service-path</a> <a href="/tag/windows/" class="set-2">windows</a> <a href="/tag/windows-privesc/" class="set-2">windows-privesc</a> <a href="/tag/windows-tokens/" class="set-1">windows-tokens</a>
+      <a href="/tag/cryptography/" class="set-1">Cryptography</a> <a href="/tag/encryption/" class="set-1">Encryption</a> <a href="/tag/openssl/" class="set-1">OpenSSL</a> <a href="/tag/pkc/" class="set-2">PKC</a> <a href="/tag/pki/" class="set-2">PKI</a> <a href="/tag/tryhackme-machines/" class="set-5">TryHackme-Machines</a> <a href="/tag/arch-linux/" class="set-1">arch-linux</a> <a href="/tag/boot-managers/" class="set-1">boot-managers</a> <a href="/tag/bruteforce/" class="set-2">bruteforce</a> <a href="/tag/buffer-overflow/" class="set-1">buffer-overflow</a> <a href="/tag/cracking/" class="set-2">cracking</a> <a href="/tag/ctf/" class="set-5">ctf</a> <a href="/tag/grub/" class="set-1">grub</a> <a href="/tag/ip-addresses/" class="set-1">ip-addresses</a> <a href="/tag/linux/" class="set-1">linux</a> <a href="/tag/linux-privesc/" class="set-1">linux-privesc</a> <a href="/tag/metasploit/" class="set-3">metasploit</a> <a href="/tag/mindows-privesc/" class="set-1">mindows-privesc</a> <a href="/tag/network-protocols/" class="set-1">network protocols</a> <a href="/tag/package-managers/" class="set-1">package-managers</a> <a href="/tag/pentesting/" class="set-5">pentesting</a> <a href="/tag/php/" class="set-1">php</a> <a href="/tag/powershell/" class="set-1">powershell</a> <a href="/tag/remote-code-execution/" class="set-3">remote-code-execution</a> <a href="/tag/reverse-shell/" class="set-1">reverse-shell</a> <a href="/tag/router/" class="set-1">router</a> <a href="/tag/shell-injection/" class="set-1">shell-injection</a> <a href="/tag/sql/" class="set-1">sql</a> <a href="/tag/sql-injection/" class="set-1">sql-injection</a> <a href="/tag/subnetting/" class="set-1">subnetting</a> <a href="/tag/switch/" class="set-1">switch</a> <a href="/tag/unqoted-service-path/" class="set-2">unqoted-service-path</a> <a href="/tag/windows/" class="set-2">windows</a> <a href="/tag/windows-privesc/" class="set-2">windows-privesc</a> <a href="/tag/windows-tokens/" class="set-1">windows-tokens</a> <a href="/tag/x509/" class="set-2">x509</a>
     </div>
   </div>
 </div>

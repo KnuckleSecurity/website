@@ -1,12 +1,21 @@
 [
   
     {
+      "title"    : "OpenSSL CLI Tool",
+      "category" : "",
+      "tags"     : "OpenSSL, PKI, PKC, Cryptography, x509, and Encryption",
+      "url"      : "/2022/01/05/OpenSSL-CLI-Tool/",
+      "date"     : "Jan 5, 2022",
+      "article"  : "<div class='article col col-4 col-d-6 col-t-12 grid__post animate'> <div class='article__inner'><a class='article__image' href='/2022/01/05/OpenSSL-CLI-Tool/'> <img src='/assets/img/posts/openssl-cli-tool/sslbanner.png' alt='OpenSSL CLI Tool'> </a><div class='article__content'> <div class='article__meta'> <span class='article__minutes'>10 min read <time class='article__date' datetime='2022-01-05T14:00:00+00:00'>Jan 5, 2022</time> </span> </div><h2 class='article__title'>OpenSSL CLI Tool</h2> <p class='article__excerpt'></p><div class='article__bottom'><div class='article__author'> <a href='/about/' aria-label='Burak Baris'><img class='article__author-image' src='/images/15.jpg' alt='Burak Baris's Picture'></a> </div><div class='article__bottom-meta'><a href='/about/' class='article__author-link'>Burak Baris</a><span> in </span> <span class='article-tags'> <a href='/tag/OpenSSL' class='article__tag'>OpenSSL</a>  <a href='/tag/PKI' class='article__tag'>PKI</a>  <a href='/tag/PKC' class='article__tag'>PKC</a>  <a href='/tag/Cryptography' class='article__tag'>Cryptography</a>  <a href='/tag/x509' class='article__tag'>x509</a>  <a href='/tag/Encryption' class='article__tag'>Encryption</a> </span></div></div></div></div></div>"
+    } ,
+  
+    {
       "title"    : "Public Key Infrastructure",
       "category" : "",
-      "tags"     : "",
+      "tags"     : "PKI, PKC, and x509",
       "url"      : "/2022/01/01/public-key-infrastructure/",
       "date"     : "Jan 1, 2022",
-      "article"  : "<div class='article col col-4 col-d-6 col-t-12 grid__post animate'> <div class='article__inner'><a class='article__image' href='/2022/01/01/public-key-infrastructure/'> <img src='/assets/img/posts/public-key-infrastructure/2.jpg' alt='Public Key Infrastructure'> </a><div class='article__content'> <div class='article__meta'> <span class='article__minutes'>7 min read <time class='article__date' datetime='2022-01-01T16:00:00+00:00'>Jan 1, 2022</time> </span> </div><h2 class='article__title'>Public Key Infrastructure</h2> <p class='article__excerpt'>Explaining all the terminologies and principles behind Public Key Infrastructure (PKI).</p><div class='article__bottom'><div class='article__author'> <a href='/about/' aria-label='Burak Baris'><img class='article__author-image' src='/images/15.jpg' alt='Burak Baris's Picture'></a> </div><div class='article__bottom-meta'><a href='/about/' class='article__author-link'>Burak Baris</a></div></div></div></div></div>"
+      "article"  : "<div class='article col col-4 col-d-6 col-t-12 grid__post animate'> <div class='article__inner'><a class='article__image' href='/2022/01/01/public-key-infrastructure/'> <img src='/assets/img/posts/public-key-infrastructure/2.jpg' alt='Public Key Infrastructure'> </a><div class='article__content'> <div class='article__meta'> <span class='article__minutes'>7 min read <time class='article__date' datetime='2022-01-01T16:00:00+00:00'>Jan 1, 2022</time> </span> </div><h2 class='article__title'>Public Key Infrastructure</h2> <p class='article__excerpt'>Explaining all the terminologies and principles behind Public Key Infrastructure (PKI).</p><div class='article__bottom'><div class='article__author'> <a href='/about/' aria-label='Burak Baris'><img class='article__author-image' src='/images/15.jpg' alt='Burak Baris's Picture'></a> </div><div class='article__bottom-meta'><a href='/about/' class='article__author-link'>Burak Baris</a><span> in </span> <span class='article-tags'> <a href='/tag/PKI' class='article__tag'>PKI</a>  <a href='/tag/PKC' class='article__tag'>PKC</a>  <a href='/tag/x509' class='article__tag'>x509</a> </span></div></div></div></div></div>"
     } ,
   
     {

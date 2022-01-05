@@ -4,6 +4,7 @@ title: Public Key Infrastructure
 date: 2022-01-01 16:00
 description: Explaining all the terminologies and principles behind Public Key Infrastructure (PKI).
 image: '/assets/img/posts/public-key-infrastructure/2.jpg'
+tags: [PKI, PKC, x509]
 featured: false
 ---
 
@@ -69,9 +70,9 @@ Let us continue to the Robert and Ashley example above:
 
 1. Robert obtains certificate A that claims to be Ashley's certificate and issued by X.
 2. To verify that certificate A is authentic by verifying CA's signature, Robert gets the public key of X from somewhere, then
-decrypts the _encrypted hash_, the digital signature, inside of certificate A to see if it matches. 
+decrypts the _encrypted hash_, the digital signature, inside of certificate A.
 
-The question is that Robert just downloaded X's certificate from somewhere, so how can he tell that it is also authentic? By looking
+The question is that Robert just downloaded X's certificate from somewhere, so how can he tell that it is also authentic? The answer is, by looking
 at the _Issuer_ of X, which is Y. Now, he must find the Y certificate to verify the signature on the X certificate. We can continue
 to do that endlessly. It becomes an endless loop, and we have to stop at one point.
 <br><br>To solve this problem we have what we call the **_Root CAs_**.
@@ -82,7 +83,7 @@ A **_top-level, root CA_** is a certificate authority that sits on the top of th
 are what we call _self-signed certificates_. Since it is not possible to validate self-signed certificates with PKI, Root CAs 
 distribute their keys _out-of-band_ (e.g. out-of-band distribution means non-electronic distributing, such as going to their offices
 and getting their public key in person).
-<br><br>However, it would be harsh to go to the Root CAs office and collect their public key each time you intend to send an 
+<br><br>However, it would be harsh to go to the Root CAs office and collect their public key when you want to send an 
 email to somebody. Web browsers come with more than 30 Root CAs. The browsers' distributors are deciding who are truthful. By
 using their browser, you trust their choice.
 <br><br>Let us get back to the Ashley and Robert example. If we assume that the certificate Y is a _self-signed_ certificate and the organization Y
@@ -146,4 +147,5 @@ In order to get a certificate signed by a Root CA, a _Certificate Signing Reques
 There are meta-data that needs to be bundled which is specified by PKCS#10
 
 <br>
-Thank you for reading.
+Further reading and practice about how to create digital signatures and x.509 certificates furthermore how to sign and 
+verify a document or certificate with [_OpenSSL can be found here_](https://www.bbsec.net/2022/01/05/OpenSSL-CLI-Tool/).
