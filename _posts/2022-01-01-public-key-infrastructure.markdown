@@ -4,7 +4,7 @@ title: Public Key Infrastructure
 date: 2022-01-01 16:00
 description: Explaining all the terminologies and principles behind Public Key Infrastructure (PKI).
 image: '/assets/img/posts/public-key-infrastructure/2.jpg'
-tags: [PKI, PKC, x509]
+tags: [PKI, PKC, x509, Cryptography]
 featured: false
 ---
 

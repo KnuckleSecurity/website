@@ -164,10 +164,10 @@
 <loc>http://localhost:4000/tag/x509/</loc>
 </url>
 <url>
-<loc>http://localhost:4000/tag/openssl/</loc>
+<loc>http://localhost:4000/tag/cryptography/</loc>
 </url>
 <url>
-<loc>http://localhost:4000/tag/cryptography/</loc>
+<loc>http://localhost:4000/tag/openssl/</loc>
 </url>
 <url>
 <loc>http://localhost:4000/tag/encryption/</loc>
