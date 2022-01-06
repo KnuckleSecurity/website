@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: subpages
 title: Socials
 permalink: /socials/
 image: '/images/pic31.jpg'

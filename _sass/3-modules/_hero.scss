@@ -10,6 +10,16 @@
     margin-bottom: 32px;
   }
 }
+.herosubpages {
+  position: relative;
+  margin-bottom: 32px;
+  overflow: hidden;
+  background-color: $dark;
+  @media only screen and (max-width: $mobile) {
+    box-shadow: none;
+  }
+}
+
 
 .hero__inner {
   &::before {
