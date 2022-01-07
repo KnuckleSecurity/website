@@ -2,10 +2,12 @@
 *, *::after, *::before {
   box-sizing: border-box;
 }
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital@1&family=Space+Mono&display=swap');
+//@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital@1&family=Space+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins&family=Roboto+Mono:ital@1&family=Space+Mono&display=swap');
 body {
   //font-family: $base-font-family;
-  font-family: 'Roboto Mono', monospace;
+  //font-family: 'Roboto Mono', monospace;
+  font-family: 'Poppins';
   font-size: $base-font-size;
   line-height: $base-line-height;
   color: $text-color;
@@ -60,7 +62,7 @@ h4,
 h5,
 h6 {
   //font-family: $base-font-family;
-  font-family: 'Roboto Mono', monospace;
+  font-family: 'Poppins';
   //font-family: $heading-font-family;
   font-weight: $heading-font-weight;
   line-height: $heading-line-height;
