@@ -2,8 +2,17 @@
 layout: subpages
 title: Socials
 permalink: /socials/
-image: '/images/pic31.jpg'
+image: '/images/pic32.jpg'
 ---
+
+<div class="img-container"> 
+   <img src='/images/avatar-circle.png'><br><br><br><br><br>
+</div>
+<style>
+    .img-container {
+        text-align: center;
+    }
+</style>
 
 <i class="fab fa-linkedin"></i>
 LinkedIn: [**/burak-baris**](https://www.linkedin.com/in/burak-baris/)<br>

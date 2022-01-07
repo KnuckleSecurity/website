@@ -1,4 +1,13 @@
-I"<p><i class="fab fa-linkedin"></i>
+I"Î<div class="img-container"> 
+   <img src="/images/avatar-circle.png" /><br /><br /><br /><br /><br />
+</div>
+<style>
+    .img-container {
+        text-align: center;
+    }
+</style>
+
+<p><i class="fab fa-linkedin"></i>
 LinkedIn: <a href="https://www.linkedin.com/in/burak-baris/"><strong>/burak-baris</strong></a><br /></p>
 
 <p><i class="fab fa-github-square"></i>
