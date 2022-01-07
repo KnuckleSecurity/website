@@ -5,7 +5,7 @@ description:   Hack into a Mr. Robot themed Windows machine. Use metasploit for 
 date:   2021-12-23 00:50:00 +0300
 image:   '/assets/img/posts/tryhackme-steel-mountain-ctf-writeup/steelbanner.jpg'
 tags:   [TryHackme Machines,ctf,pentesting,remote-code-execution,windows-privesc,powershell,metasploit,unqoted-service-path]
-featured: false
+featured: true
 ---
 [**Solve Yourself >>**](https://tryhackme.com/room/steelmountain)
 
