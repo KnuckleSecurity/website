@@ -8,7 +8,7 @@ tags:   [TryHackme Machines,ctf,pentesting,metasploit,mindows-privesc,windows-to
 featured:   false
 ---
 
-[**Solve Yourself >>**](https://www.tryhackme.com/room/blue)
+[**Solve Yourself >>**](https://www.tryhackme.com/room/alfred)
 
 # ENUMERATION
 
