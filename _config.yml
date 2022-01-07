@@ -52,7 +52,7 @@ disqus-identifier: burakbaris # Add your shortname for Disqus Comment. For examp
 
 #-------------------------------
 # Google Analytics
-google-analytics: UA-216471286-1 # Add your identifier. For example UA-99631805-1.
+google-analytics: #UA-216471286-1 Add your identifier. For example UA-99631805-1.
 
 
 #-------------------------------

