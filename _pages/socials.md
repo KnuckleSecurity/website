@@ -1,12 +1,17 @@
 ---
-layout: subpages
+layout: lay-socials
 title: Socials
 permalink: /socials/
 image: '/images/pic32.jpg'
 ---
-
+<br>
+<br>
+<br>
+<br>
+<br>
 <div class="img-container"> 
-   <img src='/images/avatar-circle.png'><br><br><br><br><br>
+   <img src='/images/avatar-circle.png'><br>
+   <h1>SOCIALS</h1>
 </div>
 <style>
     .img-container {
