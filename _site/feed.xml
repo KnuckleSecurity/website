@@ -5,8 +5,8 @@
     <description>Burak Baris</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 07 Jan 2022 20:51:23 +0000</pubDate>
-    <lastBuildDate>Fri, 07 Jan 2022 20:51:23 +0000</lastBuildDate>
+    <pubDate>Fri, 07 Jan 2022 21:07:09 +0000</pubDate>
+    <lastBuildDate>Fri, 07 Jan 2022 21:07:09 +0000</lastBuildDate>
     <generator>Jekyll v4.2.1</generator>
     
       <item>
@@ -940,6 +940,18 @@ Voilà! We are the administrator now.
         
         <category>pentesting</category>
         
+        <category>metasploit</category>
+        
+        <category>mindows-privesc</category>
+        
+        <category>bruteforce</category>
+        
+        <category>remote-code-execution</category>
+        
+        <category>directory-traversal</category>
+        
+        <category>autorun-privesc</category>
+        
         
       </item>
     
@@ -1326,6 +1338,8 @@ By doing that, we have camouflaged our malicious process into a safer looking on
         <category>bruteforce</category>
         
         <category>remote-code-execution</category>
+        
+        <category>jenkins</category>
         
         
       </item>

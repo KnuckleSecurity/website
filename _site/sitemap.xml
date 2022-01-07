@@ -155,6 +155,15 @@
 <loc>http://localhost:4000/tag/windows-tokens/</loc>
 </url>
 <url>
+<loc>http://localhost:4000/tag/jenkins/</loc>
+</url>
+<url>
+<loc>http://localhost:4000/tag/directory-traversal/</loc>
+</url>
+<url>
+<loc>http://localhost:4000/tag/autorun-privesc/</loc>
+</url>
+<url>
 <loc>http://localhost:4000/tag/pki/</loc>
 </url>
 <url>

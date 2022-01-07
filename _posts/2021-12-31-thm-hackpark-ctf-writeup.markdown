@@ -4,7 +4,7 @@ description: Bruteforce a websites login with Hydra, identify and use a public e
 title: THM Hackpark CTF Writeup
 date: 2021-12-31 18:20
 image: '/assets/img/posts/tryhackme-hackpark-ctf-writeup/parkbanner.jpg'
-tags: [TryHackme Machines,ctf,pentesting]
+tags: [TryHackme Machines,ctf,pentesting,metasploit,mindows-privesc,bruteforce,remote-code-execution,directory-traversal,autorun-privesc]
 featured: false
 ---
 
