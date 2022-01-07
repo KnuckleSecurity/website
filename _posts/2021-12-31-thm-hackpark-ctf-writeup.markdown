@@ -115,7 +115,7 @@ After logging in to the panel, under the About tab, we can see the version of th
 if there is any vulnerability on that version. I will use the **searchsploit** utility, the CLI version
 of the Exploit-db.
 ![](/assets/img/posts/tryhackme-hackpark-ctf-writeup/12.png)<br>
-Multiple different exploits showed up. However, the first one is the 3.3.6 version specific. We are going to
+Multiple different exploits showed up. However, the first one is specifically for the version 3.3.6. We are going to
 use that. [Click to read more about _File Path, Directory Traversal_](https://portswigger.net/web-security/file-path-traversal).
 <br><br>
 ## Hacking into the user's shell

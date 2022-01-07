@@ -5,8 +5,8 @@
     <description>Burak Baris</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 07 Jan 2022 21:09:59 +0000</pubDate>
-    <lastBuildDate>Fri, 07 Jan 2022 21:09:59 +0000</lastBuildDate>
+    <pubDate>Fri, 07 Jan 2022 21:15:54 +0000</pubDate>
+    <lastBuildDate>Fri, 07 Jan 2022 21:15:54 +0000</lastBuildDate>
     <generator>Jekyll v4.2.1</generator>
     
       <item>
@@ -819,7 +819,7 @@ After logging in to the panel, under the About tab, we can see the version of th
 if there is any vulnerability on that version. I will use the &lt;strong&gt;searchsploit&lt;/strong&gt; utility, the CLI version
 of the Exploit-db.
 &lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/12.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
-Multiple different exploits showed up. However, the first one is the 3.3.6 version specific. We are going to
+Multiple different exploits showed up. However, the first one is specifically for the version 3.3.6. We are going to
 use that. &lt;a href=&quot;https://portswigger.net/web-security/file-path-traversal&quot;&gt;Click to read more about &lt;em&gt;File Path, Directory Traversal&lt;/em&gt;&lt;/a&gt;.
 &lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;h2 id=&quot;hacking-into-the-users-shell&quot;&gt;Hacking into the user’s shell&lt;/h2&gt;
