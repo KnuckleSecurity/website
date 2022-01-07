@@ -180,4 +180,4 @@ You will need to repeat previous steps to get the root flag. Download **Advanced
 **certutil**, start a Netcat listener and restart the service.
 <br>
 <br>
-Thank you for following, wish you more penetrations ;)
+That is the end for this machine, wish you more penetrations ;)

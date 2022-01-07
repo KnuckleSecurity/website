@@ -228,4 +228,3 @@ Then, replace the real binary with the malicious backdoor.
 ![](/assets/img/posts/tryhackme-hackpark-ctf-writeup/34.png)<br>
 Voilà! We are the administrator now.
 ![](/assets/img/posts/tryhackme-hackpark-ctf-writeup/35.png)<br>
-<br><br>Thanks for reading.

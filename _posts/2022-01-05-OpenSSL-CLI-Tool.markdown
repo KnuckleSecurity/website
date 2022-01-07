@@ -469,4 +469,3 @@ root@bbsec:~$ openssl pkcs12 -info -in p12cert.p12
 {% highlight bash %}
 openssl req -new -x509 -newkey rsa:2048 -out new_cert.cer -keyout new_key.pem
 {% endhighlight %}
-

@@ -5,8 +5,8 @@
     <description>Burak Baris</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 07 Jan 2022 20:34:35 +0000</pubDate>
-    <lastBuildDate>Fri, 07 Jan 2022 20:34:35 +0000</lastBuildDate>
+    <pubDate>Fri, 07 Jan 2022 20:50:50 +0000</pubDate>
+    <lastBuildDate>Fri, 07 Jan 2022 20:50:50 +0000</lastBuildDate>
     <generator>Jekyll v4.2.1</generator>
     
       <item>
@@ -928,8 +928,7 @@ Then, replace the real binary with the malicious backdoor.
 &lt;br /&gt;&lt;br /&gt;Sit back and wait for session to initialize.
 &lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/34.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
 Voilà! We are the administrator now.
-&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/35.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
-&lt;br /&gt;&lt;br /&gt;Thanks for reading.&lt;/p&gt;
+&lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/35.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;/p&gt;
 </description>
         <pubDate>Fri, 31 Dec 2021 18:20:00 +0000</pubDate>
         <link>http://localhost:4000/2021/12/31/thm-hackpark-ctf-writeup/</link>
@@ -1306,8 +1305,7 @@ By doing that, we have camouflaged our malicious process into a safer looking on
 
 &lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;C:&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\W&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;indows&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\s&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;ystem32&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\c&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;onfig&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\r&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;oot.txt&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-&lt;p&gt;&lt;br /&gt;
-Thanks for reading :)&lt;/p&gt;
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 </description>
         <pubDate>Tue, 28 Dec 2021 08:40:00 +0000</pubDate>
         <link>http://localhost:4000/2021/12/28/thm-alfred-ctf-writeup/</link>
@@ -1618,8 +1616,6 @@ have fun after that point :))).
 
 &lt;p&gt;Enjoy your safely created service.
 &lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/35.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;Thanks for reading.&lt;/p&gt;
 </description>
         <pubDate>Thu, 23 Dec 2021 00:59:00 +0000</pubDate>
         <link>http://localhost:4000/2021/12/23/unquoted-service-path-vulnerability/</link>
@@ -1875,7 +1871,7 @@ You will need to repeat previous steps to get the root flag. Download &lt;strong
 &lt;strong&gt;certutil&lt;/strong&gt;, start a Netcat listener and restart the service.
 &lt;br /&gt;
 &lt;br /&gt;
-Thank you for following, wish you more penetrations ;)&lt;/p&gt;
+That is the end for this machine, wish you more penetrations ;)&lt;/p&gt;
 </description>
         <pubDate>Wed, 22 Dec 2021 21:50:00 +0000</pubDate>
         <link>http://localhost:4000/2021/12/22/thm-steel-mountain-ctf-writeup/</link>

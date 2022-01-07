@@ -172,5 +172,4 @@ bash -p
 <br>
 As you can see euid (Effective user id) set to 0 which belongs to root.Now you can get the root flag.
 
-That is all for this machine, thank you for reading :)
-
+That is all for this machine.

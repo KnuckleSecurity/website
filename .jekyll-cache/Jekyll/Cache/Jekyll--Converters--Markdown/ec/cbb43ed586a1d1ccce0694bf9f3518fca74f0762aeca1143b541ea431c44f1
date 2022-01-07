@@ -1,0 +1,249 @@
+I"�4<p><a href="https://www.tryhackme.com/room/vulnversity"><strong>Solve Yourself »</strong></a></p>
+
+<p>Vulnversity is a machine that combines reconnaissance, web attack vectors and privilege escalation methods together.
+<br />
+<br /></p>
+<h2 id="1-enumeration">1-Enumeration</h2>
+<p>Let’s start with enumerating the host.I will use Network Mapper <strong>nmap</strong> tool in order to scan and probe opened ports and active services to find my attack vector.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Parameter</th>
+      <th style="text-align: left">Functionality</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">-sS</td>
+      <td style="text-align: left">SYN Stealth Scan (Half TCP Connect scan)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-sV</td>
+      <td style="text-align: left">Probe open ports to determine service/version info</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-O</td>
+      <td style="text-align: left">Enable OS detection.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-T4</td>
+      <td style="text-align: left">T{0-5} Set scan speed, higher is faster.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-p-</td>
+      <td style="text-align: left">Scan all 65536 ports.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-oN</td>
+      <td style="text-align: left">Outputfile</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Full command:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">nmap <span class="o">{</span>machine IP<span class="o">}</span> <span class="nt">-sV</span> <span class="nt">-sS</span> <span class="nt">-O</span> <span class="nt">-T4</span> <span class="nt">-p-</span> <span class="nt">-oN</span> vulnversity.nmap</code></pre></figure>
+
+<p><img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln2.jpg" alt="Desktop View" />
+<br />
+To create our attack vector.If you do your research and investigate whether one of these services have any vulnerabilities or not, you will return to your home empty handed.You can try anonymous login to FTP protocol, or try to make a SSH connection but you would fail just like I did.None of these services have any vulnerabilities that would put us in the target system.</p>
+
+<p>Other than that <strong>“3333/tcp open  http   Apache httpd 2.4.18 ((Ubuntu))”</strong> catches the eye, so lets start to investigate the webpage that the host is running on its port 3333.</p>
+
+<p><img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln3.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
+<br />
+Fire up your browser and type <strong>{machine IP}:3333</strong> to your address bar.You will see the webpage shown above.Nothing suspicious there, so lets start to extract the directories with the help of the <code class="language-plaintext highlighter-rouge">gobuster</code> tool.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Parameter</th>
+      <th style="text-align: left">Functionality</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">dir -u</td>
+      <td style="text-align: left">URL and the port where web server is running</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-w</td>
+      <td style="text-align: left">Wordlist that contains possible directory names</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Full command:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">gobuster <span class="nb">dir</span> <span class="nt">-u</span> http://<span class="o">{</span>MachineIP<span class="o">}</span>:3333 <span class="nt">-w</span> /usr/share/wordlists/seclists/Discovery/Web-Content/common.txt</code></pre></figure>
+
+<p><a href="https://github.com/danielmiessler/SecLists"><strong>Seclist’s Wordlist Pack »</strong></a>
+<img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln4.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
+<br />
+Let’s go for <strong>http://[IP]:3333/internal</strong>
+<img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln5.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
+<br />
+It seems like we’ve find our playground :) Website have got an upload functionality.
+<br />
+<br /></p>
+<h2 id="2-exploitation">2-Exploitation</h2>
+<p>First thing came into my mind was to upload a php reverse shell, so let’s try it out.</p>
+
+<p><a href="https://github.com/krygeNNN/phpenumerate"><strong>PHP Reverse Shell Script »</strong></a>
+<img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln6.jpg" alt="Desktop View" class="shadow normal" style="max-width: 80%" /> <br />
+Download the script by using <strong>curl</strong>.However in order to make it work, we need to make some configurations in the script to make it work.</p>
+
+<p><img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln7.jpg" alt="Desktop View" class="shadow normal" style="max-width: 80%" /> <br />
+Change <strong>$ip</strong> to your own machines ip (tryhackme’s vpn tunnel) ,define the port as any random <strong>$port</strong>.I’ve changed it to the 8888 while it was 1234 by default.</p>
+
+<p>Configurations are all done ! Now, it is time for us to upload the reverse shell to the web server.<br />
+<img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln8.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
+<br />
+<strong>Note</strong>:My machine shutted it down while creating this post, so I had to restart it. That is why the ip have changed, don’t worry :)</p>
+
+<p>It seems like .php extension is not allowed.However ,php extension is not the only extension that we can use, we have got couple more.You can try all of them manually, but come on, let’s write a python script :)) 
+<img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln9.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
+<br />
+<a href="https://www.tryhackme.com/room/vulnversity"><strong>Download the php bruter script »</strong></a>
+Run it.
+<img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln10.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
+<br />
+<strong>.phtml</strong> is the working extension. Rename the payload, <strong>php_reverse_shell.php</strong> into <strong>php_reverse_shell.phtml</strong>, and than upload it.</p>
+
+<p><img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln11.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
+<br />
+Now we have successfully injected our reverse shell script.However we also need to listen incoming connections from the server.Therefore we will use Netcat (<strong>nc</strong>) to listen to the port 8888, which we set in the script before.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Parameter</th>
+      <th style="text-align: left">Functionality</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">-n</td>
+      <td style="text-align: left">Do not resolve hostnames via DNS</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-l</td>
+      <td style="text-align: left">Bind and listen for incoming connections</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-v</td>
+      <td style="text-align: left">Set verbosity level (can be used several times)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-p</td>
+      <td style="text-align: left">Specify source port to use</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Full command:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">nc <span class="nt">-nvlp</span> 8888</code></pre></figure>
+
+<p><img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln12.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
+<br />
+While listening to port 8888, we need to activate the script that we just uploaded.
+<img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln13.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
+<br />
+Visit this URL » <strong>http://{machineIP}:3333/internals/uploads</strong>, and than click to the reverse php 
+shell script that you have uploaded.</p>
+
+<p><img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln14.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
+<br />
+Excellent, we are in !
+<br />
+<br /></p>
+<h2 id="3-flag-capturing-and-privilege-eseclation">3-Flag Capturing and Privilege Eseclation</h2>
+<p>Nevertheless, this shell is not stable righ now, we need to spawn a python shell.
+<br />Run those in order:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">python <span class="nt">-c</span> <span class="s1">'import pty;pty.spawn("/bin/bash")'</span>
+<span class="nb">export </span><span class="nv">TERM</span><span class="o">=</span>xterm</code></pre></figure>
+
+<p><img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln15.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
+<br /></p>
+
+<h4 id="1-user-flag">1-User Flag</h4>
+<p><img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln16.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
+<br />
+In order to get root flag, we have to escalate our privileges, let’s search for SUID binaries.If you are not familiar with SUID executables, I recommend you to make your research, than come back, but basically, when you executing a SUID file, you are executing it with it’s owner’s permissions.We will use <strong>find</strong> command to scan for those binaries.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Parameter</th>
+      <th style="text-align: left">Functionality</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">/</td>
+      <td style="text-align: left">Search from the root directory</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-type f</td>
+      <td style="text-align: left">Only search for files</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-user root</td>
+      <td style="text-align: left">Only find the files owned by root</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">-perm -u=s</td>
+      <td style="text-align: left">Only find the files with SUID bit set</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">2&gt;/dev/null</td>
+      <td style="text-align: left">Redirect all stderr outputs to device null</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Full command:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">find <span class="nt">-type</span> f <span class="nt">-user</span> root <span class="nt">-perm</span> <span class="nt">-u</span><span class="o">=</span>s 2&gt;/dev/null</code></pre></figure>
+
+<p><img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln17.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
+<br />
+Some of those binaries have set uid bit by default, however <strong>/bin/systemctl</strong> should not have that SUID permission by default,so let’s search how we can exploit that.
+<br />
+<a href="https://gtfobins.github.io/"><strong>GTFOBins »</strong></a>
+<br />
+GTFOBins is a github project, and it is curated list of Unix binaries that can be used to bypass local security restrictions in misconfigured systems.Click the link given above and search fore <strong>systemctl</strong>.
+<img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln18.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
+<br />
+t seems like one way to exploit that SUID set systemctl is creating a temporary service.Since systemctl’s burden is coordinate the services, it makes sense.However we will need to configure that service file.</p>
+<h4 id="service-file">Service file</h4>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">TF</span><span class="o">=</span><span class="si">$(</span><span class="nb">mktemp</span><span class="si">)</span>.service
+<span class="nb">echo</span> <span class="s1">'[Service]
+Type=oneshot
+ExecStart=/bin/bash -c "chmod +s /bin/bash"
+[Install]
+WantedBy=multi-user.target'</span> <span class="o">&gt;</span> <span class="nv">$TF</span>
+/bin/systemctl <span class="nb">link</span> <span class="nv">$TF</span>
+/bin/systemctl <span class="nb">enable</span> <span class="nt">--now</span> <span class="nv">$TF</span></code></pre></figure>
+
+<p>I have manually changed the systemctl location in the given code from relative to static directory,and also ExecStart will set SUID perm to /bin/bash.</p>
+
+<p>Copy and paste the lines given above to shell (Press enter two times after you paste it), and than check the /bin/bash’s file permissions.
+<img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln19.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
+<br />
+As you can see, /bin/bash binary now have ‘s’ permission, which indicates that it is a SUID executable.
+<br />Run:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">bash <span class="nt">-p</span></code></pre></figure>
+
+<h4 id="2-root-flag">2-Root Flag</h4>
+<p><img src="/assets/img/posts/tryhackme-vulnversity-ctf-writeup/vuln20.jpg" alt="Desktop View" style="max-width: 80%" class="normal" /> 
+<br />
+As you can see euid (Effective user id) set to 0 which belongs to root.Now you can get the root flag.</p>
+
+<p>That is all for this machine.</p>
+:ET

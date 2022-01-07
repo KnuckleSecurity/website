@@ -298,4 +298,3 @@ By doing that, we have camouflaged our malicious process into a safer looking on
 cat "C:\Windows\system32\config\root.txt"
 {% endhighlight %}
 <br>
-Thanks for reading :)
