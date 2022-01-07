@@ -7,6 +7,9 @@ image:  '/assets/img/posts/tryhackme-alfred-ctf-writeup/alfredbanner.png'
 tags:   [TryHackme Machines,ctf,pentesting,metasploit,mindows-privesc,windows-tokens,bruteforce,remote-code-execution,jenkins]
 featured:   false
 ---
+
+[**Solve Yourself >>**](https://www.tryhackme.com/room/blue)
+
 # ENUMERATION
 
 Run Network Mapper (**nmap**) on Alfred machine to discover opened ports and services.   

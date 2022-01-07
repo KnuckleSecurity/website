@@ -8,6 +8,8 @@ tags: [TryHackme Machines,ctf,pentesting,metasploit,mindows-privesc,bruteforce,r
 featured: false
 ---
 
+[**Solve Yourself >>**](https://tryhackme.com/room/hackpark)
+
 # ENUMERATION
 
 Run Network Mapper (**nmap**) on Hackpark machine to discover opened ports and services.   
