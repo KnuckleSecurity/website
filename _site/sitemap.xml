@@ -2,19 +2,19 @@
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://localhost:4000/2021/10/08/thm-blue-ctf-writeup/</loc>
-<lastmod>2021-10-08T22:59:35+01:00</lastmod>
+<lastmod>2021-10-08T21:59:35+00:00</lastmod>
 </url>
 <url>
 <loc>http://localhost:4000/2021/10/09/thm-vulnversity-ctf-writeup/</loc>
-<lastmod>2021-10-09T18:04:00+01:00</lastmod>
+<lastmod>2021-10-09T18:04:00+00:00</lastmod>
 </url>
 <url>
 <loc>http://localhost:4000/2021/10/11/Downgrading-broken-packages/</loc>
-<lastmod>2021-10-11T22:59:35+01:00</lastmod>
+<lastmod>2021-10-11T21:59:35+00:00</lastmod>
 </url>
 <url>
 <loc>http://localhost:4000/2021/10/13/Sql-injection/</loc>
-<lastmod>2021-10-13T10:00:35+01:00</lastmod>
+<lastmod>2021-10-13T09:00:35+00:00</lastmod>
 </url>
 <url>
 <loc>http://localhost:4000/2021/11/18/subnetting/</loc>
@@ -186,6 +186,6 @@
 </url>
 <url>
 <loc>http://localhost:4000/assets/documents/Burak-Baris-CV.pdf</loc>
-<lastmod>2021-12-28T17:47:38+00:00</lastmod>
+<lastmod>2022-01-11T05:08:02+00:00</lastmod>
 </url>
 </urlset>

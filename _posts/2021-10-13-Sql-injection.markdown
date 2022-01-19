@@ -655,5 +655,7 @@ If this was the case, we could not see any result of the query on the screen, ne
 images nor titles etc. Also can not perform error based sqli due to exception handling added.How we can extract any data, even make sure there is a sql injection vulnerability when our eyes are blind ?
 <br>
 <br>
+This whole post is a transcript of Mehmet Deniz İnce's live broadcast. 
+If you know the lagnuage, you can watch the original version [here](https://www.youtube.com/watch?v=WtHnT73NaaQ&t=3577s).
 <br>
 To be continued
