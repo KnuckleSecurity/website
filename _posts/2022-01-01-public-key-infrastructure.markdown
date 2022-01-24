@@ -102,7 +102,7 @@ Using ASN.1, it is possible to define data structures that
 can be transmitted over the network independently of software or hardware.
 ### DER, PEM, XER, PER, BER, CER
 Those are some of the popular encoding rules for ASN.1. 
-<br>_DER_ and _PEM_ are the used.
+<br>_DER_ and _PEM_ are the most used.
 ## Algorithm
 When the context is the PKI, it refers to cryptographic algorithms like "SHA1 with DSA", "SHA1 with RSA", etc. In order to
 achieve cryptographic signing, first, we need to hash the data, then encrypt the hash. "SHA1 with RSA" would indicate that the

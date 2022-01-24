@@ -5,8 +5,8 @@
     <description>Burak Baris</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sat, 15 Jan 2022 23:47:36 +0000</pubDate>
-    <lastBuildDate>Sat, 15 Jan 2022 23:47:36 +0000</lastBuildDate>
+    <pubDate>Wed, 19 Jan 2022 02:43:47 +0000</pubDate>
+    <lastBuildDate>Wed, 19 Jan 2022 02:43:47 +0000</lastBuildDate>
     <generator>Jekyll v4.2.1</generator>
     
       <item>
@@ -1356,7 +1356,7 @@ By doing that, we have camouflaged our malicious process into a safer looking on
 quoting surrounding the path string, and if the path contains spaces, that can end up with a &lt;strong&gt;privilege escalation&lt;/strong&gt; with the
 permissions of whoever created the service.&lt;/p&gt;
 
-&lt;h1 id=&quot;how-it-works-&quot;&gt;How it works ?&lt;/h1&gt;
+&lt;h1 id=&quot;how-it-works&quot;&gt;How it works?&lt;/h1&gt;
 
 &lt;p&gt;Typically &lt;a href=&quot;https://en.wikipedia.org/wiki/Service_Control_Manager&quot;&gt;&lt;strong&gt;Service Control Manager&lt;/strong&gt;&lt;/a&gt; will run the service’s executable
 by looking at its full path.&lt;/p&gt;
@@ -2856,6 +2856,8 @@ to extract data the database.&lt;/p&gt;
 images nor titles etc. Also can not perform error based sqli due to exception handling added.How we can extract any data, even make sure there is a sql injection vulnerability when our eyes are blind ?
 &lt;br /&gt;
 &lt;br /&gt;
+This whole post is a transcript of Mehmet Deniz İnce’s live broadcast. 
+If you know the lagnuage, you can watch the original version &lt;a href=&quot;https://www.youtube.com/watch?v=WtHnT73NaaQ&amp;amp;t=3577s&quot;&gt;here&lt;/a&gt;.
 &lt;br /&gt;
 To be continued&lt;/p&gt;
 </description>
