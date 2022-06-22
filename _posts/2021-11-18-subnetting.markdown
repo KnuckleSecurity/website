@@ -8,7 +8,7 @@ featured: false
 ---
 # WHAT IS SUBNETTING ?
 
-As the name suggest, subnetting means dividing a network into sub branches. For example, you have a class with 50 students,
+As the name suggests, subnetting means dividing a network into sub branches. For example, you have a class with 50 students,
 if you divide them into two groups, you will have two subclasses, 25 students per class. Subetting is just the same however,
 instead of class, this time it is the network which is going to be divided into **smaller chunks**.
 
