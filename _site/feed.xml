@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>:~$ BBSec_</title>
+    <title>:~$ Knuckle$ecurity_</title>
     <description>Burak Baris</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Wed, 19 Jan 2022 02:43:47 +0000</pubDate>
-    <lastBuildDate>Wed, 19 Jan 2022 02:43:47 +0000</lastBuildDate>
+    <pubDate>Thu, 28 Jul 2022 17:15:59 +0000</pubDate>
+    <lastBuildDate>Thu, 28 Jul 2022 17:15:59 +0000</lastBuildDate>
     <generator>Jekyll v4.2.1</generator>
     
       <item>
@@ -593,7 +593,7 @@ Using ASN.1, it is possible to define data structures that
 can be transmitted over the network independently of software or hardware.&lt;/p&gt;
 &lt;h3 id=&quot;der-pem-xer-per-ber-cer&quot;&gt;DER, PEM, XER, PER, BER, CER&lt;/h3&gt;
 &lt;p&gt;Those are some of the popular encoding rules for ASN.1. 
-&lt;br /&gt;&lt;em&gt;DER&lt;/em&gt; and &lt;em&gt;PEM&lt;/em&gt; are the used.&lt;/p&gt;
+&lt;br /&gt;&lt;em&gt;DER&lt;/em&gt; and &lt;em&gt;PEM&lt;/em&gt; are the most used.&lt;/p&gt;
 &lt;h2 id=&quot;algorithm&quot;&gt;Algorithm&lt;/h2&gt;
 &lt;p&gt;When the context is the PKI, it refers to cryptographic algorithms like “SHA1 with DSA”, “SHA1 with RSA”, etc. In order to
 achieve cryptographic signing, first, we need to hash the data, then encrypt the hash. “SHA1 with RSA” would indicate that the
@@ -2154,7 +2154,7 @@ this first. If there is no packet loss, you can start to explore other possibili
         <title>Subnetting</title>
         <description>&lt;h1 id=&quot;what-is-subnetting-&quot;&gt;WHAT IS SUBNETTING ?&lt;/h1&gt;
 
-&lt;p&gt;As the name suggest, subnetting means dividing a network into sub branches. For example, you have a class with 50 students,
+&lt;p&gt;As the name suggests, subnetting means dividing a network into sub branches. For example, you have a class with 50 students,
 if you divide them into two groups, you will have two subclasses, 25 students per class. Subetting is just the same however,
 instead of class, this time it is the network which is going to be divided into &lt;strong&gt;smaller chunks&lt;/strong&gt;.&lt;/p&gt;
 

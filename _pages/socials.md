@@ -23,13 +23,13 @@ image: '/images/pic32.jpg'
 LinkedIn: [**/burak-baris**](https://www.linkedin.com/in/burak-baris/)<br>
 
 <i class="fab fa-github-square"></i>
-GitHub: [**/krygeNNN**](https://github.com/krygeNNN)<br>
+GitHub: [**/KnuckleSecurity**](https://github.com/KnuckleSecurity)<br>
 
 <i class="fas fa-envelope-square"></i>
-Mail: **imbarisburak_buisiness@protonmail.com**<br>
+Mail: **burak@knucklesecurity.com**<br>
 
 <i class="fab fa-twitter-square"></i>
-Twitter: [**/Krygen2**](https://twitter.com/Krygen2)<br>
+Twitter: [**/KnuckleSec**](https://twitter.com/knucklesec)<br>
 
 <i class="fab fa-instagram-square"></i>
 Instagram: [**/burak_baris_/**](https://www.instagram.com/burak_baris_/)<br>

@@ -1,4 +1,4 @@
-I"�,<p>This post will discuss all the terminologies behind the <strong><em>Public Key Infrastructure (PKI)</em></strong>.
+I"�,<p>This post will discuss all the terminologies behind the <strong><em>Public Key Infrastructure (PKI)</em></strong>.
 It is essential to have knowledge of <em>Public Key Cryptography</em>, <em>Encryption</em> and <em>Digital Signing</em> as the prequisition.</p>
 
 <h1 id="what-is-pki">WHAT IS PKI?</h1>
@@ -102,7 +102,7 @@ Using ASN.1, it is possible to define data structures that
 can be transmitted over the network independently of software or hardware.</p>
 <h3 id="der-pem-xer-per-ber-cer">DER, PEM, XER, PER, BER, CER</h3>
 <p>Those are some of the popular encoding rules for ASN.1. 
-<br /><em>DER</em> and <em>PEM</em> are the used.</p>
+<br /><em>DER</em> and <em>PEM</em> are the most used.</p>
 <h2 id="algorithm">Algorithm</h2>
 <p>When the context is the PKI, it refers to cryptographic algorithms like “SHA1 with DSA”, “SHA1 with RSA”, etc. In order to
 achieve cryptographic signing, first, we need to hash the data, then encrypt the hash. “SHA1 with RSA” would indicate that the

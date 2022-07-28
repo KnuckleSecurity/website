@@ -1,10 +1,10 @@
 #-------------------------------
 # General Site Settings
-title: ":~$ BBSec_"
-logo: '/images/logo2-5x.png'
+title: ":~$ Knuckle$ecurity_"
+logo: '/images/logoyeni2.png'
 description: Burak Baris
 baseurl: "" # The subpath of your site, e.g. /blog
-url: "https://www.bbsec.net" # The base hostname & protocol for your site, e.g. http://example.com
+url: "https://www.knucklesecurity.net" # The base hostname & protocol for your site, e.g. http://example.com
 
 
 #-------------------------------
@@ -17,7 +17,7 @@ author:
 #-------------------------------
 # Hero Settings
 hero:
-  title: root@bbsec:~$ _ 
+  title: root@knucklesec:~$ _ 
   description: Technology and Cyber Security Blog.
   image: '/images/pic32.jpg'
 
@@ -25,7 +25,7 @@ hero:
 #-------------------------------
 # Contact Settings
 contact:
-  email: imbarisburak_buisiness@protonmail.com # Add your email for contact form
+  email: burak@knucklesecurity.com # Add your email for contact form
   description: Fill out the form below and you will get a response as soon as possible, thanks.
 
 # NOTE 
@@ -37,10 +37,10 @@ contact:
 # Example of adding a new link to the footer - {icon: "ion-logo-github", link: "https://github.com"}
 # Other icons can be found at https://ionicons.com/v4/
 social:
-- {icon: "ion-logo-linkedin", link: "https://github.com/krygeNNN"}
-- {icon: "ion-logo-github", link: "https://github.com/krygeNNN"}
+- {icon: "ion-logo-linkedin", link: "https://www.linkedin.com/in/burak-baris/"}
+- {icon: "ion-logo-github", link: "https://github.com/KnuckleSecurity"}
 - {icon: "ion-logo-instagram", link: "https://www.instagram.com/burak_baris_/"}
-- {icon: "ion-logo-twitter", link: "https://twitter.com/Krygen2"}
+- {icon: "ion-logo-twitter", link: "https://twitter.com/knucklesec"}
 - {icon: "fas fa-terminal", link: "https://tryhackme.com/p/Krygen"}
 
 
