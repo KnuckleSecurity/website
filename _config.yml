@@ -4,7 +4,7 @@ title: ":~$ Knuckle$ecurity_"
 logo: '/images/logoyeni2.png'
 description: Burak Baris
 baseurl: "" # The subpath of your site, e.g. /blog
-url: "https://www.knucklesecurity.net" # The base hostname & protocol for your site, e.g. http://example.com
+url: "https://www.knucklesecurity.com" # The base hostname & protocol for your site, e.g. http://example.com
 
 
 #-------------------------------
