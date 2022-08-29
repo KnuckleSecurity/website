@@ -1,10 +1,9 @@
-I"ba<h1 id="sql-injection-lab">SQL Injection Lab</h1>
-
-<p>This blog post will examine all kind of sql injection techniques
-in detail. Sometimes it can be hard to understand how those injections
-works since there is no access to the backend code when pentesting. Attacker have to figure
-out how the backend implementation work by examining the behaviour of
-the application in order to exploit those vulnerable endpoints.</p>
+I"»a<h1 id="sql-injection-lab">SQL Injection Lab</h1>
+<p>This blog post will examine all kind of SQL injection techniques in detail. 
+Sometimes it can be hard to understand how those injections work since there 
+is no access to the backend code while conducting a penetration test to an application.
+Attacker have to figure out how the backend implementation designed by examining the 
+behaviour of the API in order to exploit those vulnerable endpoints.</p>
 
 <p>However, instead of using some prepeared vulnerable training platform,
 we will write our own vulnerable backend API. Therefore, we can precisely
@@ -334,15 +333,17 @@ Response time will be different accordingly whether the condition is met or not.
 <br /><img src="/assets/img/posts/sqlilab/95.png" alt="" class="normal" /></p>
 <h2 id="out-of-band-sqli-1">Out-Of-Band SQLi</h2>
 
-<p>What if the endpoint responding the same even if you have tried every method explained above?
-This is the implementation.
-<br /><img src="/assets/img/posts/sqlilab/88.png" alt="" class="normal" /></p>
+<p>To be continuedâ€¦</p>
 
-<p>As you see, the application will return the same string for each scenario. However, it is still vulnerable for SQLi.
-We can still extract data by using <strong>OOB</strong> methods.<br />
-Out-of-Band means triggering an interaction from database to an outer network by using some network protocol. DNS is
-a good fit for that purpose since services, including all the database services, needs to resolve the IP address 
-of a given domain name.</p>
+<!-- What if the endpoint responding the same even if you have tried every method explained above? -->
+<!-- This is the implementation. -->
+<!-- <br>![](/assets/img/posts/sqlilab/88.png){:.normal} -->
+<!---->
+<!-- As you see, the application will return the same string for each scenario. However, it is still vulnerable for SQLi. -->
+<!-- We can still extract data by using **OOB** methods.<br> -->
+<!-- Out-of-Band means triggering an interaction from database to an outer network by using some network protocol. DNS is -->
+<!-- a good fit for that purpose since services, including all the database services, needs to resolve the IP address  -->
+<!-- of a given domain name. -->
 
 <!---->
 <!---->

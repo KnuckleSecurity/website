@@ -9,12 +9,11 @@ featured: false
 ---
 
 # SQL Injection Lab
-
-This blog post will examine all kind of sql injection techniques
-in detail. Sometimes it can be hard to understand how those injections
-works since there is no access to the backend code when pentesting. Attacker have to figure
-out how the backend implementation work by examining the behaviour of
-the application in order to exploit those vulnerable endpoints.
+This blog post will examine all kind of SQL injection techniques in detail. 
+Sometimes it can be hard to understand how those injections work since there 
+is no access to the backend code while conducting a penetration test to an application.
+Attacker have to figure out how the backend implementation designed by examining the 
+behaviour of the API in order to exploit those vulnerable endpoints.
 
 However, instead of using some prepeared vulnerable training platform,
 we will write our own vulnerable backend API. Therefore, we can precisely

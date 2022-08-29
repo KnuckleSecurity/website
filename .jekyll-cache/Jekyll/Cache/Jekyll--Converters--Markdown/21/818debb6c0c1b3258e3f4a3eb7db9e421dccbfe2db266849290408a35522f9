@@ -1,10 +1,9 @@
-I"ù]<h1 id="sql-injection-lab">SQL Injection Lab</h1>
-
-<p>This blog post will examine all kind of sql injection techniques
-in detail. Sometimes it can be hard to understand how those injections
-works since there is no access to the backend code when pentesting. Attacker have to figure
-out how the backend implementation work by examining the behaviour of
-the application in order to exploit those vulnerable endpoints.</p>
+I"»a<h1 id="sql-injection-lab">SQL Injection Lab</h1>
+<p>This blog post will examine all kind of SQL injection techniques in detail. 
+Sometimes it can be hard to understand how those injections work since there 
+is no access to the backend code while conducting a penetration test to an application.
+Attacker have to figure out how the backend implementation designed by examining the 
+behaviour of the API in order to exploit those vulnerable endpoints.</p>
 
 <p>However, instead of using some prepeared vulnerable training platform,
 we will write our own vulnerable backend API. Therefore, we can precisely
@@ -317,24 +316,34 @@ However, request-query-response cycle has a  blocking structure, therefore synch
 <p>Expected response:
 <br /><img src="/assets/img/posts/sqlilab/89.png" alt="" class="normal" /></p>
 
-<p>Conditional triggering using <strong>SELECT CASE</strong> structure to sleep the database for 3 seconds.
+<p>Conditional triggering using <strong>SELECT CASE</strong> structure.</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="k">CASE</span> <span class="k">WHEN</span> <span class="p">(</span><span class="mi">5</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">THEN</span> <span class="n">pg_sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="k">END</span><span class="p">;</span></code></pre></figure>
+
+<p>Database will sleep for three seconds after the first query
+is completed if the condition of the second one is met. Therefore, it is now possible to extract data from the database by triggering time delays.
+Response time will be different accordingly whether the condition is met or not.
 <br /><img src="/assets/img/posts/sqlilab/90.png" alt="" class="normal" />
-<br /><img src="/assets/img/posts/sqlilab/91.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/91.png" alt="" class="normal" /></p>
+
+<p>Combining time triggering and conditionals, further exploitation can be done same as how it had been done at the examples above.
 <br /><img src="/assets/img/posts/sqlilab/92.png" alt="" class="normal" />
 <br /><img src="/assets/img/posts/sqlilab/93.png" alt="" class="normal" />
 <br /><img src="/assets/img/posts/sqlilab/94.png" alt="" class="normal" />
-<br /><img src="/assets/img/posts/sqlilab/95.png" alt="" class="normal" />
-<!-- ## Out-Of-Band SQLi  -->
-<!---->
+<br /><img src="/assets/img/posts/sqlilab/95.png" alt="" class="normal" /></p>
+<h2 id="out-of-band-sqli-1">Out-Of-Band SQLi</h2>
+
+<p>To be continuedâ€¦</p>
+
 <!-- What if the endpoint responding the same even if you have tried every method explained above? -->
-<!-- Let'see the implementation. -->
+<!-- This is the implementation. -->
 <!-- <br>![](/assets/img/posts/sqlilab/88.png){:.normal} -->
 <!---->
 <!-- As you see, the application will return the same string for each scenario. However, it is still vulnerable for SQLi. -->
 <!-- We can still extract data by using **OOB** methods.<br> -->
 <!-- Out-of-Band means triggering an interaction from database to an outer network by using some network protocol. DNS is -->
 <!-- a good fit for that purpose since services, including all the database services, needs to resolve the IP address  -->
-<!-- of a given domain name. --></p>
+<!-- of a given domain name. -->
 
 <!---->
 <!---->
