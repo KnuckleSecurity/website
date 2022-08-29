@@ -1,7 +1,7 @@
 ---
 layout: post
 title: SQL Injection Lab
-Description: Downgrading Broken Packages
+Description: In-Depth SQLi Lab
 date: 2022-08-22 00:59:35  +0300
 tags: [Pentesting,sql-injection]
 image: '/assets/img/posts/sqlilab/injection.png'
