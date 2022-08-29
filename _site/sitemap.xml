@@ -176,6 +176,12 @@
 <loc>http://localhost:4000/tag/encryption/</loc>
 </url>
 <url>
+<loc>http://localhost:4000/tag/pentesting/</loc>
+</url>
+<url>
+<loc>http://localhost:4000/tag/sql-injection/</loc>
+</url>
+<url>
 <loc>http://localhost:4000/page/2/</loc>
 </url>
 <url>

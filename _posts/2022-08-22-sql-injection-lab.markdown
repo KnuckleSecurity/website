@@ -3,9 +3,9 @@ layout: post
 title: SQL Injection Lab
 Description: Downgrading Broken Packages
 date: 2022-08-22 00:59:35  +0300
-tags: [arch-linux,package-managers]
+tags: [Pentesting,sql-injection]
 image: '/assets/img/posts/sqlilab/injection.png'
-featured: false
+featured: true
 ---
 
 # SQL Injection Lab
