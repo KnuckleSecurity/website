@@ -13,7 +13,7 @@
 <lastmod>2021-10-11T21:59:35+00:00</lastmod>
 </url>
 <url>
-<loc>http://localhost:4000/2021/10/13/Sql-injection/</loc>
+<loc>http://localhost:4000/2021/10/13/Sql-Injection-Fundamentals/</loc>
 <lastmod>2021-10-13T09:00:35+00:00</lastmod>
 </url>
 <url>
@@ -51,6 +51,10 @@
 <url>
 <loc>http://localhost:4000/2022/01/05/OpenSSL-CLI-Tool/</loc>
 <lastmod>2022-01-05T14:00:00+00:00</lastmod>
+</url>
+<url>
+<loc>http://localhost:4000/2022/08/21/sql-injection-lab/</loc>
+<lastmod>2022-08-21T21:59:35+00:00</lastmod>
 </url>
 <url>
 <loc>http://localhost:4000/contact/</loc>

@@ -1,0 +1,339 @@
+I"u]<h1 id="sql-injection-lab">SQL Injection Lab</h1>
+
+<p>This blog post will examine all kind of sql injection techniques
+in detail. Sometimes it can be hard to understand how those injections
+works since there is no access to the backend code when pentesting. Attacker have to figure
+out how the backend implementation work by examining the behaviour of
+the application in order to exploit those vulnerable endpoints.</p>
+
+<p>However, instead of using some prepeared vulnerable training platform,
+we will write our own vulnerable backend API. Therefore, we can precisely
+see how our injections interacts with the code.</p>
+
+<h1 id="sql-injection-types">SQL Injection Types</h1>
+
+<h2 id="in-band-sqli">In-Band SQLi</h2>
+<p>In-Band SQLi is the most common and easiest to exploit since the attacker can use the in-band 
+network communication channel for both deploy the attack and extract data.</p>
+<ul>
+  <li>
+    <h3 id="union-based-sqli">Union-Based SQLi</h3>
+    <p>Union-Based SQLi is an In-Band SQLi technique where attacker concats additional SELECT 
+queries to the end of the original query in order to return multiple query results in a single HTTP response.</p>
+  </li>
+  <li>
+    <h3 id="error-based-sqli">Error-Based SQLi</h3>
+    <p>Error Based SQLi is an In-Band SQLi technique and occurs when an attacker can see errors thrown by the 
+database in the HTTP response. An attacker can exploit these errors and probe the database by manipulating the queries.</p>
+    <h2 id="inferential-blind-sqli">Inferential-Blind SQLi</h2>
+    <p>Unlike In-Band SQLi, Blind-SQLi takes longer for attacker to gather data from the database since the endpoint does not
+return the result of the query within the HTTP response. Therefore, no data being transferred In-Band.
+Instead, the attacker extracts data from the differentiating behaviors in the application by sending 
+various payloads to the application.</p>
+  </li>
+  <li>
+    <h3 id="boolean-based-sqli">Boolean-Based SQLi</h3>
+    <p>Boolean-Based SQLi is an Blind-SQLi technique where the attacker gathers data by forcing the database to return
+different responses depending on whether the query returns a TRUE or FALSE.</p>
+  </li>
+  <li>
+    <h3 id="time-based-sqli">Time-Based SQLi</h3>
+    <p>Time-Based SQLi is a Blind SQLi technique where the attacker sends an SQL query to the database which forces it to wait
+for specific a amount of time depending on whether the query returns a TRUE or FALSE.</p>
+    <h2 id="out-of-band-sqli">Out-Of-Band SQLi</h2>
+    <p>Out-Of-Band SQLi is the last resort and needed when the attacker can not infer any differentiation via in-band
+responses after trying all those methods mentioned above. It is the most difficult method used to extract data
+from the database, as it is variable according to the type of database.</p>
+  </li>
+</ul>
+
+<h1 id="hands-on-practice">HANDS-ON PRACTICE</h1>
+
+<p>First of all, lets create a database
+and implement some tables in it. We will use PostgreSql for that purpose.</p>
+
+<p><br /><img src="/assets/img/posts/sqlilab/1.png" alt="" class="normal" /></p>
+
+<p>We now have a database called <strong>db1</strong> and two tables named as <strong>users</strong> and <strong>products</strong>.
+The users table will mimic as login credentials. We wont be implementing any login page 
+for that, we will aim to extract data from that table by using product display pages 
+by assuming we already have logged in with some account and have access to those product 
+display endpoints.</p>
+
+<p><br /><img src="/assets/img/posts/sqlilab/2.png" alt="" class="normal" /></p>
+
+<p>First thing is to connect the database to the application. Second create endpoint
+as <strong>/api/products</strong>. This page displays all the products exist in our database. 
+This endpoint does not accept any input from http request.  Therefore it is impossible 
+to inject any parameters to that query.</p>
+
+<p><br /><img src="/assets/img/posts/sqlilab/3.png" alt="" class="normal" /></p>
+
+<p>The next endpoint will accept a parameter to scan a product with a specific id in the database. 
+This parameter, which will be sent to the endpoint, will be used as the id of the queried product in the 
+database.</p>
+
+<p>Send <strong>1</strong> as the parameter.
+<br /><img src="/assets/img/posts/sqlilab/4.png" alt="" class="normal" /></p>
+
+<p>Send <strong>2</strong> as the parameter.
+<br /><img src="/assets/img/posts/sqlilab/5.png" alt="" class="normal" /></p>
+
+<p>Send <strong>3</strong> as the parameter.
+<br /><img src="/assets/img/posts/sqlilab/6.png" alt="" class="normal" /></p>
+
+<p>The problem with that implementation, it can be seen in the code, the application does not perform
+any input validation. Therefore an attacker can use any special character in parameter and perform arithmetical
+operations in the database. The way to detect whether or not there is an sql injection, you should pick a reference point first.
+If you can find a way to go back to that reference point with an unexpected parameter, it means the enpoint is vulnerable to SQLi.</p>
+
+<p><br /><img src="/assets/img/posts/sqlilab/8.png" alt="" class="normal" /></p>
+
+<p>Passing both <strong>1</strong> and <strong>3-2</strong> as parameters bringing the same response. After that point
+an attacker can easily pipe that database to himself with right methods.</p>
+
+<h2 id="union-based-sqli-1">UNION BASED SQLi</h2>
+<p>If the database returns the output of the query within the HTTP response, you can use perform <strong>UNION</strong> based
+sql injection. In order for this attack to work, number of the columns comes from <strong>UNION SELECT</strong> must match 
+with the original query. Also type of those columns should be same.</p>
+
+<p><br /><img src="/assets/img/posts/sqlilab/9.png" alt="" class="normal" /></p>
+
+<p>Eventually the following query will be performed at server side.</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">users</span> <span class="k">UNION</span> <span class="k">SELECT</span> <span class="mi">1</span><span class="p">,</span><span class="s1">'A'</span><span class="p">,</span><span class="mi">3</span><span class="p">;</span></code></pre></figure>
+
+<p>In every database there are tables to hold all the metadata related to that database. <strong>information_schema.tables</strong>
+holds all the table names withing that database.</p>
+
+<p>All databases have a table to hold user credentials. General rule of thumb, those tables named as <strong>users</strong>. It can
+have a specific prefix or suffix, such as knucklesec_users for example. In this case <strong>users</strong> is the name of it.</p>
+
+<p>There is an additional row in the HTTP response when
+an existing table is queried and no additional rows for the unexisting table.
+<br /><img src="/assets/img/posts/sqlilab/12.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/13.png" alt="" class="normal" /></p>
+
+<p>Now, it is known that there is a table named <strong>users</strong>, however it also needed to know the column names of that table.
+<br /><img src="/assets/img/posts/sqlilab/15.png" alt="" class="normal" />
+Two rows have returned from that query. Column names are <strong>username</strong> and <strong>password</strong> respectively.
+<br />
+Extraction of the values in these columns:
+First <strong>usernames</strong>.
+<br /><img src="/assets/img/posts/sqlilab/16.png" alt="" class="normal" /></p>
+
+<p>Then <strong>passwords</strong>.
+<br /><img src="/assets/img/posts/sqlilab/17.png" alt="" class="normal" /></p>
+
+<h2 id="inferential-blind-sqliboolean-based">Inferential-Blind SQLi/Boolean-Based</h2>
+
+<p>It is called <strong>Blind SQLi</strong> when the application still can be injected with some SQLi payloads, but does not return
+the result of that query within HTTP response. Since it is not possible to see any rows and columns, UNION 
+keyword won’t help. It is still possible to extract data from the database with different techniques.</p>
+
+<p>Code has been changed to alter the behavior of the application. This time instead of returning the details of the queried product,
+application will inform the user whether or not the product exists.
+<br /><img src="/assets/img/posts/sqlilab/18.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/20.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/21.png" alt="" class="normal" /></p>
+
+<p>This time the result of the query can not be seen within the HTTP response. Regardless, the backend still vulnerable for injection.
+<br /><img src="/assets/img/posts/sqlilab/22.png" alt="" class="normal" /></p>
+
+<p>It is possible to extract data with <strong>AND</strong> keyword in this keys.</p>
+
+<p>The following query will find the product with the id of 1 if 1=1. Since
+1 equals to 1, product will be found.</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">users</span> <span class="k">WHERE</span> <span class="o">*</span> <span class="n">id</span><span class="o">=</span><span class="mi">1</span> <span class="k">AND</span> <span class="mi">1</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span></code></pre></figure>
+
+<p>The following query will find the product with the id of 1 if 1=2. Since
+1 is not equal to 2, database won’t return any product.</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">users</span> <span class="k">WHERE</span> <span class="n">id</span><span class="o">=</span><span class="mi">1</span> <span class="k">AND</span> <span class="mi">1</span><span class="o">=</span><span class="mi">2</span><span class="p">;</span></code></pre></figure>
+
+<p>Launch <strong>BurpSuite</strong>.
+<br /><img src="/assets/img/posts/sqlilab/26.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/27.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/28.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/29.png" alt="" class="normal" /></p>
+
+<p>This behaviour opens up a door. One can observe that there are two different responses depending on
+the validness of the right side of the query.</p>
+
+<p>With the help of the <strong>SUBSTR()</strong> function, a subquery can be written.</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="mi">1</span> <span class="k">AND</span> <span class="n">SUBSTR</span><span class="p">((</span><span class="k">SELECT</span> <span class="k">table_name</span> <span class="k">FROM</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">tables</span> <span class="k">WHERE</span> <span class="k">table_name</span><span class="o">=</span><span class="s1">'some table name'</span><span class="p">),</span><span class="mi">1</span><span class="p">,</span><span class="mi">50</span><span class="p">)</span><span class="o">=</span><span class="s1">'some table name'</span></code></pre></figure>
+
+<p>SELECT method will return the table name of the queried table and compare it with our guess.</p>
+
+<p>If there is a table called <strong>some table name</strong>, it will be equal to <strong>some table name</strong>, the condition will be
+<strong>true</strong>. However, if there is not any table with that name, query will return empty string, 
+since an empty string is not equal to some unempty string value, the condition will be <strong>false</strong>.</p>
+
+<p>TRUE AND TRUE = Product exists<br />
+TRUE AND FALSE = Product does not exists.</p>
+
+<p><br /><img src="/assets/img/posts/sqlilab/31.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/32.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/33.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/34.png" alt="" class="normal" /></p>
+
+<p>Next, find column names of the <strong>users</strong> table.
+The number of rows which will be returned should be limited to a single row since the SUBSTR() method can only compare a single string 
+value with another. Therefore, database have to return only the first row of the query result, which is the first column name of 
+the <strong>users</strong> table. If there would not any prior knowledge about the database, all the permutations had to be brute-forced. 
+It can be done with the <strong>Cluster Bomb</strong>  utility in <strong>BurpSuite</strong>.
+<br /><img src="/assets/img/posts/sqlilab/41.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/42.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/39.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/40.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/43.png" alt="" class="normal" />
+It is validated that there is a row called <strong>username</strong> in the <strong>users</strong> table.</p>
+
+<p>Let’s see if there is an admin user.
+<br /><img src="/assets/img/posts/sqlilab/44.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/75.png" alt="" class="normal" /></p>
+
+<p>It is verified that there is an admin user. However, it is not possible to guess the
+password. The characters of the password must be brute-forced one by one.
+<br /><img src="/assets/img/posts/sqlilab/46.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/47.png" alt="" class="normal" /></p>
+
+<p>It is not practical to do it manually. Therefore, it is best to use an automated brute-force attack tool.
+In this case a <strong>Sniper</strong> attack would do the job which is an <strong>Intruder</strong> utility exists in BurpSuite.
+<br /><img src="/assets/img/posts/sqlilab/52.png" alt="" class="normal" />
+First character is <strong>c</strong>. 
+<br /><img src="/assets/img/posts/sqlilab/53.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/54.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/55.png" alt="" class="normal" />
+Second character is <strong>o</strong>. 
+<br /><img src="/assets/img/posts/sqlilab/56.png" alt="" class="normal" /></p>
+
+<p>By doing the same attack for each character, we can find the password is ‘cokgizlisifre’ eventually.</p>
+
+<h2 id="error-based-sqli-1">Error-Based SQLi</h2>
+
+<p>There are two different <strong>Error-Based SQLi</strong> types.</p>
+<ul>
+  <li>Static Error Message/Boolean-Based: Seeing the same error message each time for all kind of errors.</li>
+  <li>Dynamic Error Message/In-Band: Seeing the exact database error log within the HTTP response.</li>
+</ul>
+
+<h3 id="static-error-messageboolean-based">Static Error Message/Boolean-Based</h3>
+
+<p>What if the the endpoint does not behave any differently whether or not the query is successfull or not?
+In this case it is not possible extract any data by observing the behaviour of the application.
+Let’s see the altered code.
+<br /><img src="/assets/img/posts/sqlilab/59.png" alt="" class="normal" />
+As you can see endpoint is embedding the same response in HTTP response. When this is the case,
+we use another SQLi techique, which is called <strong>Error Based SQLi</strong>. Practically, we inject an illegitimate 
+sql query which will force the application to spawn an error. The point is to create our own conditional response.</p>
+
+<p>First let’s see how the API behaves naturally.
+<br /><img src="/assets/img/posts/sqlilab/57.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/58.png" alt="" class="normal" /></p>
+
+<p>We should test whether the application behaves accordingly when it receives an illegitimate parameter to query.
+General rule of thumb is to trigger a <strong>division by zero</strong> error. No database can divide an integer to zero (it is not possible in algebra).
+<br /><img src="/assets/img/posts/sqlilab/60.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/61.png" alt="" class="normal" /></p>
+
+<p>In this case the application does not manage the error gracefully, therefore we generated our own conditional response.</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="mi">1</span> <span class="k">AND</span> <span class="mi">1</span><span class="o">=</span><span class="p">(</span><span class="k">SELECT</span> <span class="k">CASE</span> <span class="k">WHEN</span> <span class="p">(</span><span class="mi">3</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="k">THEN</span> <span class="s1">'illegitimate subquery here'</span> <span class="k">ELSE</span> <span class="mi">1</span> <span class="k">END</span><span class="p">);</span></code></pre></figure>
+
+<p>When the <strong>CASE</strong> condition is met, in this case if 3=2, we will trigger an error by injecting an illegitimate subquery, else
+<strong>CASE</strong> will select 1. When the <strong>CASE</strong> keyword selects the <strong>ELSE</strong> block, which is 1. Finally, this is how the right side of 
+the query will look like;</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="mi">1</span> <span class="k">AND</span> <span class="mi">1</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span></code></pre></figure>
+
+<p>No errors.<br /></p>
+
+<p>However when we inject it like this;</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="mi">1</span> <span class="k">AND</span> <span class="mi">1</span><span class="o">=</span><span class="p">(</span><span class="k">SELECT</span> <span class="k">CASE</span> <span class="k">WHEN</span> <span class="p">(</span><span class="mi">3</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span> <span class="k">THEN</span> <span class="s1">'illegitimate subquery here'</span> <span class="k">ELSE</span> <span class="mi">1</span> <span class="k">END</span><span class="p">);</span></code></pre></figure>
+
+<p>Since 3 is equal to 3, it will execute the <strong>THEN</strong> block, and try to execute an illegitimate subquery.
+That query will return the error page.<br /></p>
+
+<p>The illegitimate payload we will use in this example will be;</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">cAsT</span><span class="p">(</span><span class="n">chr</span><span class="p">(</span><span class="mi">126</span><span class="p">)</span><span class="o">||</span><span class="k">vErSiOn</span><span class="p">()</span><span class="o">||</span><span class="n">chr</span><span class="p">(</span><span class="mi">126</span><span class="p">)</span> <span class="k">aS</span> <span class="nb">nUmeRiC</span><span class="p">)</span></code></pre></figure>
+
+<p>It is not possible for database to cast <strong>CHARACTER</strong> type value as numeric. Therefore, it will generate an error.</p>
+
+<p><strong>Note:</strong> There are tons of payloads for error-based-sqli and for other types online, the ones I am using for
+demonstration purposes.</p>
+
+<p>Instead of testing if 3=3 or 3=2, <strong>CASE WHEN</strong> block will test if a certain named table exists or not by using <strong>SUBSTR()</strong>
+function, same as how we did for <strong>Conditional SQLi</strong> above.
+<br /><img src="/assets/img/posts/sqlilab/76.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/77.png" alt="" class="normal" />
+Since the condition does not met, no error message have generated by the database.
+<br /><img src="/assets/img/posts/sqlilab/78.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/79.png" alt="" class="normal" />
+Since the condition is met, error message have generated by the database.</p>
+
+<p>Let’s further extract data from the database by using this technique with altering the payload.
+<br /><img src="/assets/img/posts/sqlilab/68.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/69.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/70.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/71.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/72.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/74.png" alt="" class="normal" /></p>
+
+<h3 id="dynamic-error-messagein-band">Dynamic Error Message/In-Band</h3>
+
+<p>The application might return the exact databse error in the HTTP response message. It is easier to extract data
+from that kind of implementation since it is an in-band vulnerability.
+<br /><img src="/assets/img/posts/sqlilab/89.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/80.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/81.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/82.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/83.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/84.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/85.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/86.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/87.png" alt="" class="normal" /></p>
+
+<p><strong>SUBSTRING()</strong> can be used for further exploitation same as before after this point.</p>
+
+<h2 id="inferential-blind-sqlitime-based">Inferential-Blind SQLi/Time-Based</h2>
+
+<p>What if the endpoint responding the same even if every method explained above had been tried?
+<br />This is the implementation:
+<br /><img src="/assets/img/posts/sqlilab/88.png" alt="" class="normal" /></p>
+
+<p>The application will return the same string for each scenario. However, it is still vulnerable for SQLi.
+Data still can be extracted by using <strong>Time-Based SQLi</strong> methods.<br /></p>
+
+<p>The endpoint executes the query and sending the response synchronously <a href="https://www.geeksforgeeks.org/difference-between-synchronous-and-asynchronous-method-of-fs-module/"><strong>(See synch/asynch)</strong></a>.
+Which means that, the response will be sent after the query is completed.<br /><br />
+<strong>Note:</strong> The client.query() block is asynchron for the rest of the code, which means it is going to be executed in a seperate thread.
+However, request-query-response cycle has a  blocking structure, therefore synchronous in itself.</p>
+
+<p><br /><img src="/assets/img/posts/sqlilab/89.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/90.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/91.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/92.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/93.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/94.png" alt="" class="normal" />
+<br /><img src="/assets/img/posts/sqlilab/95.png" alt="" class="normal" />
+<!-- ## Out-Of-Band SQLi  -->
+<!---->
+<!-- What if the endpoint responding the same even if you have tried every method explained above? -->
+<!-- Let'see the implementation. -->
+<!-- <br>![](/assets/img/posts/sqlilab/88.png){:.normal} -->
+<!---->
+<!-- As you see, the application will return the same string for each scenario. However, it is still vulnerable for SQLi. -->
+<!-- We can still extract data by using **OOB** methods.<br> -->
+<!-- Out-of-Band means triggering an interaction from database to an outer network by using some network protocol. DNS is -->
+<!-- a good fit for that purpose since services, including all the database services, needs to resolve the IP address  -->
+<!-- of a given domain name. --></p>
+
+<!---->
+<!---->
+<!---->
+:ET
