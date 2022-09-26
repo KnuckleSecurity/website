@@ -2,11 +2,18 @@
 *, *::after, *::before {
   box-sizing: border-box;
 }
+@import url(//db.onlinewebfonts.com/c/a651e3710471f67f2aaa41cfe5dbdeac?family=a+Atmospheric);
 //@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital@1&family=Space+Mono&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Poppins&family=Roboto+Mono:ital@1&family=Space+Mono&display=swap');
+// @import dir('./fonts/aAtmospheric.otf');
+// @font-face {
+//     font-family: 'Atmospheric';
+//     src: url(./fonts/aAtmospheric.otf);
+// }
 body {
   //font-family: $base-font-family;
   //font-family: 'Roboto Mono', monospace;
+  // font-family: 'Poppins';
   font-family: 'Poppins';
   font-size: $base-font-size;
   line-height: $base-line-height;
@@ -63,6 +70,7 @@ h5,
 h6 {
   //font-family: $base-font-family;
   font-family: 'Poppins';
+  // font-family: 'a Atmospheric';
   //font-family: $heading-font-family;
   font-weight: $heading-font-weight;
   line-height: $heading-line-height;

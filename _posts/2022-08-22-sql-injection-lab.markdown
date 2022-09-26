@@ -341,21 +341,16 @@ Combining time triggering and conditionals, further exploitation can be done sam
 <br>![](/assets/img/posts/sqlilab/93.png){:.normal}
 <br>![](/assets/img/posts/sqlilab/94.png){:.normal}
 <br>![](/assets/img/posts/sqlilab/95.png){:.normal}
+
 ## Out-Of-Band SQLi 
 
-To be continued...
+Application might run the query asynchronously. Or endpoint can pass the parameter to another microservice to run the sql query.
+Regardless of which, it is not possible to use time-based technique, since application would not wait for sql query to
+complete in order to respond to the client.
+<br>![](/assets/img/posts/sqlilab/88.png){:.normal}
 
-
-<!-- What if the endpoint responding the same even if you have tried every method explained above? -->
-<!-- This is the implementation. -->
-<!-- <br>![](/assets/img/posts/sqlilab/88.png){:.normal} -->
-<!---->
-<!-- As you see, the application will return the same string for each scenario. However, it is still vulnerable for SQLi. -->
-<!-- We can still extract data by using **OOB** methods.<br> -->
-<!-- Out-of-Band means triggering an interaction from database to an outer network by using some network protocol. DNS is -->
-<!-- a good fit for that purpose since services, including all the database services, needs to resolve the IP address  -->
-<!-- of a given domain name. -->
-
-<!---->
-<!---->
-<!---->
+As you see, the application will return the same string for each scenario. However, it is still vulnerable for SQLi.
+We can still extract data by using **OOB** methods.<br>
+Out-of-Band means triggering an interaction from database to an outer network by using some network protocol. DNS is
+a good fit for that purpose since services, including all the database services, needs to resolve the IP address 
+of a given domain name.

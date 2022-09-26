@@ -18,8 +18,9 @@ author:
 # Hero Settings
 hero:
   title: root@knucklesec:~$ _ 
-  description: Technology and Cyber Security Blog.
-  image: '/images/pic32.jpg'
+  # description: Technology and Cyber Security Blog.
+  description: OFFENSE IS THE BEST DEFENSE.
+  image: '/images/KNUCKLE.gif'
 
 
 #-------------------------------
