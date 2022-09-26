@@ -1,4 +1,6 @@
 /* Hero */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins&family=Roboto+Mono:ital@1&family=Space+Mono&display=swap');
 .hero {
   position: relative;
   //margin-bottom: 32px;
@@ -75,8 +77,8 @@
 .hero__title {
   //font-family: 'Montserrat', sans-serif;
   //font-family: $base-font-family;
-  // font-family: 'Poppins';
-  font-family: 'a Atmospheric';
+  font-family: 'Poppins';
+  // font-family: 'a Atmospheric';
   font-size: 35px;
   margin: 0 0 10px;
   line-height: 1;
@@ -90,7 +92,8 @@
 
 .hero__desc {
 
-  font-family: 'a Atmospheric';
+  font-family: 'Poppins';
+  // font-family: 'a Atmospheric';
   font-size: 15px;
   color: $gray;
   //margin: 0;

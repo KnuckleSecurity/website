@@ -3,10 +3,10 @@
   <channel>
     <title>:~$ Knuckle$ecurity_</title>
     <description>Burak Baris</description>
-    <link>http://192.168.1.33:4000/</link>
-    <atom:link href="http://192.168.1.33:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sun, 25 Sep 2022 21:54:49 +0000</pubDate>
-    <lastBuildDate>Sun, 25 Sep 2022 21:54:49 +0000</lastBuildDate>
+    <link>http://localhost:4000/</link>
+    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Mon, 26 Sep 2022 16:31:37 +0000</pubDate>
+    <lastBuildDate>Mon, 26 Sep 2022 16:31:37 +0000</lastBuildDate>
     <generator>Jekyll v4.2.1</generator>
     
       <item>
@@ -359,8 +359,8 @@ a good fit for that purpose since services, including all the database services,
 of a given domain name.&lt;/p&gt;
 </description>
         <pubDate>Sun, 21 Aug 2022 21:59:35 +0000</pubDate>
-        <link>http://192.168.1.33:4000/2022/08/21/sql-injection-lab/</link>
-        <guid isPermaLink="true">http://192.168.1.33:4000/2022/08/21/sql-injection-lab/</guid>
+        <link>http://localhost:4000/2022/08/21/sql-injection-lab/</link>
+        <guid isPermaLink="true">http://localhost:4000/2022/08/21/sql-injection-lab/</guid>
         
         <category>Pentesting</category>
         
@@ -829,8 +829,8 @@ Verifying - Enter Export Password:&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
 </description>
         <pubDate>Wed, 05 Jan 2022 14:00:00 +0000</pubDate>
-        <link>http://192.168.1.33:4000/2022/01/05/OpenSSL-CLI-Tool/</link>
-        <guid isPermaLink="true">http://192.168.1.33:4000/2022/01/05/OpenSSL-CLI-Tool/</guid>
+        <link>http://localhost:4000/2022/01/05/OpenSSL-CLI-Tool/</link>
+        <guid isPermaLink="true">http://localhost:4000/2022/01/05/OpenSSL-CLI-Tool/</guid>
         
         <category>OpenSSL</category>
         
@@ -1004,8 +1004,8 @@ Further reading and practice about how to create digital signatures and x.509 ce
 verify a document or certificate with &lt;a href=&quot;https://www.bbsec.net/2022/01/05/OpenSSL-CLI-Tool/&quot;&gt;&lt;em&gt;OpenSSL can be found here&lt;/em&gt;&lt;/a&gt;.&lt;/p&gt;
 </description>
         <pubDate>Sat, 01 Jan 2022 16:00:00 +0000</pubDate>
-        <link>http://192.168.1.33:4000/2022/01/01/public-key-infrastructure/</link>
-        <guid isPermaLink="true">http://192.168.1.33:4000/2022/01/01/public-key-infrastructure/</guid>
+        <link>http://localhost:4000/2022/01/01/public-key-infrastructure/</link>
+        <guid isPermaLink="true">http://localhost:4000/2022/01/01/public-key-infrastructure/</guid>
         
         <category>PKI</category>
         
@@ -1293,8 +1293,8 @@ Voilà! We are the administrator now.
 &lt;img src=&quot;/assets/img/posts/tryhackme-hackpark-ctf-writeup/35.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;/p&gt;
 </description>
         <pubDate>Fri, 31 Dec 2021 18:20:00 +0000</pubDate>
-        <link>http://192.168.1.33:4000/2021/12/31/thm-hackpark-ctf-writeup/</link>
-        <guid isPermaLink="true">http://192.168.1.33:4000/2021/12/31/thm-hackpark-ctf-writeup/</guid>
+        <link>http://localhost:4000/2021/12/31/thm-hackpark-ctf-writeup/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/12/31/thm-hackpark-ctf-writeup/</guid>
         
         <category>TryHackme Machines</category>
         
@@ -1684,8 +1684,8 @@ By doing that, we have camouflaged our malicious process into a safer looking on
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 </description>
         <pubDate>Tue, 28 Dec 2021 08:40:00 +0000</pubDate>
-        <link>http://192.168.1.33:4000/2021/12/28/thm-alfred-ctf-writeup/</link>
-        <guid isPermaLink="true">http://192.168.1.33:4000/2021/12/28/thm-alfred-ctf-writeup/</guid>
+        <link>http://localhost:4000/2021/12/28/thm-alfred-ctf-writeup/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/12/28/thm-alfred-ctf-writeup/</guid>
         
         <category>TryHackme Machines</category>
         
@@ -1996,8 +1996,8 @@ have fun after that point :))).
 &lt;img src=&quot;/assets/img/posts/unquoted-service-path-vulnerability/35.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
 </description>
         <pubDate>Thu, 23 Dec 2021 00:59:00 +0000</pubDate>
-        <link>http://192.168.1.33:4000/2021/12/23/unquoted-service-path-vulnerability/</link>
-        <guid isPermaLink="true">http://192.168.1.33:4000/2021/12/23/unquoted-service-path-vulnerability/</guid>
+        <link>http://localhost:4000/2021/12/23/unquoted-service-path-vulnerability/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/12/23/unquoted-service-path-vulnerability/</guid>
         
         <category>windows-privesc</category>
         
@@ -2252,8 +2252,8 @@ You will need to repeat previous steps to get the root flag. Download &lt;strong
 That is the end for this machine, wish you more penetrations ;)&lt;/p&gt;
 </description>
         <pubDate>Wed, 22 Dec 2021 21:50:00 +0000</pubDate>
-        <link>http://192.168.1.33:4000/2021/12/22/thm-steel-mountain-ctf-writeup/</link>
-        <guid isPermaLink="true">http://192.168.1.33:4000/2021/12/22/thm-steel-mountain-ctf-writeup/</guid>
+        <link>http://localhost:4000/2021/12/22/thm-steel-mountain-ctf-writeup/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/12/22/thm-steel-mountain-ctf-writeup/</guid>
         
         <category>TryHackme Machines</category>
         
@@ -2298,8 +2298,8 @@ That is the end for this machine, wish you more penetrations ;)&lt;/p&gt;
 Done ! You will see all bootable system in your grub menu at the next boot.&lt;/p&gt;
 </description>
         <pubDate>Thu, 18 Nov 2021 12:00:00 +0000</pubDate>
-        <link>http://192.168.1.33:4000/2021/11/18/add-windows-boot-manager-to-grub/</link>
-        <guid isPermaLink="true">http://192.168.1.33:4000/2021/11/18/add-windows-boot-manager-to-grub/</guid>
+        <link>http://localhost:4000/2021/11/18/add-windows-boot-manager-to-grub/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/11/18/add-windows-boot-manager-to-grub/</guid>
         
         <category>linux</category>
         
@@ -2500,8 +2500,8 @@ layer. If ping responses with a packet loss, then the connectivity issue is on t
 this first. If there is no packet loss, you can start to explore other possibilities that may cause failure.&lt;/p&gt;
 </description>
         <pubDate>Thu, 18 Nov 2021 12:00:00 +0000</pubDate>
-        <link>http://192.168.1.33:4000/2021/11/18/ipv4-addresses/</link>
-        <guid isPermaLink="true">http://192.168.1.33:4000/2021/11/18/ipv4-addresses/</guid>
+        <link>http://localhost:4000/2021/11/18/ipv4-addresses/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/11/18/ipv4-addresses/</guid>
         
         <category>network protocols</category>
         
@@ -2560,8 +2560,8 @@ both for them to see each other’s traffic as they are completely different dep
 To be continued&lt;/p&gt;
 </description>
         <pubDate>Thu, 18 Nov 2021 12:00:00 +0000</pubDate>
-        <link>http://192.168.1.33:4000/2021/11/18/subnetting/</link>
-        <guid isPermaLink="true">http://192.168.1.33:4000/2021/11/18/subnetting/</guid>
+        <link>http://localhost:4000/2021/11/18/subnetting/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/11/18/subnetting/</guid>
         
         <category>subnetting</category>
         
