@@ -2,12 +2,17 @@
 layout: lay-socials
 title: Socials
 permalink: /socials/
+image: '/images/KNUCKLE.gif'
+
 ---
 <br>
 <br>
 <br>
 <br>
 <br>
+<!-- <body background=''> -->
+<!--     <h1>sa</h1> -->
+<!-- </body> -->
 <div class="img-container"> 
    <img src='/images/avatar-circle.png'><br>
    <h1>SOCIALS</h1>

@@ -11,7 +11,7 @@ url: "https://www.knucklesecurity.com" # The base hostname & protocol for your s
 # Author Settings
 author:
   name: Burak Baris
-  avatar: '/images/15.jpg'
+  avatar: '/images/avatar.png'
 
 
 #-------------------------------
@@ -40,9 +40,11 @@ contact:
 social:
 - {icon: "ion-logo-linkedin", link: "https://www.linkedin.com/in/burak-baris/"}
 - {icon: "ion-logo-github", link: "https://github.com/KnuckleSecurity"}
+- {icon: "ion-logo-twitch", link: "https://twitch.tv/knucklesecurity"}
 - {icon: "ion-logo-instagram", link: "https://www.instagram.com/burak_baris_/"}
 - {icon: "ion-logo-twitter", link: "https://twitter.com/knucklesec"}
-- {icon: "fas fa-terminal", link: "https://tryhackme.com/p/Krygen"}
+- {icon: "fas fa-terminal", link: "https://tryhackme.com/p/knucklesec"}
+
 
 
 
