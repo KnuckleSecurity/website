@@ -1,0 +1,89 @@
+---
+layout:   post
+title:   Binary Exploitation
+description:   desc
+date:   2022-12-03 01:20:00 +0300
+image: '/assets/img/posts/tryhackme-hackpark-ctf-writeup/parkbanner.jpg'
+tags:   [c,shell-coding,binary-exploitation,buffer-overflows]
+featured:   false
+---
+
+In this blog post I will cover binary exploitation techniques, memory structure mechanisms,
+buffer overflows, shell coding and more. Before moving any further, in order to understand
+how things work, you need to have a little programming background. No extensive amount
+of knowledge required since I will go through everything. However, basic concepts will go
+uncovered for sake of simplicity.
+
+# Baby Steps
+
+We will use C programming language through the post. Since the C programming language is the closest one
+to the machine code after assembly, we will use it in order to analyze how variables, arrays, functions
+are taking their place in memory and how the CPU work with those data.
+
+So, let's get right to it. We will start really easy. It is a piece of code prints out a "Hello World" message
+to the screen for five times.
+![](/assets/img/posts/binary-exploitation/1.png)<br>
+
+Let's compile and run it.
+![](/assets/img/posts/binary-exploitation/1.png)<br>
+
+The aim of that paper will gain a perspective on how hackers see the code and exploit them. In order for us to 
+see the bigger picture, we have to analyze each step carefully. Therefore, I will start by making that statement:
+the **firstprogram.c** is just a text file, and it does not carry and meaning for CPU except just being a simple text
+file. It is what we call **the source code**. It should be complied (as we did) into an executable binary file, **.exe**
+for windows and **ELF executable** for Linux in 2022. It is harmless to think the compiler as a middle ground for all
+computers. There are plenty of different modeled CPU architectures. Different CPU architectures means different
+operation codes and instruction sets. In short, for each architecture, specialized machine code should be written for 
+the same piece of program. It is pain. Instead, people write their programs in the C syntax and the compiler translates 
+that piece of source code into the machine code with the available instruction set that the present CPU supplies. 
+When the executable has executed, its instructions are getting loaded to the **RAM** for the CPU (or GPU) to handle.<br><br>
+
+
+Here things goes tricky. For the programmer perspective only think he needs to focus is writing a well functioning program.
+However, hacker knows that the compiled machine code is what actually getting executed by the CPU in the real world.
+By having a deep understanding on how the CPU works, hacker can manipulate the expected behavior in their behalf.<br><br>
+
+We can see how that binary executable look like with a **GNU developement tool** called **objdump**. Let's see what
+that the **main()** function had translated to.
+
+![](/assets/img/posts/binary-exploitation/3.png)<br>
+
+Each byte is represented in hexadecimal notation, which is a base-16 numbering system, since it is more practical
+to express 8-bit by using two characters instead of eight. The hex numbers at the far left ending with a colon are 
+the memory addresses. Those addresses are where the instructions are getting stored as a collection of bytes for 
+a temporary amount of time for the CPU to handle.<br>
+
+Memory can be thought as a row of bytes. Each row has a defined space (1 byte %99.9 of the time) and each defined 
+space starts with an address. Therefore, when we say that we have a 64-bit processor we are saying that our CPU supports
+2^64 (18 billion) possible addresses.<br>
+
+The hex values at the middle are the machine language instructions for the processor. For example, let's examine the
+first instruction. It is 0x55 (hexadecimal notation starts with a 0x as a rule of thumb) in hexadecimal, 
+85 in binary when converted, and 1010101 in binary. Since processors can only handle ones and zeroes, 
+that hex value being red as its binary value in the CPU. And for the current instruction set that operation code, 
+which is 0x55, means : **push %rbp** in assembly language. And the texts at the far right, just like I said,
+they are assembly code human-readable representations of the machine instructions.<br>
+
+Unlike other programming languages, assembly language have a direct one-to-one correlation between the operation and the 
+argument. Just like mentioned before, each CPU comes with different instruction set. Therefore, an assembly 
+programmer can not follow the commonsense as they do with a compiled language. They have to read the actual CPU manual
+book, and follow its own instructions to write their own program accordingly since assembly is converted directly 
+to the machine code with no compilation process. When it comes to syntax, there are two common syntaxes: Intel and AT&T.
+The syntax you see in the picture is AT&T syntax, the default syntax. It is easy to detect AT&T syntax by observing
+$ and % symbols prefixing everything. The same assembly code can be shown in the Intel syntax just like in the
+following picture.
+
+![](/assets/img/posts/binary-exploitation/4.png)<br>
+
+Since Intel representation is much more clean and understandable, I will be using Intel syntax from now on.
+It is worth to note that syntax does not mean anything for the CPU, it is there for the humans. An instruction 
+starts with an operation, and usually follows with additional arguments (does not have to have), which 
+describes the source or/and the destination for the operation.<br>
+
+Processors also have superfast memory units called caches and registers. Most of the instructions are actively
+using those registers to read and write the data. Therefore, it is essential to understand how those
+registers work in order to have a good understanding on how a CPU works.
+
+# x64 Architecture
+
+
