@@ -236,3 +236,75 @@ allowing the stack to be larger if the
 heap is small and vice versa.
 
 ![](/assets/img/posts/memory-segmentation/20.png)<br>
+
+# Memory Segments in C language
+
+In C programming language, just like the other languages, compiled code take its place in the code segment 
+while, while variables sits in the remaining segments. Depending on the how the variable is defined, the variables
+will reside in different segments. If a variable defined at the outside of a function, it is considered as a **global** 
+variable. The **static** keyword is can also be prepended to any variable decleration to make the variable static. If a 
+static or global variable initialized with a value, they will be stored in the **data segment**; otherwise, these 
+variables will be located in the BSS segment. The memory on the heap memory must be allocated first by using a 
+memory allocation function called malloc(). In general, pointers are used to reference memory on the heap segment.
+Finally, the remaining variables will reside in the stack. Since the stack segment contains many stack frames
+within, stack variables can maintain uniqueness within different functional contexts.<br>
+
+The following code will explain these concepts in C.
+
+![](/assets/img/posts/memory-segmentation/21.png)<br>
+![](/assets/img/posts/memory-segmentation/22.png)<br>
+
+Most of the concepts are self-explanatory since the variable names are descriptive and each variable grouped 
+with their segment couples. Two identical named stack variables are declared in order to illustrade 
+their functional contexts. The heap variable is declared as an integer pointer, which will point to the memory address 
+allocated on the heap segment. malloc() function is called allocate four bytes in the heap segment. Since the newly 
+allocated heap memory could be of any data type, the malloc() function returns a **void** pointer. It then type casted
+into an integer pointer.
+
+Summary:
+- Initialized **global** and **static** variables will be stored in the Data Segment.
+- Uninitialized **global** and **static** variables will be stored in the BSS Segment.
+- Heap variables will be stored in the Heap Segment.
+- Stack variables, in the both functions, will be stored in the Stack Segment in different Stack Frames.
+
+The first two initialized variables have the lowers memory addresses. It is because the Text Segment starts from
+the lowest memory address and the Data Segment resides where the Text Segment ends. The next two uninitialized variables 
+are stored in the BSS segment. The memory addresses for those variables are slightly bigger then the addresses which points
+to the variables in the Data Segment since the BSS Segment being initialized where the Data Segment ends. Since both 
+segments are fixed size, there is verry litle wasted space, and the addresses are not very far apart.<br>
+
+Heap Segment is not fixed size, and more space can be allocated on the run. And the first address of the Heap Segment
+starts where the BSS Segment ends. Finally, the stack variables have the greatest addresses since the Stack Segment starts
+where the memory ends. Stack Segment is also not fixed size, which means it will grow towards to the heap whereby heap 
+grows toward to the stack. This allows both memory segments to be dynamic without wasting any unnecesarry space in memory.<br>
+
+The first stack_var in the main() function's context resides in the Stack Segment within its own stack frame. The second 
+stack_var in the function() has its own functional context, thereby that variable is stored within a different stack
+frame in the Stack Segment. When the function() is called, CPU will initialize a function prologue in order to create 
+a new stack frame in the stack to store stack_var (among other data) for function()'s context. Since the stack grow
+back up toward the Heap Segment with each stack frame and pushed data, the memory address for the second stack_var 
+(0xbffff814) is smaller than the address for the first stack_var (0xbffff834) found within main()'s context.
+
+# Using the Heap
+
+Using the other segments of the RAM is an automated process, programmer does not have to be attentive in to the 
+segmentation process. However, when it comes to heap, the programmer have to manually set and calibrate the use 
+of the variables. As previously illustrated, heap memory allocation is done by a memory allocation function called 
+malloc() in C. This function accepts a size as its one and only argument and reserves that much space in the heap
+segment as bytes, returning initial address of that space as a void pointer. If the malloc() function is not able 
+to allocate any space for some reason, it will return a NULL pointer with a value of 0 instead. The corresponding 
+de-allocation function is free(). This function accepts a pointer as its one and only argument and frees that 
+previously reserved memory space for later use.
+
+![](/assets/img/posts/memory-segmentation/23.png)<br>
+![](/assets/img/posts/memory-segmentation/24.png)<br>
+
+This program takes a command line argument and uses this argument as the size for the heap reservation which 
+will be allocated by the malloc() function. Then it uses malloc() and free() functions to allocate and de-allocate
+the memory. printf() statements are being used in order to debug what is actually happening. Since the malloc()
+function does not know what kind of data will be stored in that reserved space, the void pointer should be type
+casted into the appropriate type. After each malloc() call, there is an error-checking functionality that check 
+whether or not the reservation process were successfull or not. If the allocation fails, fprintf() is called to 
+direct a text message to the standart error file descriptor and program exits.
+
+![](/assets/img/posts/memory-segmentation/25.png)<br>

@@ -1,4 +1,4 @@
-I"ã@<h1 id="segmentation-on-x86-architecture">Segmentation on x86 Architecture</h1>
+I" L<h1 id="segmentation-on-x86-architecture">Segmentation on x86 Architecture</h1>
 
 <p>When a program is compiled and run, memory is divided into five segments: stack, heap, data, bss and text.
 Each segment of the memory serves a certain purpose. The <strong>text</strong> segment is also called <strong>code</strong> segment.
@@ -253,4 +253,41 @@ allowing the stack to be larger if the
 heap is small and vice versa.</p>
 
 <p><img src="/assets/img/posts/memory-segmentation/20.png" alt="" /><br /></p>
+
+<h1 id="memory-segments-in-c-language">Memory Segments in C language</h1>
+
+<p>In C programming language, just like the other languages, compiled code take its place in the code segment 
+while, while variables sits in the remaining segments. Depending on the how the variable is defined, the variables
+will reside in different segments. If a variable defined at the outside of a function, it is considered as a <strong>global</strong> 
+variable. The <strong>static</strong> keyword is can also be prepended to any variable decleration to make the variable static. If a 
+static or global variable initialized with a value, they will be stored in the <strong>data segment</strong>; otherwise, these 
+variables will be located in the BSS segment. The memory on the heap memory must be allocated first by using a 
+memory allocation function called malloc(). In general, pointers are used to reference memory on the heap segment.
+Finally, the remaining variables will reside in the stack. Since the stack segment contains many stack frames
+within, stack variables can maintain uniqueness within different functional contexts.<br /></p>
+
+<p>The following code will explain these concepts in C.</p>
+
+<p><img src="/assets/img/posts/memory-segmentation/21.png" alt="" /><br />
+<img src="/assets/img/posts/memory-segmentation/22.png" alt="" /><br /></p>
+
+<p>Most of the concepts are self-explanatory since the variable names are descriptive and each variable grouped 
+with their segment couples. Two identical named stack variables are declared in order to illustrade 
+their functional contexts. The heap variable is declared as an integer pointer, which will point to the memory address 
+allocated on the heap segment. malloc() function is called allocate four bytes in the heap segment. Since the newly 
+allocated heap memory could be of any data type, the malloc() function returns a <strong>void</strong> pointer. It then type casted
+into an integer pointer.</p>
+
+<p>Summary:</p>
+<ul>
+  <li>Initialized <strong>global</strong> and <strong>static</strong> variables will be stored in the Data Segment.</li>
+  <li>Uninitialized <strong>global</strong> and <strong>static</strong> variables will be stored in the BSS Segment.</li>
+  <li>Heap variables will be stored in the Heap Segment.</li>
+  <li>Stack variables, in the both functions, will be stored in the Stack Segment in different Stack Frames.</li>
+</ul>
+
+<p>The first two initialized variables have the lowers memory addresses. It is because the Text Segment starts from
+the lowest memory address and the Data Segment resides where the Text Segment ends. The next two uninitialized variables 
+are stored in the BSS segment. The memory addresses for those variables are slightly bigger then the addresses which points
+to the variables in the Data Segment since the BSS Segment being initialized where the Data Segment ends.</p>
 :ET

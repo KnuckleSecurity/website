@@ -290,18 +290,6 @@
       
     
   
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
 </ul>
                 </div>
               </div>
@@ -352,18 +340,6 @@
       <li class="nav__item">
         <a href="/tag/tryhackme-machines/" class="nav__link">THM</a>
       </li>
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
       
     
   
@@ -618,7 +594,7 @@
             <span class="post__minutes">
               
               
-                13 min read
+                18 min read
               
               <time class="post__date"
                 datetime="2022-12-02T22:20:00+00:00">Dec 2, 2022</time>
@@ -924,6 +900,80 @@ heap is small and vice versa.</p>
 
 <p><img src="/assets/img/posts/memory-segmentation/20.png" alt="" /><br /></p>
 
+<h1 id="memory-segments-in-c-language">Memory Segments in C language</h1>
+
+<p>In C programming language, just like the other languages, compiled code take its place in the code segment 
+while, while variables sits in the remaining segments. Depending on the how the variable is defined, the variables
+will reside in different segments. If a variable defined at the outside of a function, it is considered as a <strong>global</strong> 
+variable. The <strong>static</strong> keyword is can also be prepended to any variable decleration to make the variable static. If a 
+static or global variable initialized with a value, they will be stored in the <strong>data segment</strong>; otherwise, these 
+variables will be located in the BSS segment. The memory on the heap memory must be allocated first by using a 
+memory allocation function called malloc(). In general, pointers are used to reference memory on the heap segment.
+Finally, the remaining variables will reside in the stack. Since the stack segment contains many stack frames
+within, stack variables can maintain uniqueness within different functional contexts.<br /></p>
+
+<p>The following code will explain these concepts in C.</p>
+
+<p><img src="/assets/img/posts/memory-segmentation/21.png" alt="" /><br />
+<img src="/assets/img/posts/memory-segmentation/22.png" alt="" /><br /></p>
+
+<p>Most of the concepts are self-explanatory since the variable names are descriptive and each variable grouped 
+with their segment couples. Two identical named stack variables are declared in order to illustrade 
+their functional contexts. The heap variable is declared as an integer pointer, which will point to the memory address 
+allocated on the heap segment. malloc() function is called allocate four bytes in the heap segment. Since the newly 
+allocated heap memory could be of any data type, the malloc() function returns a <strong>void</strong> pointer. It then type casted
+into an integer pointer.</p>
+
+<p>Summary:</p>
+<ul>
+  <li>Initialized <strong>global</strong> and <strong>static</strong> variables will be stored in the Data Segment.</li>
+  <li>Uninitialized <strong>global</strong> and <strong>static</strong> variables will be stored in the BSS Segment.</li>
+  <li>Heap variables will be stored in the Heap Segment.</li>
+  <li>Stack variables, in the both functions, will be stored in the Stack Segment in different Stack Frames.</li>
+</ul>
+
+<p>The first two initialized variables have the lowers memory addresses. It is because the Text Segment starts from
+the lowest memory address and the Data Segment resides where the Text Segment ends. The next two uninitialized variables 
+are stored in the BSS segment. The memory addresses for those variables are slightly bigger then the addresses which points
+to the variables in the Data Segment since the BSS Segment being initialized where the Data Segment ends. Since both 
+segments are fixed size, there is verry litle wasted space, and the addresses are not very far apart.<br /></p>
+
+<p>Heap Segment is not fixed size, and more space can be allocated on the run. And the first address of the Heap Segment
+starts where the BSS Segment ends. Finally, the stack variables have the greatest addresses since the Stack Segment starts
+where the memory ends. Stack Segment is also not fixed size, which means it will grow towards to the heap whereby heap 
+grows toward to the stack. This allows both memory segments to be dynamic without wasting any unnecesarry space in memory.<br /></p>
+
+<p>The first stack_var in the main() function’s context resides in the Stack Segment within its own stack frame. The second 
+stack_var in the function() has its own functional context, thereby that variable is stored within a different stack
+frame in the Stack Segment. When the function() is called, CPU will initialize a function prologue in order to create 
+a new stack frame in the stack to store stack_var (among other data) for function()’s context. Since the stack grow
+back up toward the Heap Segment with each stack frame and pushed data, the memory address for the second stack_var 
+(0xbffff814) is smaller than the address for the first stack_var (0xbffff834) found within main()’s context.</p>
+
+<h1 id="using-the-heap">Using the Heap</h1>
+
+<p>Using the other segments of the RAM is an automated process, programmer does not have to be attentive in to the 
+segmentation process. However, when it comes to heap, the programmer have to manually set and calibrate the use 
+of the variables. As previously illustrated, heap memory allocation is done by a memory allocation function called 
+malloc() in C. This function accepts a size as its one and only argument and reserves that much space in the heap
+segment as bytes, returning initial address of that space as a void pointer. If the malloc() function is not able 
+to allocate any space for some reason, it will return a NULL pointer with a value of 0 instead. The corresponding 
+de-allocation function is free(). This function accepts a pointer as its one and only argument and frees that 
+previously reserved memory space for later use.</p>
+
+<p><img src="/assets/img/posts/memory-segmentation/23.png" alt="" /><br />
+<img src="/assets/img/posts/memory-segmentation/24.png" alt="" /><br /></p>
+
+<p>This program takes a command line argument and uses this argument as the size for the heap reservation which 
+will be allocated by the malloc() function. Then it uses malloc() and free() functions to allocate and de-allocate
+the memory. printf() statements are being used in order to debug what is actually happening. Since the malloc()
+function does not know what kind of data will be stored in that reserved space, the void pointer should be type
+casted into the appropriate type. After each malloc() call, there is an error-checking functionality that check 
+whether or not the reservation process were successfull or not. If the allocation fails, fprintf() is called to 
+direct a text message to the standart error file descriptor and program exits.</p>
+
+<p><img src="/assets/img/posts/memory-segmentation/25.png" alt="" /><br /></p>
+
       <br><p>Thanks for reading. If it was helpful and you want to support, you can buy me a coffee ;)</p>
       <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="burakbaris" data-color="#900000" data-emoji=""  data-font="Poppins" data-text="Buy me a coffee" data-outline-color="#ffffff" data-font-color="#ffffff" data-coffee-color="#FFDD00" ></script>
     </div>
@@ -940,11 +990,11 @@ heap is small and vice versa.</p>
 
     <div class="post__navigation">
       
-      <a class="prev" href="/2022/12/02/binary-exploitation/">
-        <img class="post__nav-image lazy" data-src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/parkbanner.jpg" alt="Binary Exploitation">
+      <a class="prev" href="/2022/08/21/sql-injection-lab/">
+        <img class="post__nav-image lazy" data-src="/assets/img/posts/sqlilab/injection.png" alt="SQL Injection Lab">
         <div class="post__nav-box">
           <div class="post__nav post__nav__prev"><i class="ion ion-md-arrow-round-back"></i> Previous Post</div>
-          <h4 class="post__nav__title">Binary Exploitation</h4>
+          <h4 class="post__nav__title">SQL Injection Lab</h4>
         </div>
       </a>
       
@@ -963,7 +1013,7 @@ heap is small and vice versa.</p>
 
 
 <div class="container">
-  <div class="related-posts is-related">
+  <div class="related-posts ">
     <div class="row">
       <div class="col col-12">
         <div class="container__inner">
@@ -977,77 +1027,6 @@ heap is small and vice versa.</p>
             
 
             
-            
-            
-            
-
-            
-
-            
-
-            <div class="article col col-4 col-d-6 col-t-12 grid__post">
-              <div class="article__inner">
-
-                
-                <a class="article__image" href="/2022/12/02/binary-exploitation/">
-                  <img class="lazy" data-src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/parkbanner.jpg" alt="Binary Exploitation">
-                </a>
-                
-
-                <div class="article__content">
-
-                  <div class="article__meta">
-                    <span class="article__minutes">
-                      
-                      
-                        11 min read
-                      
-                      <time class="article__date"
-                        datetime="2022-12-02T22:20:00+00:00">Dec 2, 2022</time>
-                    </span>
-                  </div>
-
-                  <h2 class="article__title">Binary Exploitation</h2>
-
-                  <p class="article__excerpt">desc</p>
-
-                  <div class="article__bottom">
-
-                    
-                    <div class="article__author">
-                      <a href="/about/" aria-label="Burak Baris"><img class="article__author-image lazy" data-src="/images/avatar.png" alt="Burak Baris's Picture"></a>
-                    </div>
-                    
-
-                    <div class="article__bottom-meta">
-                      
-                        <a href="/about/" class="article__author-link">Burak Baris</a>
-                      
-                      
-                      <span>in</span>
-                      <span class="article-tags">
-                        
-                          <a href="/tag/c" class="article__tag">c</a>
-                        
-                          <a href="/tag/shell-coding" class="article__tag">shell-coding</a>
-                        
-                          <a href="/tag/binary-exploitation" class="article__tag">binary-exploitation</a>
-                        
-                          <a href="/tag/buffer-overflows" class="article__tag">buffer-overflows</a>
-                        
-                      </span>
-                      
-                    </div>
-                  </div>
-
-                </div>
-
-              </div>
-            </div>
-
-            
-                
-              
             
             
             
@@ -1173,7 +1152,7 @@ heap is small and vice versa.</p>
           <span class="article__minutes">
             
             
-              13 min read
+              18 min read
             
           </span>
           <time class="article__date"
@@ -1193,20 +1172,20 @@ heap is small and vice versa.</p>
     
     <div class="recent-posts">
       
-      <a class="recent-posts__image" href="/2022/12/02/binary-exploitation/"><img class="lazy" data-src="/assets/img/posts/tryhackme-hackpark-ctf-writeup/parkbanner.jpg" alt="Binary Exploitation"></a>
+      <a class="recent-posts__image" href="/2022/08/21/sql-injection-lab/"><img class="lazy" data-src="/assets/img/posts/sqlilab/injection.png" alt="SQL Injection Lab"></a>
       
       <div class="recent-posts__content">
         <div class="article__meta">
           <span class="article__minutes">
             
             
-              11 min read
+              13 min read
             
           </span>
           <time class="article__date"
-            datetime="2022-12-02T22:20:00+00:00">Dec 2, 2022</time>
+            datetime="2022-08-21T21:59:35+00:00">Aug 21, 2022</time>
         </div>
-        <h4 class="recent-posts__title"><a href="/2022/12/02/binary-exploitation/">Binary Exploitation</a></h4>
+        <h4 class="recent-posts__title"><a href="/2022/08/21/sql-injection-lab/">SQL Injection Lab</a></h4>
         <div class="article__bottom">
           <div class="article__author">
             <a href="/about/" aria-label="Burak Baris"><img class="article__author-image lazy" data-src="/images/avatar.png" alt="Burak Baris's Picture"></a>
@@ -1228,7 +1207,7 @@ heap is small and vice versa.</p>
       <h3 class="widget__title">Explore Tags</h3>
     </div>
     <div class="tag__cloud">
-      <a href="/tag/32-bit/" class="set-1">32-bit</a> <a href="/tag/cryptography/" class="set-2">Cryptography</a> <a href="/tag/encryption/" class="set-1">Encryption</a> <a href="/tag/openssl/" class="set-1">OpenSSL</a> <a href="/tag/pkc/" class="set-2">PKC</a> <a href="/tag/pki/" class="set-2">PKI</a> <a href="/tag/pentesting/" class="set-1">Pentesting</a> <a href="/tag/tryhackme-machines/" class="set-5">TryHackme Machines</a> <a href="/tag/arch-linux/" class="set-1">arch-linux</a> <a href="/tag/assembly/" class="set-1">assembly</a> <a href="/tag/autorun-privesc/" class="set-1">autorun-privesc</a> <a href="/tag/binary-exploitation/" class="set-1">binary-exploitation</a> <a href="/tag/boot-managers/" class="set-1">boot-managers</a> <a href="/tag/bruteforce/" class="set-3">bruteforce</a> <a href="/tag/buffer-overflow/" class="set-1">buffer-overflow</a> <a href="/tag/buffer-overflows/" class="set-1">buffer-overflows</a> <a href="/tag/c/" class="set-2">c</a> <a href="/tag/cracking/" class="set-2">cracking</a> <a href="/tag/ctf/" class="set-5">ctf</a> <a href="/tag/directory-traversal/" class="set-1">directory-traversal</a> <a href="/tag/grub/" class="set-1">grub</a> <a href="/tag/ip-addresses/" class="set-1">ip-addresses</a> <a href="/tag/jenkins/" class="set-1">jenkins</a> <a href="/tag/linux/" class="set-1">linux</a> <a href="/tag/linux-privesc/" class="set-1">linux-privesc</a> <a href="/tag/memory-segmentation/" class="set-2">memory-segmentation</a> <a href="/tag/metasploit/" class="set-4">metasploit</a> <a href="/tag/mindows-privesc/" class="set-2">mindows-privesc</a> <a href="/tag/network-protocols/" class="set-1">network protocols</a> <a href="/tag/package-managers/" class="set-1">package-managers</a> <a href="/tag/pentesting/" class="set-5">pentesting</a> <a href="/tag/php/" class="set-1">php</a> <a href="/tag/powershell/" class="set-1">powershell</a> <a href="/tag/remote-code-execution/" class="set-4">remote-code-execution</a> <a href="/tag/reverse-shell/" class="set-1">reverse-shell</a> <a href="/tag/router/" class="set-1">router</a> <a href="/tag/shell-coding/" class="set-1">shell-coding</a> <a href="/tag/shell-injection/" class="set-1">shell-injection</a> <a href="/tag/sql-injection/" class="set-1">sql-injection</a> <a href="/tag/subnetting/" class="set-1">subnetting</a> <a href="/tag/switch/" class="set-1">switch</a> <a href="/tag/unqoted-service-path/" class="set-2">unqoted-service-path</a> <a href="/tag/windows/" class="set-2">windows</a> <a href="/tag/windows-privesc/" class="set-2">windows-privesc</a> <a href="/tag/windows-tokens/" class="set-1">windows-tokens</a> <a href="/tag/x509/" class="set-2">x509</a> <a href="/tag/x86/" class="set-1">x86</a>
+      <a href="/tag/32-bit/" class="set-1">32-bit</a> <a href="/tag/cryptography/" class="set-2">Cryptography</a> <a href="/tag/encryption/" class="set-1">Encryption</a> <a href="/tag/openssl/" class="set-1">OpenSSL</a> <a href="/tag/pkc/" class="set-2">PKC</a> <a href="/tag/pki/" class="set-2">PKI</a> <a href="/tag/pentesting/" class="set-1">Pentesting</a> <a href="/tag/tryhackme-machines/" class="set-5">TryHackme Machines</a> <a href="/tag/arch-linux/" class="set-1">arch-linux</a> <a href="/tag/assembly/" class="set-1">assembly</a> <a href="/tag/autorun-privesc/" class="set-1">autorun-privesc</a> <a href="/tag/boot-managers/" class="set-1">boot-managers</a> <a href="/tag/bruteforce/" class="set-3">bruteforce</a> <a href="/tag/buffer-overflow/" class="set-1">buffer-overflow</a> <a href="/tag/c/" class="set-1">c</a> <a href="/tag/cracking/" class="set-2">cracking</a> <a href="/tag/ctf/" class="set-5">ctf</a> <a href="/tag/directory-traversal/" class="set-1">directory-traversal</a> <a href="/tag/grub/" class="set-1">grub</a> <a href="/tag/ip-addresses/" class="set-1">ip-addresses</a> <a href="/tag/jenkins/" class="set-1">jenkins</a> <a href="/tag/linux/" class="set-1">linux</a> <a href="/tag/linux-privesc/" class="set-1">linux-privesc</a> <a href="/tag/memory-segmentation/" class="set-2">memory-segmentation</a> <a href="/tag/metasploit/" class="set-4">metasploit</a> <a href="/tag/mindows-privesc/" class="set-2">mindows-privesc</a> <a href="/tag/network-protocols/" class="set-1">network protocols</a> <a href="/tag/package-managers/" class="set-1">package-managers</a> <a href="/tag/pentesting/" class="set-5">pentesting</a> <a href="/tag/php/" class="set-1">php</a> <a href="/tag/powershell/" class="set-1">powershell</a> <a href="/tag/remote-code-execution/" class="set-4">remote-code-execution</a> <a href="/tag/reverse-shell/" class="set-1">reverse-shell</a> <a href="/tag/router/" class="set-1">router</a> <a href="/tag/shell-injection/" class="set-1">shell-injection</a> <a href="/tag/sql-injection/" class="set-1">sql-injection</a> <a href="/tag/subnetting/" class="set-1">subnetting</a> <a href="/tag/switch/" class="set-1">switch</a> <a href="/tag/unqoted-service-path/" class="set-2">unqoted-service-path</a> <a href="/tag/windows/" class="set-2">windows</a> <a href="/tag/windows-privesc/" class="set-2">windows-privesc</a> <a href="/tag/windows-tokens/" class="set-1">windows-tokens</a> <a href="/tag/x509/" class="set-2">x509</a> <a href="/tag/x86/" class="set-1">x86</a>
     </div>
   </div>
 </div>

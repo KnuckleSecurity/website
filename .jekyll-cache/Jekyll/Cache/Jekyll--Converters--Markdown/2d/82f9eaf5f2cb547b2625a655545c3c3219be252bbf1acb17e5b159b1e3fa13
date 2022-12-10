@@ -1,0 +1,276 @@
+I"�F<h1 id="segmentation-on-x86-architecture">Segmentation on x86 Architecture</h1>
+
+<p>When a program is compiled and run, memory is divided into five segments: stack, heap, data, bss and text.
+Each segment of the memory serves a certain purpose. The <strong>text</strong> segment is also called <strong>code</strong> segment.
+This segment contains the compiled program’s assembled machine code instructions to be read by the CPU.
+The execution process is non-linear. When the executable first loaded into memory, EIP (instruction pointer) 
+register is first set to the first instruction loaded in the text segment. Then, the processor gets into the 
+execution loop state as following:</p>
+
+<ul>
+  <li>Read the instruction written in the memory address that EIP points to.</li>
+  <li>Adds the byte length of the instruction to EIP.</li>
+  <li>Execute the instruction that was read in the first step.</li>
+  <li>Loop back. Go back to the fist step.</li>
+</ul>
+
+<p>As mentioned before, execution process is non-linear, sometimes in the text segment, instruction pointer will 
+encounter a call instruction or a jump, which basically sets the EIP to a different address of the memory instead
+of incrementing it by the previously read instruction’s byte length. If the EIP is changed in the execution step,
+EIP will point and loop back to the first step back, and then execute that instruction found at the address of
+whatever EIP was changed to.<br /></p>
+
+<h2 id="text-segment">Text Segment</h2>
+<p>Write permission in disabled in the text segment since it is not used to store variables, only code. This security 
+mechanism is there for to prevent malicious activity which involves modifying the pre-compiled code into something else.
+Any write attempt into this segment of the memory will cause the program to alert the user that something restricted 
+happened, and program will be killed. Since that segment is in read-only mode, it can be shared among different copies 
+of the program, allowing multiple proccesses or threads to run at the same time without problem. Plus, text segment
+has a fixed size since nothing ever changes in it.</p>
+
+<h2 id="data-and-bss-segment">Data and BSS Segment</h2>
+<p>The data and bss segments are used to store static and global variables. The <strong>data segment</strong> is being used to store 
+<strong>initialized</strong> global and static variables while the <strong>bss segment</strong> is being used to store their uninitialized
+counterparts. Those segments also fixed size segments regardless of the fact that they are writable. Global
+variables persist, despite the functional context. Both global and static variables are able to persist
+because they are stored in their own memory segments.</p>
+
+<h2 id="heap-segment">Heap Segment</h2>
+<p>The <strong>heap segment</strong> is a memory segment which the programmers have a direct control over. It is programmable.
+Blocks of the heap segment can be allocated and used for whatever the program needs. Unlike the text, bss and the 
+data segment, heap does not have a fixed size, it can grow larger or smaller. The memory chunks within 
+the heap is managed by de-allocator and allocator algorithms. Those algorithms enable programmers to reserve
+a region of the heap memory for a required use or remove reservation to allow that portion of the memory 
+to be reusable again for a later reservation. Heap will dynamically shrink and grow depending on how much memory 
+is allocated for use. The growth of the heap moves downward toward the high memory addresses.</p>
+
+<h2 id="stack-segment">Stack Segment</h2>
+<p>The <strong>stack</strong> segment also has variable size and is used as a temporary pile 
+to store local function variables and context during function calls. When a program calls for a function, EIP will 
+point to the first instruction written for that function, and that function will have its own variables within its 
+function scope, and a new stack frame will be created for that function. After a function call EIP does not immidiately
+jumps to the address written on it, first the CPU pushes all the parameters passed to that function to the stack, then, since 
+the EIP have to go back to the instruction where it was left before the function call, the return address and the
+stack base pointer will be passed to the stack. When the last instruction of the called function is read by the EIP,
+return address and base pointer address pushed to the stack before the function call will be read and by the 
+instruction and stack pointer, and execution will continue from where it was left. All of this information is stored 
+together on the stack in what is collectively called a stack frame. The stack contains many stack frames.<br /></p>
+
+<p>In general computer science terms, a stack is an abstract data structure<br />
+that is used frequently. It has first-in, last-out (FILO) ordering, which means the
+first item that is put into a stack is the last item to come out of it. 
+You can’t get the first bead off until you have removed all the other beads. When an
+item is placed into a stack, it’s known as pushing, and when an item is removed
+from a stack, it’s called popping.<br /></p>
+
+<p>Stack segment, as the name implies,
+is a stack data structure, which stores all the stack frames. The ESP (stack pointer) is used to store the address 
+of the last data pushed onto the stack. That address is constantly changin as the PUSH and POP operations are executed 
+by the CPU. As this behavior being dynamic, just like heap, stack segment does not have a fixed size. Stack segment 
+grows upward in a visual listing of memory, toward lower memory addresses, as opposed to the heap.<br /></p>
+
+<p>As I briefly mentioned before, when a function called, several things are pushed into to the stack.
+The EBP (base pointer, sometimes called frame pointer FP), is used to reference local function variables
+in the current stack frame, it stores the starting address of the active stack frame. Each stack frame
+contains parameters to the function, its local variables, and two pointers that are neccesarry to put things
+back the way they were. The saved frame pointer (SFP) and the return address. The SFP is used to restore EBP to 
+its previous value, which is the starting address of the previous stack frame. And the return address is used to 
+restore EIP to the next instruction found after the function call. This restores the functional context of the 
+previous stack frame.</p>
+
+<h2 id="stack-practices">Stack Practices</h2>
+
+<p>The following C code has two functions, main() and test_function().
+<img src="/assets/img/posts/memory-segmentation/9.png" alt="" /><br /></p>
+
+<p>Inside the main function the program declares a function called test_function(). This function 
+takes four integer parameters. The local variables for this function are an integer called flag
+and a 10 byte long character array called buffer. The machine instructions for this code will be 
+placed in the text segment while the local variables and the parameters stored in the stack. After
+compiling the program, we can examine the inner mechanisms with GDB (GNU debugger). The following 
+picture illustrates the disassembled machine instructions for main() and test_function().
+The main() function starts at 0x08048344. There is something called <strong>function prologue</strong> or 
+<strong>procedure prologue</strong>. Each function has to start with a function prologue. The first three 
+instructions for test_function() and the first six instructions for main() function are the procedure 
+prologue instructions. They save base pointer in the stack, and open up space in the 
+stack for the local variables. Depending on which compiler being used the disassembled instructions and the 
+function prologue would differ slightly. However, in general, those instructions are required in order to build the 
+stack frame for the called function.<br /></p>
+
+<p>Machine instructions for main().
+<img src="/assets/img/posts/memory-segmentation/10.png" alt="" /><br /></p>
+
+<p>Machine instructions for test_function().
+<img src="/assets/img/posts/memory-segmentation/11.png" alt="" /><br /></p>
+
+<p>After the initial execution of the program, the main() function executes its own function prologue in those 
+first six instructions. When the stack frame is set, main() function immediately calls for the test_function(). When the
+the test_function() is called, after the stack frame is created, four values are pushed to the stack in 
+reverse order, since stack is first in lost out (FILO). The arguments are 1 ,2 ,3 , 4. Therefore, they are 
+pushed in the stack as 4, 3, 2 and finally 1. Those values correspond to the a, b, c, d variables.</p>
+
+<figure class="highlight"><pre><code class="language-assembly" data-lang="assembly">0x08048367 &lt;main+16&gt;: mov DWORD PTR [esp+12],0x4
+0x0804836f &lt;main+24&gt;: mov DWORD PTR [esp+8],0x3
+0x08048377 &lt;main+32&gt;: mov DWORD PTR [esp+4],0x2
+0x0804837f &lt;main+40&gt;: mov DWORD PTR [esp],0x1</code></pre></figure>
+
+<p>In C programming language each integer uses 4-bytes. Since a RAM block is 1-byte, the value of those 
+integers will be spread into four consecutive RAM addresses. As you can see first integer 0x1 written
+at the first address where the newly created stack frame’s pointer points. esp, esp+1, esp+2, esp+3 will store 
+0x1 as 0x00000001. After all those four parameters are pushed to the stack, the progam calls for the test_function(). 
+Before setting the EIP to the first instructions of the test_function(), the <strong>call</strong> instruction will push the return 
+address to the stack in order to restore the EIP when the execution of the called function is over. 
+In this case, the return address would point to the leave instruction in main() at 0x0804838b</p>
+
+<p>The call instruction both stores the return address on the stack and jumps
+EIP to the beginning of test_function(), so test_function()’s procedure prologue
+instructions finish building the stack frame. In this step, the current
+value of EBP is pushed to the stack. This value is called the saved frame
+pointer (SFP) and is later used to restore EBP back to its original state.
+The current value of ESP is then copied into EBP to set the new frame pointer.
+This frame pointer is used to reference the local variables of the function
+(flag and buffer). Memory is saved for these variables by subtracting from
+ESP. In the end, the stack frame looks like this:</p>
+
+<p><img src="/assets/img/posts/memory-segmentation/12.png" alt="" /><br /></p>
+
+<p>We can watch the stack frame construction on the stack using GDB. In the
+following output, a breakpoint is set in main() before the call to test_function()
+and also at the beginning of test_function(). GDB will put the first break-
+point before the function arguments are pushed to the stack, and the second
+breakpoint after test_function()’s procedure prologue. When the program is
+run, execution stops at the breakpoint, where the register’s ESP (stack pointer),
+EBP (frame pointer), and EIP (execution pointer) are examined.</p>
+
+<p><img src="/assets/img/posts/memory-segmentation/13.png" alt="" /><br /></p>
+
+<p>As you can observe from the picture, the EIP points to the 0x8048367 &lt;main+16&gt;, 
+where the EIP instructs the program to push the first parameter of the test_function() to 
+the stack. However, that instruction is not executed yet since there is a breakpoint. 
+It also means that since the call instruction is not invoked yet, the current stack frame is 
+still belong to the main(). If we subtract the current value of the EBP from the ESP we can find out how many bytes are allocated 
+in the stack for the main() function’s stack frame.<br />
+0xbffff818 - 0xbffff800 = 0x18<br />
+0x18 (24) bytes are allocated in the stack for the main() function’s stack frame. It is possible to verify this value
+by observing the third instruction of the main() function’s machine code where it subtracts 0x18 from the ESP.
+Then, we can observe the upcoming five instructions after the first breakpoint. The CPU will push all the parameters
+to the stack then invoke the call instruction.<br /></p>
+
+<p>First, let’s see how does the stack frame allocated for main() look like before and after the breakpoints.<br /><br />
+Before the call:
+<img src="/assets/img/posts/memory-segmentation/14.png" alt="" /><br />
+Before the CPU pushes those integer parameters to the stack in order to 
+prepare for the upcoming function call, this is how those allocated 24 bytes look like.<br /></p>
+
+<p>After the call:
+<img src="/assets/img/posts/memory-segmentation/16.png" alt="" /><br /></p>
+
+<p>The next breakpoint is just after the <strong>function prologue</strong> for the test_function(). Therefore, continuing
+built the new stack frame. 
+As you can see those function parameters are located at the top of the main() function’s stack. The key takeaway
+from that behavior is that, those function parameters won’t be located in test_function()’s stack frame. Instead,
+they will be referenced via its own base pointer (EBP).<br /></p>
+
+<p>And this is how newly created stack fame looks like: 
+Just like every 
+local variable, flag and char local variables will be referenced relative to the frame pointer (EBP).
+<img src="/assets/img/posts/memory-segmentation/17.png" alt="" /><br /></p>
+
+<p>You may wonder, in test_function’s stack frame, none of the values listed are corresponds neither to the return 
+address nor to the saved frame pointer. Those values are stored between the two stack frames. There is an 8-byte address gap 
+between the new EBP and the old ESP. If that was not the case the new EBP would be sharing the old EBP’s value, which is 
+0xbffff800. Instead, the new value for the EBP is 0xbffff7f8.<br />
+0xbffff800 - 0xbffff7f8 = 0x8<br /></p>
+
+<p>Therefore, the new EBP’s address stores the last byte (research little endian byte) of the saved frame pointer (SFP).
+If we go further 8 more bytes from the new EBP, we will hit to the address of the old ESP. And that address
+will be storing the last byte of the first integer parameter passed to the test_function(). Let’s see.</p>
+
+<p><img src="/assets/img/posts/memory-segmentation/18.png" alt="" /><br /></p>
+
+<p>By referencing the new EBP, program can locate the parameters, SFP and return address.</p>
+
+<p><img src="/assets/img/posts/memory-segmentation/19.png" alt="" /><br /></p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Number</th>
+      <th style="text-align: left">Correlation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">1</td>
+      <td style="text-align: left">Saved frame pointer (SFP)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">2</td>
+      <td style="text-align: left">Return address</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">3</td>
+      <td style="text-align: left">int a</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">4</td>
+      <td style="text-align: left">int b</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">5</td>
+      <td style="text-align: left">int c</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">6</td>
+      <td style="text-align: left">int d</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>After the execution finishes, the entire stack frame is popped off of the
+stack, and the EIP is set to the return address, so the program can continue
+execution. If another function was called within the function, another stack
+frame would be pushed onto the stack, and so on. As each function ends, its
+stack frame is popped off of the stack, so execution can be returned to the
+previous function. This behavior is the reason this segment of memory is
+organized in a FILO data structure.
+The various segments of memory are arranged in the order they
+were presented, from the lower memory addresses to the higher memory
+addresses. Since most people are familiar with seeing numbered lists that
+count downward, the smaller memory addresses are shown at the top.
+Some texts have this reversed, which can be very confusing; so for this
+paper, smaller memory addresses
+are always shown at the top. Most
+debuggers also display memory in
+this style, with the smaller memory
+addresses at the top and the higher
+ones at the bottom.
+Since the heap and the stack
+are both dynamic, they both grow
+in different directions toward each
+other. This minimizes wasted space,
+allowing the stack to be larger if the
+heap is small and vice versa.</p>
+
+<p><img src="/assets/img/posts/memory-segmentation/20.png" alt="" /><br /></p>
+
+<h1 id="memory-segments-in-c-language">Memory Segments in C language</h1>
+
+<p>In C programming language, just like the other languages, compiled code take its place in the code segment 
+while, while variables sits in the remaining segments. Depending on the how the variable is defined, the variables
+will reside in different segments. If a variable defined at the outside of a function, it is considered as a <strong>global</strong> 
+variable. The <strong>static</strong> keyword is can also be prepended to any variable decleration to make the variable static. If a 
+static or global variable initialized with a value, they will be stored in the <strong>data segment</strong>; otherwise, these 
+variables will be located in the BSS segment. The memory on the heap memory must be allocated first by using a 
+memory allocation function called malloc(). In general, pointers are used to reference memory on the heap segment.
+Finally, the remaining variables will reside in the stack. Since the stack segment contains many stack frames
+within, stack variables can maintain uniqueness within different functional contexts.<br /></p>
+
+<p>The following code will explain these concepts in C.</p>
+
+<p><img src="/assets/img/posts/memory-segmentation/21.png" alt="" /><br />
+<img src="/assets/img/posts/memory-segmentation/22.png" alt="" /><br /></p>
+
+<p>Most of the concepts are self-explanatory since the variable names are descriptive and each variable grouped 
+with their segment couples.</p>
+:ET
