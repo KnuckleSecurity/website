@@ -1,0 +1,49 @@
+I"�<p>Buffer overflow vulnerabilities have been around since the beginning of the computers. Most internet viruses and worms take
+advantage of this concept to propagate, and exploit zero-day vulnerabilities.<br /></p>
+
+<p>C is a high level programming language (despite the fact that nowadays people call it low level.) but it assumes that the
+programmer is responsible for memory and data integrity. If this responsibility were shifted over to the compiler, the 
+resulting binary would be significantly slower, due to integrity checks on each variable. We can observe the reality of this
+by experimenting the difference with some modern day programming languages. Whether they are interpreted, compiled or both,
+such as JIT (Just in Time Compiler), the resulting binaries are much slower when they do have garbage 
+collection, dynamic typing and other facilities which make it easier for the programmer to write programs.
+Processing overheads are inevitable in such cases. C does not do any of that, there is no overhead, but that means programmer 
+needs to be able to allocate memory and free them to prevent memory leaks, and must deal with static typing of variables.
+However, lacking those features gives a significant level of control to the programmer.<br /></p>
+
+<p>While C’s simplicity increases the programmer’s level of control and the efficency, it also means that those programs are 
+very likely vulnerable to buffer-overflows if the programmer is not cautious enough. Once a variable is allocated memory, 
+there is no built-in safeguards or any preventation mechanisms to ensure that the contents of that variable fit into the
+allocated memory. If a programmer wants to store a ten character long string in a memory, and allocates only eight bytes, 
+that type of operation is allowed. However, it will most likely cause program to crash. This is known as <strong>buffer-overflows</strong>
+since the last two bytes of the string data will not be fit into its allocated space and overwrites whatever happens to come
+next in the relevant segment.</p>
+
+<h2 id="stack-overflow-vulnerable-code-example">Stack Overflow Vulnerable Code Example</h2>
+<p><img src="/assets/img/posts/buffer-overflows/1.png" alt="" /><br />
+<img src="/assets/img/posts/buffer-overflows/2.png" alt="" /><br /></p>
+
+<p>Note that buffer_one is located just after where buffer_two ends. Thereby, when compiler writes ten bytes to the eight byte 
+long buffer_two, last two bytes are overwriting the first two bytes of the buffer_one.<br /></p>
+
+<p>Let’s see this behavior by examining the memory directly with the GDB.
+There are two breakpoints set within the debugger. When the first breakpoint is hit, two buffer takes their 
+In GDB we can see their starting addresses. buffer_one starts at 0xbffff7f8 and buffer_two starts at 0xbffff7f0.
+If we do the math we can observe that there is an eight byte gap between two buffers. The following picture examines how those
+bytes are set and located in the memory.</p>
+
+<p><img src="/assets/img/posts/buffer-overflows/3.png" alt="" /><br /></p>
+
+<p>The second breakpoint is just after when the program copies the command-line argument into the buffer_two’s address 
+space. As you can see, ten bytes are being written, however last two bytes are overwrite the initial two bytes of 
+the buffer_one.</p>
+
+<p><img src="/assets/img/posts/buffer-overflows/4.png" alt="" /><br /></p>
+
+<p>For visual people, this is how it looks.
+<img src="/assets/img/posts/buffer-overflows/5.png" alt="" /><br /></p>
+
+<p>A larger buffer will naturally overrun into the other variables as well, but if large enough, program will die and crash.
+<img src="/assets/img/posts/buffer-overflows/6.png" alt="" /><br />
+Segmentation fault.</p>
+:ET

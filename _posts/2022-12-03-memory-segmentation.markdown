@@ -1,14 +1,18 @@
 ---
 layout:   post
 title:   Memory Segmentation
-description:   Memory Segmentation 
+description:   Memory Segmentation
 date:   2022-12-03 01:20:00 +0300
 image: '/assets/img/posts/memory-segmentation/banner2.jpg'
 tags:   [c,assembly,x86,32-bit,memory-segmentation,memory-segmentation]
 featured:   false
 ---
 
-# Segmentation on x86 Architecture
+# What is RAM?
+Random-access memory is a form of computer memory that can be read and changed in any order,
+typically used to store working data and machine code.
+
+# Memory Segmentation
 
 When a program is compiled and run, memory is divided into five segments: stack, heap, data, bss and text.
 Each segment of the memory serves a certain purpose. The **text** segment is also called **code** segment.
@@ -86,7 +90,7 @@ its previous value, which is the starting address of the previous stack frame. A
 restore EIP to the next instruction found after the function call. This restores the functional context of the 
 previous stack frame. 
 
-## Stack Practices
+## Stack Practices on X86 Architecture
 
 The following C code has two functions, main() and test_function().
 ![](/assets/img/posts/memory-segmentation/9.png)<br>

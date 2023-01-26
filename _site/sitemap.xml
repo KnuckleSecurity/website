@@ -57,6 +57,14 @@
 <lastmod>2022-12-02T22:20:00+00:00</lastmod>
 </url>
 <url>
+<loc>http://localhost:4000/2022/12/10/stack-based-overflows-on-64bit-linux/</loc>
+<lastmod>2022-12-10T22:20:00+00:00</lastmod>
+</url>
+<url>
+<loc>http://localhost:4000/2022/12/10/stack-based-overflows-on-64bit-linux-2/</loc>
+<lastmod>2022-12-10T22:20:00+00:00</lastmod>
+</url>
+<url>
 <loc>http://localhost:4000/contact/</loc>
 </url>
 <url>
@@ -199,6 +207,9 @@
 </url>
 <url>
 <loc>http://localhost:4000/tag/memory-segmentation/</loc>
+</url>
+<url>
+<loc>http://localhost:4000/tag/buffer-overflows/</loc>
 </url>
 <url>
 <loc>http://localhost:4000/page/2/</loc>

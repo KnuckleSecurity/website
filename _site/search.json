@@ -1,6 +1,33 @@
 [
   
     {
+      "title"    : "X64 Linux Binary Exploitation Part 2 Ret2Libc",
+      "category" : "",
+      "tags"     : "c, assembly, x86, 32-bit, memory-segmentation, memory-segmentation, and buffer-overflows",
+      "url"      : "/2022/12/10/stack-based-overflows-on-64bit-linux-2/",
+      "date"     : "Dec 10, 2022",
+      "article"  : "<div class='article col col-4 col-d-6 col-t-12 grid__post animate'> <div class='article__inner'><a class='article__image' href='/2022/12/10/stack-based-overflows-on-64bit-linux-2/'> <img src='/assets/img/posts/stack-based-overflows-on-64bit-linux/banner.png' alt='X64 Linux Binary Exploitation Part 2 Ret2Libc'> </a><div class='article__content'> <div class='article__meta'> <span class='article__minutes'>24 min read <time class='article__date' datetime='2022-12-10T22:20:00+00:00'>Dec 10, 2022</time> </span> </div><h2 class='article__title'>X64 Linux Binary Exploitation Part 2 Ret2Libc</h2> <p class='article__excerpt'>Buffer Buffer Overflows</p><div class='article__bottom'><div class='article__author'> <a href='/about/' aria-label='Burak Baris'><img class='article__author-image' src='/images/avatar.png' alt='Burak Baris's Picture'></a> </div><div class='article__bottom-meta'><a href='/about/' class='article__author-link'>Burak Baris</a><span> in </span> <span class='article-tags'> <a href='/tag/c' class='article__tag'>c</a>  <a href='/tag/assembly' class='article__tag'>assembly</a>  <a href='/tag/x86' class='article__tag'>x86</a>  <a href='/tag/32-bit' class='article__tag'>32-bit</a>  <a href='/tag/memory-segmentation' class='article__tag'>memory-segmentation</a>  <a href='/tag/memory-segmentation' class='article__tag'>memory-segmentation</a>  <a href='/tag/buffer-overflows' class='article__tag'>buffer-overflows</a> </span></div></div></div></div></div>"
+    } ,
+  
+    {
+      "title"    : "X64 Linux Binary Exploitation Part 1 Stack Based Overflow",
+      "category" : "",
+      "tags"     : "c, assembly, x86, 32-bit, memory-segmentation, memory-segmentation, and buffer-overflows",
+      "url"      : "/2022/12/10/stack-based-overflows-on-64bit-linux/",
+      "date"     : "Dec 10, 2022",
+      "article"  : "<div class='article col col-4 col-d-6 col-t-12 grid__post animate'> <div class='article__inner'><a class='article__image' href='/2022/12/10/stack-based-overflows-on-64bit-linux/'> <img src='/assets/img/posts/stack-based-overflows-on-64bit-linux/banner.png' alt='X64 Linux Binary Exploitation Part 1 Stack Based Overflow'> </a><div class='article__content'> <div class='article__meta'> <span class='article__minutes'>42 min read <time class='article__date' datetime='2022-12-10T22:20:00+00:00'>Dec 10, 2022</time> </span> </div><h2 class='article__title'>X64 Linux Binary Exploitation Part 1 Stack Based Overflow</h2> <p class='article__excerpt'>Buffer Buffer Overflows</p><div class='article__bottom'><div class='article__author'> <a href='/about/' aria-label='Burak Baris'><img class='article__author-image' src='/images/avatar.png' alt='Burak Baris's Picture'></a> </div><div class='article__bottom-meta'><a href='/about/' class='article__author-link'>Burak Baris</a><span> in </span> <span class='article-tags'> <a href='/tag/c' class='article__tag'>c</a>  <a href='/tag/assembly' class='article__tag'>assembly</a>  <a href='/tag/x86' class='article__tag'>x86</a>  <a href='/tag/32-bit' class='article__tag'>32-bit</a>  <a href='/tag/memory-segmentation' class='article__tag'>memory-segmentation</a>  <a href='/tag/memory-segmentation' class='article__tag'>memory-segmentation</a>  <a href='/tag/buffer-overflows' class='article__tag'>buffer-overflows</a> </span></div></div></div></div></div>"
+    } ,
+  
+    {
+      "title"    : "Memory Segmentation",
+      "category" : "",
+      "tags"     : "c, assembly, x86, 32-bit, memory-segmentation, and memory-segmentation",
+      "url"      : "/2022/12/02/memory-segmentation/",
+      "date"     : "Dec 2, 2022",
+      "article"  : "<div class='article col col-4 col-d-6 col-t-12 grid__post animate'> <div class='article__inner'><a class='article__image' href='/2022/12/02/memory-segmentation/'> <img src='/assets/img/posts/memory-segmentation/banner2.jpg' alt='Memory Segmentation'> </a><div class='article__content'> <div class='article__meta'> <span class='article__minutes'>19 min read <time class='article__date' datetime='2022-12-02T22:20:00+00:00'>Dec 2, 2022</time> </span> </div><h2 class='article__title'>Memory Segmentation</h2> <p class='article__excerpt'>Memory Segmentation</p><div class='article__bottom'><div class='article__author'> <a href='/about/' aria-label='Burak Baris'><img class='article__author-image' src='/images/avatar.png' alt='Burak Baris's Picture'></a> </div><div class='article__bottom-meta'><a href='/about/' class='article__author-link'>Burak Baris</a><span> in </span> <span class='article-tags'> <a href='/tag/c' class='article__tag'>c</a>  <a href='/tag/assembly' class='article__tag'>assembly</a>  <a href='/tag/x86' class='article__tag'>x86</a>  <a href='/tag/32-bit' class='article__tag'>32-bit</a>  <a href='/tag/memory-segmentation' class='article__tag'>memory-segmentation</a>  <a href='/tag/memory-segmentation' class='article__tag'>memory-segmentation</a> </span></div></div></div></div></div>"
+    } ,
+  
+    {
       "title"    : "SQL Injection Lab",
       "category" : "",
       "tags"     : "Pentesting and sql-injection",
